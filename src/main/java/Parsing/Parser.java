@@ -3,6 +3,7 @@ package Parsing;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -25,14 +26,15 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
             String line = in.readLine();
-            String key;
+            String key, value;
             while (line != null) {
                 if (line.startsWith("S")) {
                     line = line.substring(2);
                     key = line.substring(0, line.indexOf("\t"));
-                    line = line.substring(line.indexOf("\t"));
+                    line = line.substring(line.indexOf("\t") + 1);
+                    value = line.substring(0, line.indexOf("\t"));
                     //TODO fix for actual file
-                    result.put(key, line);
+                    result.put(Integer.parseInt(key), value);
                 }
                 line = in.readLine();
             }

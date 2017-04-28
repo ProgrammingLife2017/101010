@@ -6,12 +6,12 @@ package Parsing;
 public class Link {
     Node first;
     Node second;
-    String cigar;
+    String offset;
 
-    public Link(Node first, Node second, String cigar) {
+    public Link(Node first, Node second, String offset) {
         this.first = first;
         this.second = second;
-        this.cigar = cigar;
+        this.offset = offset;
     }
 
     public Node getFirst() {
@@ -30,11 +30,23 @@ public class Link {
         this.second = second;
     }
 
-    public String getCigar() {
-        return cigar;
+    public String getOffset() {
+        return offset;
     }
 
-    public void setCigar(String cigar) {
-        this.cigar = cigar;
+    public void setOffset(String offset) {
+        this.offset = offset;
+    }
+
+    public boolean equals(Object other) {
+        if (other instanceof Link) {
+            Link that = (Link) other;
+            if (this.getFirst().equals(that.getFirst()) &&
+                    this.getSecond().equals(that.getSecond()) &&
+                    this.getOffset().equals(that.getOffset())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -17,4 +17,14 @@ public class Node {
     public void setSegment(String segment) {
         this.segment = segment;
     }
+
+    public boolean equals(Object other) {
+        if (other instanceof Node) {
+            Node that = (Node) other;
+            if (this.getSegment().equals(that.getSegment())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

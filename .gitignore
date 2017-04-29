@@ -2,3 +2,5 @@
 GFA-specification.txt
 *.class
 *.iml
+target/maven-status/
+out/

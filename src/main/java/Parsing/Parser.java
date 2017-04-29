@@ -46,4 +46,13 @@ public class Parser {
         }
         return result;
     }
+
+    public static void main(String args[]) {
+        Parser parser = Parser.getInstance();
+        TreeMap map = parser.segments("/test.gfa");
+        Node first = (Node) map.get(map.firstKey());
+        System.out.println(first.getSegment());
+        first.reverseComplement();
+        System.out.println(first.getSegment());
+    }
 }

@@ -5,9 +5,11 @@ package Parsing;
  */
 public class Node {
     String segment;
+    int id;
 
-    public Node(String segment) {
+    public Node(String segment, int id) {
         this.segment = segment;
+        this.id = id;
     }
 
     public String getSegment() {
@@ -18,10 +20,18 @@ public class Node {
         this.segment = segment;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public boolean equals(Object other) {
         if (other instanceof Node) {
             Node that = (Node) other;
-            if (this.getSegment().equals(that.getSegment())) {
+            if (this.getSegment().equals(that.getSegment()) && this.getId() == that.getId()) {
                 return true;
             }
         }

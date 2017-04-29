@@ -4,46 +4,46 @@ package Parsing;
  * Created by Jochem on 26-4-2017.
  */
 public class Link {
-    Node first;
-    Node second;
-    String offset;
+    int first;
+    int second;
+    int offset;
 
-    public Link(Node first, Node second, String offset) {
+    public Link(int first, int second, int offset) {
         this.first = first;
         this.second = second;
         this.offset = offset;
     }
 
-    public Node getFirst() {
+    public int getFirst() {
         return first;
     }
 
-    public void setFirst(Node first) {
+    public void setFirst(int first) {
         this.first = first;
     }
 
-    public Node getSecond() {
+    public int getSecond() {
         return second;
     }
 
-    public void setSecond(Node second) {
+    public void setSecond(int second) {
         this.second = second;
     }
 
-    public String getOffset() {
+    public int getOffset() {
         return offset;
     }
 
-    public void setOffset(String offset) {
+    public void setOffset(int offset) {
         this.offset = offset;
     }
 
     public boolean equals(Object other) {
         if (other instanceof Link) {
             Link that = (Link) other;
-            if (this.getFirst().equals(that.getFirst()) &&
-                    this.getSecond().equals(that.getSecond()) &&
-                    this.getOffset().equals(that.getOffset())) {
+            if (this.getFirst() == that.getFirst() &&
+                    this.getSecond() == that.getSecond() &&
+                    this.getOffset() == that.getOffset()) {
                 return true;
             }
         }

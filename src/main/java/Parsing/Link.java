@@ -5,12 +5,24 @@ package Parsing;
  */
 public class Link {
     int first;
+    boolean rCfirst;
     int second;
+    boolean rCsecond;
     int offset;
 
-    public Link(int first, int second, int offset) {
+    public Link() {
+        this.first = 0;
+        this.rCfirst = false;
+        this.second = 0;
+        this.rCsecond = false;
+        this.offset = 0;
+    }
+
+    public Link(int first, boolean rCfirst, int second, boolean rCsecond, int offset) {
         this.first = first;
+        this.rCfirst = rCfirst;
         this.second = second;
+        this.rCsecond = rCsecond;
         this.offset = offset;
     }
 
@@ -22,12 +34,28 @@ public class Link {
         this.first = first;
     }
 
+    public boolean isrCfirst() {
+        return rCfirst;
+    }
+
+    public void setrCfirst(boolean rCfirst) {
+        this.rCfirst = rCfirst;
+    }
+
     public int getSecond() {
         return second;
     }
 
     public void setSecond(int second) {
         this.second = second;
+    }
+
+    public boolean isrCsecond() {
+        return rCsecond;
+    }
+
+    public void setrCsecond(boolean rCsecond) {
+        this.rCsecond = rCsecond;
     }
 
     public int getOffset() {

@@ -27,7 +27,7 @@ public class Parser {
             String line = in.readLine();
             while (line != null) {
                 if (line.startsWith("S")) {
-                    Node temp = new Node("", 0);
+                    Node temp = new Node();
                     line = line.substring(2);
                     temp.setId(Integer.parseInt(line.substring(0, line.indexOf("\t"))));
                     line = line.substring(line.indexOf("\t") + 1);
@@ -37,6 +37,7 @@ public class Parser {
                     temp.setSegment(line);
                     graph.addVertex(temp);
                 } else if (line.startsWith("L")) {
+                    Link temp = new Link();
                     line = line.substring(2);
                     System.out.println(line);
                 }

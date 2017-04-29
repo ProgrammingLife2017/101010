@@ -7,6 +7,11 @@ public class Node {
     String segment;
     int id;
 
+    public Node() {
+        this.segment = "";
+        this.id = 0;
+    }
+
     public Node(String segment, int id) {
         this.segment = segment;
         this.id = id;

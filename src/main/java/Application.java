@@ -1,13 +1,14 @@
+
+
+import Parsing.Link;
+import Parsing.Node;
+import Parsing.Parser;
 import org.jgraph.JGraph;
 import org.jgraph.graph.AttributeMap;
 import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.GraphConstants;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.ListenableGraph;
 import org.jgrapht.ext.JGraphModelAdapter;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultListenableGraph;
-import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 import javax.swing.*;
 import java.awt.Color;
@@ -46,7 +47,9 @@ public class Application extends JApplet{
         frame.setTitle("JGraphT Adapter to JGraph Demo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setResizable(true);
         frame.setVisible(true);
+
     }
 
     /**
@@ -54,13 +57,15 @@ public class Application extends JApplet{
      */
     public void init()
     {
+
+        Parser parser = Parser.getInstance();
+
         // create a JGraphT graph
-        ListenableGraph<String, DefaultEdge> g =
-                new ListenableDirectedMultigraph<String, DefaultEdge>(
-                        DefaultEdge.class);
+        DefaultDirectedGraph<Node, Link> g = parser.parse("/test.gfa");
+        System.out.println(g.toString());
 
         // create a visualization using JGraph, via an adapter
-        jgAdapter = new JGraphModelAdapter<String, DefaultEdge>(g);
+        jgAdapter = new JGraphModelAdapter<Node, Link>(g);
 
         JGraph jgraph = new JGraph(jgAdapter);
 
@@ -68,27 +73,13 @@ public class Application extends JApplet{
         getContentPane().add(jgraph);
         resize(DEFAULT_SIZE);
 
-        String v1 = "v1";
-        String v2 = "v2";
-        String v3 = "v3";
-        String v4 = "v4";
 
-        // add some sample data (graph manipulated via JGraphT)
-        g.addVertex(v1);
-        g.addVertex(v2);
-        g.addVertex(v3);
-        g.addVertex(v4);
 
-        g.addEdge(v1, v2);
-        g.addEdge(v2, v3);
-        g.addEdge(v3, v1);
-        g.addEdge(v4, v3);
-
-        // position vertices nicely within JGraph component
-        positionVertexAt(v1, 130, 40);
-        positionVertexAt(v2, 60, 200);
-        positionVertexAt(v3, 310, 230);
-        positionVertexAt(v4, 380, 70);
+//        // position vertices nicely within JGraph component
+//        positionVertexAt(v1, 130, 40);
+//        positionVertexAt(v2, 60, 200);
+//        positionVertexAt(v3, 310, 230);
+//        positionVertexAt(v4, 380, 70);
 
         // that's all there is to it!...
     }
@@ -112,7 +103,6 @@ public class Application extends JApplet{
         jg.setBackground(c);
     }
 
-    @SuppressWarnings("unchecked") // FIXME hb 28-nov-05: See FIXME below
     private void positionVertexAt(Object vertex, int x, int y)
     {
         DefaultGraphCell cell = jgAdapter.getVertexCell(vertex);
@@ -128,26 +118,9 @@ public class Application extends JApplet{
 
         GraphConstants.setBounds(attr, newBounds);
 
-        // TODO: Clean up generics once JGraph goes generic
         AttributeMap cellAttr = new AttributeMap();
         cellAttr.put(cell, attr);
         jgAdapter.edit(cellAttr, null, null, null);
     }
 
-    //~ Inner Classes ----------------------------------------------------------
-
-    /**
-     * a listenable directed multigraph that allows loops and parallel edges.
-     */
-    private static class ListenableDirectedMultigraph<V, E>
-            extends DefaultListenableGraph<V, E>
-            implements DirectedGraph<V, E>
-    {
-        private static final long serialVersionUID = 1L;
-
-        ListenableDirectedMultigraph(Class<E> edgeClass)
-        {
-            super(new DirectedMultigraph<V, E>(edgeClass));
-        }
-    }
 }

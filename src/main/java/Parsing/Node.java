@@ -70,4 +70,8 @@ public class Node {
         }
         this.setSegment(result);
     }
+
+    public String toString() {
+        return segment;
+    }
 }

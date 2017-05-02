@@ -1,12 +1,12 @@
 package Parsing;
 
+import org.jgrapht.graph.DefaultDirectedGraph;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
-
-import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
  * Created by Jochem on 26-4-2017.
@@ -30,7 +30,9 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
             String line = in.readLine();
+
             while (line != null) {
+                System.out.println(line);
                 if (line.startsWith("S")) {
                     Node temp = new Node();
                     line = line.substring(2);

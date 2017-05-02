@@ -77,4 +77,8 @@ public class Link {
         }
         return false;
     }
+
+    public String toString() {
+        return Integer.toString(offset);
+    }
 }

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 /**
- * Created by Jochem on 26-4-2017.
+ * Created by 101010.
  */
 public class Parser {
     private static Parser instance = null;
@@ -23,6 +23,11 @@ public class Parser {
         return instance;
     }
 
+    /**
+     * Parses a .gfa file to a graph.
+     * @param filename The name of the target .gfa file.
+     * @return The graph created from the .gfa file.
+     */
     public DefaultDirectedGraph<Node, Link> parse(String filename) {
         DefaultDirectedGraph<Node, Link> graph = new DefaultDirectedGraph<Node, Link>(Link.class);
         TreeMap<Integer, Node> nodes = new TreeMap<Integer, Node>();

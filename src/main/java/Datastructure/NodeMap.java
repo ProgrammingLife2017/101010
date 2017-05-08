@@ -5,7 +5,7 @@ import com.koloboke.collect.map.hash.HashIntObjMap;
 import java.sql.*;
 
 /**
- * Created by DexterQuintin on 5/8/2017.
+ * Created by 101010.
  */
 public class NodeMap {
     HashIntObjMap<int[]> map;
@@ -13,7 +13,7 @@ public class NodeMap {
     Connection con;
 
     public NodeMap() {
-        this.map = HashIntObjMaps.<int[]>newUpdatableMap(0);
+        this.map = HashIntObjMaps.newUpdatableMap();
         dbLoc = "jdbc:h2:~/h2/genomedb";
         dbInit();
     }
@@ -39,9 +39,11 @@ public class NodeMap {
     private void dbInit() {
         try {
             Class.forName("org.h2.Driver");
-            con = DriverManager.getConnection(dbLoc, "", "");
+            con = DriverManager.getConnection(dbLoc);
+            con.prepareStatement("DROP TABLE IF EXISTS node").execute();
+            con.prepareStatement("DROP TABLE IF EXISTS edges").execute();
             con.prepareStatement("CREATE TABLE node(id INT PRIMARY KEY, segment CLOB NOT NULL)").execute();
-            con.prepareStatement("CREATE TABLE edges(from INT NOT NULL, FOREIGN KEY (from) REFERENCES node(id), to INT NOT NULL, FOREIGN KEY (to) REFERENCES node(id))").execute();
+            con.prepareStatement("CREATE TABLE edges(from_id INT PRIMARY KEY, FOREIGN KEY (from_id) REFERENCES node(id), to_id INT NOT NULL, FOREIGN KEY (to_id) REFERENCES node(id))").execute();
             con.close();
         }
         catch(ClassNotFoundException e) {

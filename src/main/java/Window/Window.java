@@ -3,6 +3,8 @@ package Window;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -19,6 +21,7 @@ public class Window extends Application{
         mainPane.setMinSize(1000, 500);
         mainPane.setLeft(createVBoxLeft());
         mainPane.setRight(createVBoxRight());
+        mainPane.setTop(createMenuBar());
 
         //Creating a scene object
         Scene scene = new Scene(mainPane);
@@ -48,6 +51,13 @@ public class Window extends Application{
         box.setAlignment(Pos.CENTER);
         box.setMinSize(200, 200);
         return box;
+    }
+
+    public MenuBar createMenuBar() {
+        MenuBar menuBar = new MenuBar();
+        Menu menu1 = new Menu("File");
+        menuBar.getMenus().add(menu1);
+        return menuBar;
     }
 
 

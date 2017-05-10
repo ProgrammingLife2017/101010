@@ -173,4 +173,33 @@ public class NodeDB {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Gets the segment of the provided node
+     * from the database.
+     * @param id The id of the node.
+     * @return The segment corresponding to the id.
+     */
+    public String getSegment(final int id) {
+        String res = "";
+
+        try {
+            Class.forName("org.h2.Driver");
+            Connection con = DriverManager.getConnection(dbLoc);
+            PreparedStatement stmt = con.prepareStatement(
+                    "SELECT segment FROM NODE WHERE id = ?"
+            );
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            res = rs.getString("segment");
+            con.close();
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return res;
+    }
 }

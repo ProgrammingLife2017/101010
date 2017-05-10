@@ -1,4 +1,4 @@
-package Parsing;
+package parsing;
 
 /**
  * Created by 101010.

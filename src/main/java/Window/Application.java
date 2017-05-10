@@ -1,8 +1,8 @@
 package Window;
 
-import Parsing.Link;
-import Parsing.Node;
-import Parsing.Parser;
+import parsing.Link;
+import parsing.Node;
+import parsing.Parser;
 import org.jgraph.JGraph;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;

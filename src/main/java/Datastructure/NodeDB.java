@@ -7,18 +7,15 @@ import java.sql.*;
 /**
  * Created by 101010.
  */
-public class NodeMap {
-    HashIntObjMap<int[]> map;
+public class NodeDB {
     String dbLoc;
 
-    public NodeMap() {
-        this.map = HashIntObjMaps.newUpdatableMap();
+    public NodeDB() {
         dbLoc = "jdbc:h2:~/h2/genomedb";
         dbInit();
     }
 
-    public NodeMap(HashIntObjMap<int[]> map, String dbLoc) {
-        this.map = map;
+    public NodeDB(HashIntObjMap<int[]> map, String dbLoc) {
         if(dbLoc.startsWith("jdbc:h2:~/")) {
             this.dbLoc = dbLoc;
         }
@@ -43,7 +40,7 @@ public class NodeMap {
             Connection con = DriverManager.getConnection(dbLoc);
             con.prepareStatement("DROP TABLE IF EXISTS node").execute();
             con.prepareStatement("DROP TABLE IF EXISTS edges").execute();
-            con.prepareStatement("CREATE TABLE node(id INT PRIMARY KEY, coordinate INT NOT NULL, segment CLOB NOT NULL)").execute();
+            con.prepareStatement("CREATE TABLE node(id INT PRIMARY KEY, segment CLOB NOT NULL)").execute();
             con.prepareStatement("CREATE TABLE edges(from_id INT PRIMARY KEY, FOREIGN KEY (from_id) REFERENCES node(id), to_id INT PRIMARY KEY)").execute();
             con.close();
         }

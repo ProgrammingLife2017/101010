@@ -1,25 +1,22 @@
 package Datastructure;
 
 /**
- * Created by 101010 on 5/9/2017.
+ * Created by 101010.
  */
 public class Node{
-    String segment;
     int id;
-    int coordinate;
+    String segment;
     int[] to;
 
     public Node() {
-        this.segment = "";
         this.id = 0;
-        this.coordinate = 0;
+        this.segment = "";
         this.to = new int[0];
     }
 
-    public Node(String segment, int numberOfOutgoingEdges, int id, int coordinate) {
-        this.segment = segment;
+    public Node(int id, String segment, int numberOfOutgoingEdges) {
         this.id = id;
-        this.coordinate = coordinate;
+        this.segment = segment;
         this.to = new int[numberOfOutgoingEdges];
     }
 
@@ -31,14 +28,6 @@ public class Node{
         return id;
     }
 
-    public int getCoordinate() {
-        return coordinate;
-    }
-
-    public void setCoordinate(int newCoordinate) {
-        this.coordinate = newCoordinate;
-    }
-
     public int[] getDestinationIDs() {
         return to;
     }
@@ -47,7 +36,7 @@ public class Node{
     public boolean equals(Object other) {
         if(other instanceof Node) {
             Node that = (Node) other;
-            if(this.to.length == that.to.length && this.id == that.id && this.coordinate == that.coordinate && this.segment.equals(that.segment)) {
+            if(this.to.length == that.to.length && this.id == that.id && this.segment.equals(that.segment)) {
                 for(int i = 0; i < this.to.length; i++) {
                     if(this.to[i] != that.to[i]) {
                         return false;

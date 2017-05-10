@@ -1,4 +1,4 @@
-package Datastructure;
+package datastructure;
 
 import org.junit.jupiter.api.Test;
 

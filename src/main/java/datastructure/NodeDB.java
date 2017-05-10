@@ -66,19 +66,49 @@ public class NodeDB {
     }
 
     /**
-     * Returns a ResultSet of all nodes at a certain coordinate.
-     * @param coordinate - the coordinate of the requested nodes.
+     * Returns the Node with id as id from the database.
+     * @param id - the id of the requested node.
      * @return A resultset containing all nodes at the given coordinate.
      */
-    private ResultSet getNodes(final int coordinate) {
+    public Node getNode(final int id) {
+        Node res = new Node();
+
         try {
             Class.forName("org.h2.Driver");
             Connection con = DriverManager.getConnection(dbLoc);
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM NODE WHERE coordinate = ?");
-            stmt.setInt(1, coordinate);
-            ResultSet res = stmt.executeQuery();
+            PreparedStatement stmt = con.prepareStatement("SELECT segment FROM NODE WHERE id = ?");
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            String segment = rs.getString("segment");
+
+            stmt = con.prepareStatement("SELECT to_id FROM EDGES WHERE from_id = ?");
+            stmt.setInt(1, id);
+            rs = stmt.executeQuery();
+
+            rs.last();
+            int[] icedges = new int[rs.getRow()];
+            rs.first();
+
+            for(int i = 0; i < icedges.length && !rs.isAfterLast(); i++) {
+                icedges[i] = rs.getInt("to_id");
+                rs.next();
+            }
+
+            stmt = con.prepareStatement("SELECT from_id FROM EDGES WHERE to_id = ?");
+            stmt.setInt(1, id);
+            rs = stmt.executeQuery();
+
+            rs.last();
+            int[] ogedges = new int[rs.getRow()];
+            rs.first();
+
+            for(int i = 0; i < ogedges.length && !rs.isAfterLast(); i++) {
+                icedges[i] = rs.getInt("from_id");
+                rs.next();
+            }
+
             con.close();
-            return res;
+            res = new Node(id, segment, ogedges, icedges);
         }
         catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
@@ -88,21 +118,20 @@ public class NodeDB {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-        return null;
+        return res;
     }
 
     /**
      * Inserts a node and edges into the database based on the provided parameters.
      * @param id - the id of the node.
-     * @param coordinate - the coordinate of the node.
      * @param segment - the segment of the node.
      * @param destinationIDs - the ids of the nodes the outgoing edges of this node go to.
      */
-    public void addNode(final int id, final int coordinate, final String segment, final int[] destinationIDs) {
+    public void addNode(final int id, final String segment, final int[] destinationIDs) {
         try {
             String iNode =
                     "INSERT INTO NODE" +
-                    "VALUES (?, ?, ?)";
+                    "VALUES (?, ?)";
             String iEdges =
                     "INSERT INTO EDGES" +
                     "VALUES (?, ?)";
@@ -112,8 +141,7 @@ public class NodeDB {
 
             PreparedStatement insertNode = con.prepareStatement(iNode);
             insertNode.setInt(1, id);
-            insertNode.setInt(2, coordinate);
-            insertNode.setString(3, segment);
+            insertNode.setString(2, segment);
             insertNode.execute();
 
             PreparedStatement insertEdges = con.prepareStatement(iEdges);
@@ -133,43 +161,5 @@ public class NodeDB {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Gets the ids of the nodes that have outgoing edges to current node.
-     * @param id the id of the node in question.
-     * @return
-     */
-    public ResultSet getIncomingEdges(final int id) {
-        ResultSet result = null;
-        try{
-            Connection con;
-            con = DriverManager.getConnection(dbLoc);
-            Statement temp = con.createStatement();
-            result = temp.executeQuery("SELECT from_id FROM EDGES WHERE to_id='" + id + "'");
-            con.close();
-        } catch (SQLException e){
-            System.out.println("Database was corrupted");
-        }
-        return result;
-    }
-
-    /**
-     * Gets the ids of the nodes that the current node has outgoing edges to.
-     * @param id hte id of the node in question.
-     * @return
-     */
-    public ResultSet getOutgoingEdges(final int id) {
-        ResultSet result = null;
-        try{
-            Connection con;
-            con = DriverManager.getConnection(dbLoc);
-            Statement temp = con.createStatement();
-            result = temp.executeQuery("SELECT to_id FROM EDGES WHERE from_id='" + id + "'");
-            con.close();
-        } catch (SQLException e){
-            System.out.println("Database was corrupted");
-        }
-        return result;
     }
 }

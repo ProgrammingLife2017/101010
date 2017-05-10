@@ -1,4 +1,4 @@
-package Datastructure;
+package datastructure;
 
 /**
  * Created by 101010.
@@ -7,17 +7,20 @@ public class Node{
     int id;
     String segment;
     int[] to;
+    int[] from;
 
     public Node() {
         this.id = 0;
         this.segment = "";
         this.to = new int[0];
+        this.from = new int[0];
     }
 
-    public Node(int id, String segment, int numberOfOutgoingEdges) {
+    public Node(int id, String segment, int[] outgoingEdges, int[] incomingEdges) {
         this.id = id;
         this.segment = segment;
-        this.to = new int[numberOfOutgoingEdges];
+        this.to = outgoingEdges;
+        this.from = incomingEdges;
     }
 
     public String getSegment() {
@@ -28,8 +31,12 @@ public class Node{
         return id;
     }
 
-    public int[] getDestinationIDs() {
+    public int[] getOutgoingEdges() {
         return to;
+    }
+
+    public int[] getIncomingEdges() {
+        return from;
     }
 
     @Override

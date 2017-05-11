@@ -1,7 +1,17 @@
 package datastructure;
 
 import javax.sql.rowset.serial.SerialClob;
-import java.sql.*;
+import com.koloboke.collect.map.hash.HashIntObjMap;
+import com.koloboke.collect.map.hash.HashIntObjMaps;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.sql.Clob;
 
 /**
  * Created by 101010.
@@ -205,6 +215,52 @@ public class NodeDB {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+        return res;
+    }
+
+    /**
+     * Uses breadth first traversal to get the required nodes
+     * from the database.
+     * @param center the id of the center node.
+     * @param limit the amount of nodes to load.
+     * @return a hashmap containing the amount of nodes
+     * around and including the center node, equal to the limit.
+     */
+    public HashIntObjMap<Node> getNodes(final int center, final int limit) {
+        Queue<Integer> nodeQueue = new LinkedList<Integer>();
+        HashIntObjMap<Node> res = HashIntObjMaps.newMutableMap(limit);
+        nodeQueue.offer(center);
+
+        while (res.size() < limit && !nodeQueue.isEmpty()) {
+            int tempId = nodeQueue.poll();
+            Node tempNode = getNode(tempId);
+            res.put(tempId, tempNode);
+
+            int[] edges = tempNode.getIncomingEdges();
+            for (int i = 0; i < edges.length; i++) {
+                if (!nodeQueue.contains(edges[i])
+                        && !res.containsKey(edges[i])) {
+                   nodeQueue.offer(edges[i]);
+                }
+            }
+
+            edges = tempNode.getOutgoingEdges();
+            for (int i = 0; i < edges.length; i++) {
+                if (!nodeQueue.contains(edges[i])
+                        && !res.containsKey(edges[i])) {
+                    nodeQueue.offer(edges[i]);
+                }
+            }
+
+        }
+
+        while (!nodeQueue.isEmpty()) {
+            int tempId = nodeQueue.poll();
+            if (!res.containsKey(tempId)) {
+                res.put(tempId, getNode(tempId));
+            }
+        }
+
         return res;
     }
 }

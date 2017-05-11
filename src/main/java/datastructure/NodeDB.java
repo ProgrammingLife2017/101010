@@ -1,17 +1,17 @@
 package datastructure;
 
-import javax.sql.rowset.serial.SerialClob;
 import com.koloboke.collect.map.hash.HashIntObjMap;
 import com.koloboke.collect.map.hash.HashIntObjMaps;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.ResultSet;
+import javax.sql.rowset.serial.SerialClob;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.sql.Clob;
 
 /**
  * Created by 101010.
@@ -66,7 +66,7 @@ public class NodeDB {
             con.prepareStatement("CREATE TABLE edges(from_id INT NOT NULL, "
                     + "FOREIGN KEY (from_id) REFERENCES node(id), "
                     + "to_id INT  NOT NULL,"
-                    +  "constraint PK_D primary key (from_id, to_id))").execute();
+                    +  "PRIMARY KEY(from_id, to_id))").execute();
             con.close();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());

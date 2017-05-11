@@ -1,10 +1,7 @@
 package datastructure;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
+import javax.sql.rowset.serial.SerialClob;
+import java.sql.*;
 
 /**
  * Created by 101010.
@@ -44,7 +41,7 @@ public class NodeDB {
      *              OTHER:          segment (CLOB, NOT NULL)
      *                              length (INT, NOT NULL)
      *      edges - PRIMARY KEY:    from (INT, FOREIGN KEY node(id))
-     *                              to (INT, FOREIGN KEY node(id))
+     *                              to (INT)
      */
     private void dbInit() {
         try {
@@ -54,12 +51,12 @@ public class NodeDB {
             con.prepareStatement("DROP TABLE IF EXISTS node").execute();
             con.prepareStatement("DROP TABLE IF EXISTS edges").execute();
             con.prepareStatement("CREATE TABLE node(id INT PRIMARY KEY, "
-                    + "segment CLOB NOT NULL)"
-                    + "length INT NOT NULL").execute();
-            con.prepareStatement("CREATE TABLE edges(from_id INT PRIMARY KEY, "
+                    + "segment CLOB NOT NULL, "
+                    + "length INT NOT NULL)").execute();
+            con.prepareStatement("CREATE TABLE edges(from_id INT NOT NULL, "
                     + "FOREIGN KEY (from_id) REFERENCES node(id), "
-                    + "to_id INT NOT NULL, "
-                    + "FOREIGN KEY (to_id) REFERENCES node(id))").execute();
+                    + "to_id INT  NOT NULL,"
+                    +  "constraint PK_D primary key (from_id, to_id))").execute();
             con.close();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
@@ -85,33 +82,39 @@ public class NodeDB {
                     "SELECT length FROM NODE WHERE id = ?");
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
+            rs.first();
             int length = rs.getInt("length");
 
             stmt = con.prepareStatement(
-                    "SELECT to_id FROM EDGES WHERE from_id = ?");
+                    "SELECT DISTINCT from_id FROM EDGES WHERE to_id = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
 
+
             rs.last();
             int[] icedges = new int[rs.getRow()];
+            rs = stmt.executeQuery();
             rs.first();
 
-            for (int i = 0; i < icedges.length && !rs.isAfterLast(); i++) {
-                icedges[i] = rs.getInt("to_id");
+            for (int i = 0; i < icedges.length; i++) {
+                icedges[i] = rs.getInt("from_id");
                 rs.next();
             }
 
             stmt = con.prepareStatement(
-                    "SELECT from_id FROM EDGES WHERE to_id = ?");
+                    "SELECT DISTINCT to_id FROM EDGES WHERE from_id = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
 
-            rs.last();
-            int[] ogedges = new int[rs.getRow()];
             rs.first();
 
-            for (int i = 0; i < ogedges.length && !rs.isAfterLast(); i++) {
-                icedges[i] = rs.getInt("from_id");
+            rs.last();
+            int[] ogedges = new int[rs.getRow()];
+            rs = stmt.executeQuery();
+            rs.first();
+
+            for (int i = 0; i < ogedges.length; i++) {
+                ogedges[i] = rs.getInt("to_id");
                 rs.next();
             }
 
@@ -142,10 +145,10 @@ public class NodeDB {
                         final int[] destinationIDs) {
         try {
             String iNode =
-                    "INSERT INTO NODE"
+                    "INSERT INTO node \n"
                     + "VALUES (?, ?, ?)";
             String iEdges =
-                    "INSERT INTO EDGES"
+                    "INSERT INTO edges \n"
                     + "VALUES (?, ?)";
 
             Class.forName("org.h2.Driver");
@@ -153,8 +156,8 @@ public class NodeDB {
 
             PreparedStatement insertNode = con.prepareStatement(iNode);
             insertNode.setInt(1, id);
-            insertNode.setInt(2, segment.length());
-            insertNode.setString(2 + 1, segment);
+            insertNode.setClob(2, new SerialClob(segment.toCharArray()));
+            insertNode.setInt(2 + 1, segment.length());
             insertNode.execute();
 
             PreparedStatement insertEdges = con.prepareStatement(iEdges);
@@ -191,7 +194,9 @@ public class NodeDB {
             );
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            res = rs.getString("segment");
+            rs.first();
+            Clob tempClob = rs.getClob(1);
+            res = tempClob.getSubString(1, (int) tempClob.length());
             con.close();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());

@@ -20,7 +20,7 @@ public class Parser {
     /**
      * Constructor of the parser.
      */
-    protected Parser() {}
+    protected Parser() { }
 
     /**
      * Getter for the Singleton parser.
@@ -34,16 +34,27 @@ public class Parser {
     }
 
     /**
-     * Parses a .gfa file to a graph.
-     * @param filename The name of the target .gfa file.
-     * @return The graph created from the .gfa file.
+     * Parses the data of the inputted file.
+     * @param filename The name of the file.
+     * @return The database created from the .gfa file.
      */
     public NodeDB parse(final String filename) {
         NodeDB database = new NodeDB();
+        return parse(filename, database);
+    }
+
+    /**
+     * Parses a .gfa file to a graph.
+     * @param filename The name of the target .gfa file.
+     * @param database The databasae where the file should be added.
+     * @return The database created from the .gfa file.
+     */
+    public NodeDB parse(final String filename, final NodeDB database) {
 
 
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(getClass().getResourceAsStream(filename)));
             String line = in.readLine();
 
             while (line != null) {
@@ -54,23 +65,26 @@ public class Parser {
                     String segment;
                     ArrayList<Integer> edgesList = new ArrayList<>();
                     line = line.substring(2);
-                    id = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+                    id = Integer.parseInt(line.substring(0,
+                            line.indexOf("\t")));
                     line = line.substring(line.indexOf("\t") + 1);
                     if (line.indexOf("\t") != -1) {
                         line = line.substring(0, line.indexOf("\t"));
                     }
                     segment = line;
                     line = in.readLine();
-                    while (line.startsWith("L")) {
+                    while (line != null && line.startsWith("L")) {
                         int edgeId;
                         line = line.substring(2);
                         line = line.substring(line.indexOf("\t") + 1);
                         line = line.substring(line.indexOf("\t") + 1);
-                       edgeId = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+                       edgeId = Integer.parseInt(line.substring(0,
+                               line.indexOf("\t")));
                        edgesList.add(edgeId);
+                       line = in.readLine();
                     }
                     int[] edges = new int[edgesList.size()];
-                    for (int i = 0; i < edgesList.size(); i++){
+                    for (int i = 0; i < edgesList.size(); i++) {
                         edges[i] = edgesList.get(i);
                     }
                     database.addNode(id, segment, edges);

@@ -10,6 +10,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 
 import java.io.IOException;
 import java.io.File;
@@ -22,7 +24,26 @@ import java.text.SimpleDateFormat;
 public class Controller {
     @FXML private Button browse;
 
+    @FXML private MenuBar menu;
+
+    @FXML private MenuItem openFile;
+
     @FXML private TextArea console;
+
+    @FXML private void open(final ActionEvent event) throws IOException {
+        Stage stage = (Stage) menu.getScene().getWindow();
+        Parent root;
+        if (event.getSource() == openFile) {
+            final FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("GFA files (*.gfa)", "*.gfa");
+            fileChooser.getExtensionFilters().add(extFilter);
+            final Button openButton = new Button("Open");
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+                //TODO open new file
+            }
+        }
+    }
 
     @FXML private void handleBrowseButton(final ActionEvent event) throws IOException {
         Stage stage = (Stage) browse.getScene().getWindow();
@@ -31,7 +52,7 @@ public class Controller {
             final FileChooser fileChooser = new FileChooser();
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("GFA files (*.gfa)", "*.gfa");
             fileChooser.getExtensionFilters().add(extFilter);
-            final Button openButton = new Button("Open a Picture...");
+            final Button openButton = new Button("Open");
             File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
                 stage.setTitle("Graph visualization");

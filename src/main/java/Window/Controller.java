@@ -33,15 +33,13 @@ public class Controller {
     @FXML private void open(final ActionEvent event) throws IOException {
         Stage stage = (Stage) menu.getScene().getWindow();
         Parent root;
-        if (event.getSource() == openFile) {
-            final FileChooser fileChooser = new FileChooser();
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("GFA files (*.gfa)", "*.gfa");
-            fileChooser.getExtensionFilters().add(extFilter);
-            final Button openButton = new Button("Open");
-            File file = fileChooser.showOpenDialog(stage);
-            if (file != null) {
-                //TODO open new file
-            }
+        final FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("GFA files (*.gfa)", "*.gfa");
+        fileChooser.getExtensionFilters().add(extFilter);
+        final Button openButton = new Button("Open");
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            //TODO parse the selected file and visualize the graph with its data
         }
     }
 

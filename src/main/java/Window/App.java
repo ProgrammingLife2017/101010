@@ -7,7 +7,6 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-
 import java.io.IOException;
 import javafx.stage.FileChooser;
 import javafx.scene.control.Button;

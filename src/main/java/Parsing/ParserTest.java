@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Created by Tycho on 11-5-2017.
+ * Created by 101010.
  */
 class ParserTest {
 //    /**

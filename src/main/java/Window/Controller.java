@@ -26,11 +26,9 @@ public class Controller {
 
     @FXML private MenuBar menu;
 
-    @FXML private MenuItem openFile;
-
     @FXML private TextArea console;
 
-    @FXML private void open(final ActionEvent event) throws IOException {
+    @FXML private void openFile(final ActionEvent event) throws IOException {
         Stage stage = (Stage) menu.getScene().getWindow();
         Parent root;
         final FileChooser fileChooser = new FileChooser();

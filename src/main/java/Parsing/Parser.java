@@ -1,5 +1,6 @@
 package Parsing;
 
+import Graph.Node;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 import java.io.BufferedReader;

@@ -100,7 +100,6 @@ public class NodeDB {
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
 
-
             rs.last();
             int[] icedges = new int[rs.getRow()];
             rs = stmt.executeQuery();
@@ -115,8 +114,6 @@ public class NodeDB {
                     "SELECT DISTINCT to_id FROM EDGES WHERE from_id = ?");
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
-
-            rs.first();
 
             rs.last();
             int[] ogedges = new int[rs.getRow()];

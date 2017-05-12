@@ -58,7 +58,6 @@ public class Parser {
             String line = in.readLine();
 
             while (line != null) {
-//                System.out.println(line);
 
                 if (line.startsWith("S")) {
                     int id;

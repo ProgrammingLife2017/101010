@@ -12,18 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Created by 101010.
  */
 class ParserTest {
-//    /**
-//     * The parser that we will use.
-//     */
-//    private Parser parser = null;
-//
-//    /**
-//     * The set up method.
-//     */
-//    @BeforeEach
-//    void setUp() {
-//    }
-
     @Test
     void getInstance() {
         Object parser = Parser.getInstance();

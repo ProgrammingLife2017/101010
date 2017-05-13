@@ -86,6 +86,42 @@ public class Node {
     }
 
     /**
+     * Adds a node id to the list of incoming edges.
+     *
+     * @param incomingId
+     *        The id of the incoming edge's node.
+     */
+    public void addIncomingEdge(final int incomingId) {
+        int[] temp = new int[from.length + 1];
+
+        for (int i = 0; i < from.length; i++) {
+            temp[i] = from[i];
+        }
+
+        temp[from.length] = incomingId;
+
+        from = temp;
+    }
+
+    /**
+     * Adds a node if to the list of outgoing edges.
+     *
+     * @param outgoingId
+     *        The id of the outgoing edge's node.
+     */
+    public void addOutgoingEdge(final int outgoingId) {
+        int[] temp = new int[to.length + 1];
+
+        for (int i = 0; i < to.length; i++) {
+            temp[i] = to[i];
+        }
+
+        temp[to.length] = outgoingId;
+
+        to = temp;
+    }
+
+    /**
      *
      * @param other the object to compare to.
      * @return whether this Node is equal to the other object.

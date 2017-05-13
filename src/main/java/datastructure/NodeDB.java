@@ -1,7 +1,5 @@
 package datastructure;
 
-import com.koloboke.collect.map.hash.HashIntObjMap;
-import com.koloboke.collect.map.hash.HashIntObjMaps;
 
 import javax.sql.rowset.serial.SerialClob;
 import java.sql.Clob;
@@ -32,6 +30,7 @@ public class NodeDB {
 
     /**
      * Constructor for NodeDB.
+     *
      * @param newDbLoc the location of the database.
      */
     public NodeDB(final String newDbLoc) {
@@ -47,11 +46,11 @@ public class NodeDB {
      * Initializes the database by creating a new empty database
      * and creating the necessary tables in that database.
      * The following tables are created:
-     *      node -  PRIMARY KEY:    id (INT)
-     *              OTHER:          segment (CLOB, NOT NULL)
-     *                              length (INT, NOT NULL)
-     *      edges - PRIMARY KEY:    from (INT, FOREIGN KEY node(id))
-     *                              to (INT)
+     * node -  PRIMARY KEY:    id (INT)
+     * OTHER:          segment (CLOB, NOT NULL)
+     * length (INT, NOT NULL)
+     * edges - PRIMARY KEY:    from (INT, FOREIGN KEY node(id))
+     * to (INT)
      */
     private void dbInit() {
         try {
@@ -66,7 +65,7 @@ public class NodeDB {
             con.prepareStatement("CREATE TABLE edges(from_id INT NOT NULL, "
                     + "FOREIGN KEY (from_id) REFERENCES node(id), "
                     + "to_id INT  NOT NULL,"
-                    +  "PRIMARY KEY(from_id, to_id))").execute();
+                    + "PRIMARY KEY(from_id, to_id))").execute();
             con.close();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
@@ -79,6 +78,7 @@ public class NodeDB {
 
     /**
      * Returns the Node with id as id from the database.
+     *
      * @param id the id of the requested node.
      * @return A resultset containing all nodes at the given coordinate.
      */
@@ -140,12 +140,10 @@ public class NodeDB {
     /**
      * Inserts a node and edges into the database
      * based on the provided parameters.
-     * @param id
-     *        the id of the node.
-     * @param segment
-     *        the segment of the node.
-     * @param destinationIDs
-     *        the ids of the nodes the outgoing edges of this node go to.
+     *
+     * @param id             the id of the node.
+     * @param segment        the segment of the node.
+     * @param destinationIDs the ids of the nodes the outgoing edges of this node go to.
      */
     public void addNode(final int id,
                         final String segment,
@@ -153,10 +151,10 @@ public class NodeDB {
         try {
             String iNode =
                     "INSERT INTO node \n"
-                    + "VALUES (?, ?, ?)";
+                            + "VALUES (?, ?, ?)";
             String iEdges =
                     "INSERT INTO edges \n"
-                    + "VALUES (?, ?)";
+                            + "VALUES (?, ?)";
 
             Class.forName("org.h2.Driver");
             Connection con = DriverManager.getConnection(dbLoc);
@@ -187,6 +185,7 @@ public class NodeDB {
     /**
      * Gets the segment of the provided node
      * from the database.
+     *
      * @param id The id of the node.
      * @return The segment corresponding to the id.
      */
@@ -212,52 +211,6 @@ public class NodeDB {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-        return res;
-    }
-
-    /**
-     * Uses breadth first traversal to get the required nodes
-     * from the database.
-     * @param center the id of the center node.
-     * @param limit the amount of nodes to load.
-     * @return a hashmap containing the amount of nodes
-     * around and including the center node, equal to the limit.
-     */
-    public HashIntObjMap<Node> getNodes(final int center, final int limit) {
-        Queue<Integer> nodeQueue = new LinkedList<Integer>();
-        HashIntObjMap<Node> res = HashIntObjMaps.newMutableMap(limit);
-        nodeQueue.offer(center);
-
-        while (res.size() < limit && !nodeQueue.isEmpty()) {
-            int tempId = nodeQueue.poll();
-            Node tempNode = getNode(tempId);
-            res.put(tempId, tempNode);
-
-            int[] edges = tempNode.getIncomingEdges();
-            for (int i = 0; i < edges.length; i++) {
-                if (!nodeQueue.contains(edges[i])
-                        && !res.containsKey(edges[i])) {
-                   nodeQueue.offer(edges[i]);
-                }
-            }
-
-            edges = tempNode.getOutgoingEdges();
-            for (int i = 0; i < edges.length; i++) {
-                if (!nodeQueue.contains(edges[i])
-                        && !res.containsKey(edges[i])) {
-                    nodeQueue.offer(edges[i]);
-                }
-            }
-
-        }
-
-        while (!nodeQueue.isEmpty()) {
-            int tempId = nodeQueue.poll();
-            if (!res.containsKey(tempId)) {
-                res.put(tempId, getNode(tempId));
-            }
-        }
-
         return res;
     }
 }

@@ -1,6 +1,6 @@
 package parsing;
 
-import datastructure.NodeDB;
+import datastructure.SegmentDB;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -38,8 +38,8 @@ public class Parser {
      * @param filename The name of the file.
      * @return The database created from the .gfa file.
      */
-    public NodeDB parse(final String filename) {
-        NodeDB database = new NodeDB();
+    public SegmentDB parse(final String filename) {
+        SegmentDB database = new SegmentDB();
         return parse(filename, database);
     }
 
@@ -49,7 +49,7 @@ public class Parser {
      * @param database The databasae where the file should be added.
      * @return The database created from the .gfa file.
      */
-    public NodeDB parse(final String filename, final NodeDB database) {
+    public SegmentDB parse(final String filename, final SegmentDB database) {
 
 
         try {

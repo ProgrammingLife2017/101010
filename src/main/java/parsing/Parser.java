@@ -86,7 +86,7 @@ public class Parser {
                     for (int i = 0; i < edgesList.size(); i++) {
                         edges[i] = edgesList.get(i);
                     }
-                    database.addNode(id, segment, edges);
+                    database.addSegment(id, segment);
                 } else {
                     line = in.readLine();
                 }

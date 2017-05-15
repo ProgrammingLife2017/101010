@@ -1,9 +1,11 @@
 package datastructure;
 
+import javafx.scene.shape.Rectangle;
+
 /**
  * Created by 101010.
  */
-public class Node {
+public class Node extends Rectangle{
     /**
      * The id of the node.
      */
@@ -59,14 +61,6 @@ public class Node {
      */
     public int getLength() {
         return length;
-    }
-
-    /**
-     *
-     * @return the id of the node.
-     */
-    public int getId() {
-        return id;
     }
 
     /**

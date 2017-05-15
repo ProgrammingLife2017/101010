@@ -1,4 +1,4 @@
-package Window;
+package window;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -23,14 +23,31 @@ import java.text.SimpleDateFormat;
  */
 public class Controller {
 
+    /**
+     * Main frame making up the window.
+     */
     @FXML private Pane mainPane;
 
+    /**
+     * Button when clicked allows the user to browse to gfa file in directory.
+     */
     @FXML private Button browse;
 
+    /**
+     * The menu bar.
+     */
     @FXML private MenuBar menu;
 
+    /**
+     * TextArea used to print information about the running process.
+     */
     @FXML private TextArea console;
 
+    /**
+     * Handling file opening when the open button in the menu bar is clicked.
+     * @param event The event holding information about what the user did in the program.
+     * @throws IOException An Exception is thrown when the file can not be found.
+     */
     @FXML private void openFile(final ActionEvent event) throws IOException {
         Stage stage = (Stage) menu.getScene().getWindow();
         Parent root;
@@ -44,6 +61,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Handling file opening when browse button is clicked. Also creates the main program window and opens that window.
+     * @param event The event holding information about what the user did in the program.
+     * @throws IOException An Exception is thrown when the file can not be found.
+     */
     @FXML private void handleBrowseButton(final ActionEvent event) throws IOException {
         Stage stage = (Stage) browse.getScene().getWindow();
         Parent root;
@@ -67,15 +89,26 @@ public class Controller {
         }
     }
 
+    /**
+     * Handling printing the console when a node is clicked.
+     * @param event Information about the mouse action.
+     */
     @FXML protected void handleNode(MouseEvent event) {
-
         console.appendText("[" + new SimpleDateFormat("HH:mm").format(System.currentTimeMillis()) + "] - " + "ATCTGGTTCATG\n");
     }
 
+    /**
+     * Handling clearing the console when the clear button is clicked in the menu bar.
+     * @param event Information about the event.
+     */
     @FXML protected void clearConsole(ActionEvent event) {
         console.clear();
     }
 
+    /**
+     * Handling exiting the application.
+     * @param event Information about the event.
+     */
     @FXML protected void exitApp(ActionEvent event) {
         Platform.exit();
     }

@@ -20,12 +20,12 @@ public class NodeGraph {
      * Empty constructor for NodeGraph.
      */
     public NodeGraph() {
-        this.nodes = new ArrayList<Node>(0);
+        this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
     }
 
     /**
-     * Constructor for NodeGraph
+     * Constructor for NodeGraph.
      * @param nodes
      *        The list of nodes for the graph.
      * @param segments

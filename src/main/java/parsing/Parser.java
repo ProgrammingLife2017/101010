@@ -1,12 +1,12 @@
 package parsing;
 
-import datastructure.SegmentDB;
+import datastructure.Node;
+import datastructure.NodeGraph;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 /**
  * Created by 101010.
@@ -36,21 +36,20 @@ public class Parser {
     /**
      * Parses the data of the inputted file.
      * @param filename The name of the file.
-     * @return The database created from the .gfa file.
+     * @return The graph created from the .gfa file.
      */
-    public SegmentDB parse(final String filename) {
-        SegmentDB database = new SegmentDB();
-        return parse(filename, database);
+    public NodeGraph parse(final String filename) {
+        NodeGraph graph = new NodeGraph();
+        return parse(filename, graph);
     }
 
     /**
      * Parses a .gfa file to a graph.
      * @param filename The name of the target .gfa file.
-     * @param database The databasae where the file should be added.
-     * @return The database created from the .gfa file.
+     * @param graph The graph the data gets put into.
+     * @return The graph created from the .gfa file.
      */
-    public SegmentDB parse(final String filename, final SegmentDB database) {
-
+    public NodeGraph parse(final String filename, NodeGraph graph) {
 
         try {
             BufferedReader in = new BufferedReader(
@@ -62,31 +61,25 @@ public class Parser {
                 if (line.startsWith("S")) {
                     int id;
                     String segment;
-                    ArrayList<Integer> edgesList = new ArrayList<>();
-                    line = line.substring(2);
-                    id = Integer.parseInt(line.substring(0,
-                            line.indexOf("\t")));
-                    line = line.substring(line.indexOf("\t") + 1);
-                    if (line.indexOf("\t") != -1) {
-                        line = line.substring(0, line.indexOf("\t"));
-                    }
-                    segment = line;
+                    line = line.substring(line.indexOf("\t" + 1));
+                    id = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+                    segment = line.substring(line.indexOf("\t" + 1));
+
+                    graph.addNode(id, new Node(segment.length(), new int[0], new int[0]), segment);
+
                     line = in.readLine();
-                    while (line != null && line.startsWith("L")) {
-                        int edgeId;
-                        line = line.substring(2);
-                        line = line.substring(line.indexOf("\t") + 1);
-                        line = line.substring(line.indexOf("\t") + 1);
-                       edgeId = Integer.parseInt(line.substring(0,
-                               line.indexOf("\t")));
-                       edgesList.add(edgeId);
-                       line = in.readLine();
+                    segment = null;
+
+                    while(line.startsWith("L")) {
+                        int from;
+                        int to;
+                        line = line.substring(line.indexOf("\t" + 1));
+                        from = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+                        line = line.substring(line.indexOf("+" + 2));
+                        to = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+                        graph.addEdge(from, to);
+                        line = in.readLine();
                     }
-                    int[] edges = new int[edgesList.size()];
-                    for (int i = 0; i < edgesList.size(); i++) {
-                        edges[i] = edgesList.get(i);
-                    }
-                    database.addSegment(id, segment);
                 } else {
                     line = in.readLine();
                 }
@@ -99,6 +92,6 @@ public class Parser {
             e.printStackTrace();
         }
 
-        return database;
+        return graph;
     }
 }

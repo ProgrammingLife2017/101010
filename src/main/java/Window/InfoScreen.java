@@ -10,9 +10,7 @@ public class InfoScreen extends GridPane {
 
 
     public InfoScreen() {
-        setMinWidth(200);
-        setMinHeight(200);
-        getStyleClass().addAll("pane", "vbox");
+        getStyleClass().addAll("pane");
         add(new Label("Graph information:"), 1, 1);
     }
 

@@ -1,4 +1,4 @@
-package window;
+package Window;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,7 +11,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.io.File;
@@ -22,6 +22,9 @@ import java.text.SimpleDateFormat;
  * Created by 101010 on 8-5-2017.
  */
 public class Controller {
+
+    @FXML private Pane mainPane;
+
     @FXML private Button browse;
 
     @FXML private MenuBar menu;

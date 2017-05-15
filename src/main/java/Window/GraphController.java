@@ -3,6 +3,8 @@ package Window;
 import datastructure.Graph;
 import datastructure.Node;
 
+import javafx.scene.layout.Pane;
+
 import java.util.*;
 
 
@@ -11,9 +13,11 @@ import java.util.*;
  */
 public class GraphController {
     private Graph graph;
+    private Pane pane;
 
-    public GraphController(Graph graph) {
+    public GraphController(Graph graph, Pane mainPane) {
         this.graph = graph;
+        this.pane = mainPane;
     }
 
     public void drawGraph(int center, int radius) {

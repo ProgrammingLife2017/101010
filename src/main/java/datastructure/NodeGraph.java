@@ -43,13 +43,13 @@ public class NodeGraph {
      * @param segment The segment of the node.
      */
     public void addNode(final int id, Node node, String segment) {
-        if (nodes.size() <= id || nodes.get(id) == null) {
-            nodes.set(id, node);
-        } else {
-            int[] temp = nodes.get(id).getIncomingEdges();
-            nodes.set(id, node);
-            nodes.get(id).setIncomingEdges(temp);
+        while (nodes.size() <= id) {
+            nodes.add(new Node());
         }
+
+        int[] temp = nodes.get(id).getIncomingEdges();
+        nodes.set(id, node);
+        nodes.get(id).setIncomingEdges(temp);
         segments.addSegment(id, segment);
     }
 
@@ -59,10 +59,11 @@ public class NodeGraph {
      * @param to Destination node of the edge.
      */
     public void addEdge(final int from, final int to) {
-        nodes.get(from).addOutgoingEdge(to);
-        if (nodes.size() <= to || nodes.get(to) == null) {
-            nodes.set(to, new Node());
+        while (nodes.size() <= from || nodes.size() <= to) {
+            nodes.add(new Node());
         }
+
+        nodes.get(from).addOutgoingEdge(to);
         nodes.get(to).addIncomingEdge(from);
     }
 
@@ -74,5 +75,14 @@ public class NodeGraph {
      */
     public String getSegment(int id) {
         return segments.getSegment(id);
+    }
+
+    /**
+     * Returns the node corresponding to the provided id.
+     * @param id The id of the node.
+     * @return The node.
+     */
+    public Node getNode(int id) {
+        return nodes.get(id);
     }
 }

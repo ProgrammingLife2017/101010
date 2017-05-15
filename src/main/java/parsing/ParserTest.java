@@ -1,7 +1,7 @@
 package parsing;
 
 import datastructure.Node;
-import datastructure.SegmentDB;
+import datastructure.NodeGraph;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,13 +19,7 @@ class ParserTest {
     @Test
     void parse() {
         Parser parser = Parser.getInstance();
-        SegmentDB data = parser.parse("/test2.gfa");
-        assertEquals("G",  data.getSegment(7));
-        Node node = data.getNode(5);
-        assertEquals(3, node.getIncomingEdges()[0]);
-        assertEquals(4, node.getIncomingEdges()[1]);
-        assertEquals(6, node.getOutgoingEdges()[0]);
-        assertEquals(7, node.getOutgoingEdges()[1]);
+        NodeGraph data = parser.parse("/TB10.gfa");
     }
 
 }

@@ -61,22 +61,23 @@ public class Parser {
                 if (line.startsWith("S")) {
                     int id;
                     String segment;
-                    line = line.substring(line.indexOf("\t" + 1));
-                    id = Integer.parseInt(line.substring(0, line.indexOf("\t")));
-                    segment = line.substring(line.indexOf("\t" + 1));
+                    line = line.substring(line.indexOf("\t") + 1);
+                    id = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
+                    line = line.substring(line.indexOf("\t") + 1);
+                    segment = line.substring(0, line.indexOf("\t"));
 
                     graph.addNode(id, new Node(segment.length(), new int[0], new int[0]), segment);
 
                     line = in.readLine();
                     segment = null;
 
-                    while(line.startsWith("L")) {
+                    while (line != null && line.startsWith("L")) {
                         int from;
                         int to;
-                        line = line.substring(line.indexOf("\t" + 1));
-                        from = Integer.parseInt(line.substring(0, line.indexOf("\t")));
-                        line = line.substring(line.indexOf("+" + 2));
-                        to = Integer.parseInt(line.substring(0, line.indexOf("\t")));
+                        line = line.substring(line.indexOf("\t") + 1);
+                        from = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
+                        line = line.substring(line.indexOf("+") + 2);
+                        to = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
                         graph.addEdge(from, to);
                         line = in.readLine();
                     }

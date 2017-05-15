@@ -24,11 +24,6 @@ class NodeTest {
     }
 
     @org.junit.jupiter.api.Test
-    void getId() {
-        assertEquals(0, node.getId());
-    }
-
-    @org.junit.jupiter.api.Test
     void getOutgoingEdges() {
         assertEquals(0, node.getOutgoingEdges().length);
     }
@@ -40,7 +35,7 @@ class NodeTest {
 
     @org.junit.jupiter.api.Test
     void equals() {
-        assertTrue(node.equals(new Node(0, 0, new int[0], new int[0])));
+        assertTrue(node.equals(new Node(0, new int[0], new int[0])));
     }
 
     @org.junit.jupiter.api.Test

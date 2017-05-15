@@ -5,11 +5,6 @@ package datastructure;
  */
 public class Node {
     /**
-     * The id of the node.
-     */
-    private int id;
-
-    /**
      * The length of the segment corresponding to the node.
      */
     private int length;
@@ -30,7 +25,6 @@ public class Node {
      * Empty constructor for Node.
      */
     public Node() {
-        this.id = 0;
         this.length = 0;
         this.to = new int[0];
         this.from = new int[0];
@@ -38,16 +32,13 @@ public class Node {
 
     /**
      * Constructor for Node.
-     * @param id the id of the node.
      * @param length the length of the node.
      * @param outgoingEdges array of outgoing edge ids.
      * @param incomingEdges array of incoming edge ids.
      */
-    public Node(final int id,
-                final int length,
+    public Node(final int length,
                 final int[] outgoingEdges,
                 final int[] incomingEdges) {
-        this.id = id;
         this.length = length;
         this.to = outgoingEdges;
         this.from = incomingEdges;
@@ -59,14 +50,6 @@ public class Node {
      */
     public int getLength() {
         return length;
-    }
-
-    /**
-     *
-     * @return the id of the node.
-     */
-    public int getId() {
-        return id;
     }
 
     /**
@@ -131,7 +114,6 @@ public class Node {
             Node that = (Node) other;
             if (this.to.length == that.to.length
                     && this.from.length == that.from.length
-                    && this.id == that.id
                     && this.length == that.length) {
                 for (int i = 0; i < this.to.length; i++) {
                     if (this.to[i] != that.to[i]) {
@@ -147,5 +129,13 @@ public class Node {
             }
         }
         return false;
+    }
+
+    /**
+     * Sets the incoming edges.
+     * @param incoming The incoming edges.
+     */
+    public void setIncomingEdges(int[] incoming) {
+        from = incoming;
     }
 }

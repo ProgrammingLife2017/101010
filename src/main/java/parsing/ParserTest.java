@@ -21,10 +21,10 @@ class ParserTest {
     /**
      * This checks nothing.
      */
-    @Test
-    void parse() {
-        Parser parser = Parser.getInstance();
-        NodeGraph data = parser.parse("/TB10.gfa");
-    }
+//    @Test
+//    void parse() {
+//        Parser parser = Parser.getInstance();
+//        NodeGraph data = parser.parse("/TB10.gfa");
+//    }
 
 }

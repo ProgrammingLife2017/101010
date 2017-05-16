@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * Created by 101010.
@@ -38,9 +40,9 @@ public class Parser {
      * @param filename The name of the file.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final String filename) {
+    public NodeGraph parse(final File file) {
         NodeGraph graph = new NodeGraph();
-        return parse(filename, graph);
+        return parse(file, graph);
     }
 
     /**
@@ -49,11 +51,11 @@ public class Parser {
      * @param graph The graph the data gets put into.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final String filename, NodeGraph graph) {
+    public NodeGraph parse(final File file, NodeGraph graph) {
 
         try {
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(getClass().getResourceAsStream(filename)));
+                    new FileReader(file));
             String line = in.readLine();
 
             while (line != null) {

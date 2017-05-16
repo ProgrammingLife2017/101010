@@ -2,13 +2,15 @@ package screens;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 /**
  * Created by Michael on 5/16/2017.
  */
-public final class Backlog extends Pane {
+public final class Backlog extends Stage {
     private TextArea textArea;
 
     public Backlog() {
@@ -23,7 +25,11 @@ public final class Backlog extends Pane {
                     }
                 }
         );
-        this.getChildren().add(textArea);
+
+        Group root = new Group();
+        root.getChildren().add(textArea);
+        Scene scene = new Scene(root);
+        this.setScene(scene);
     }
 
     public void printContent(final String cont) {

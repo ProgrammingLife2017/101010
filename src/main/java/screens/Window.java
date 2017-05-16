@@ -98,12 +98,7 @@ public class Window extends Application{
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        Scene scene = new Scene(backLog);
-                        Stage newStage = new Stage();
-                        newStage.setTitle("Backlog");
-                        newStage.setScene(scene);
-                        newStage.sizeToScene();
-                        newStage.show();
+                        getBackLog().show();
                     }
                 }
         );

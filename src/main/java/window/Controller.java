@@ -56,9 +56,6 @@ public class Controller {
         fileChooser.getExtensionFilters().add(extFilter);
         final Button openButton = new Button("Open");
         File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            //TODO parse the selected file and visualize the graph with its data
-        }
     }
 
     /**

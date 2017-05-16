@@ -4,6 +4,7 @@ import datastructure.Node;
 
 import datastructure.NodeGraph;
 import javafx.scene.layout.Pane;
+import javafx.util.Pair;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -38,10 +39,10 @@ public class GraphController {
      * @param radius The maximum depth we want to draw.
      */
     public void drawGraph(int center, int radius) {
-        Set<Integer> visited = new HashSet<>();
+        Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(visited, graph.getNode(center), radius, depth);
+        drawGraphUtil(visited, graph.getNode(center), radius, depth, new Pair<>((pane.getWidth() / 2) - 115, (pane.getHeight() / 2)), true);
     }
 
     /**
@@ -50,18 +51,29 @@ public class GraphController {
      * @param current The current node we want to draw.
      * @param radius The maximum depth we want to go.
      * @param depth The current depth we are on.
+     * @param location The current location we are drawing on.
+     * @param direction True if we went from parent to child and false visa versa.
      */
-    private void drawGraphUtil(Set<Integer> visited, Node current, int radius, int depth) {
-        if (depth <= radius && !visited.contains(Integer.parseInt(current.getId()))) {
-            //TODO draw current on its location.
+    private void drawGraphUtil(Set<Node> visited, Node current, int radius, int depth, Pair<Double, Double> location, boolean direction) {
+        if (depth <= radius && !visited.contains(current)) {
+            if (direction) {
+                location = new Pair<>(location.getKey() + 100, location.getValue());
+            } else {
+                location = new Pair<>(location.getKey() - 100, location.getValue());
+            }
 
-            visited.add(Integer.parseInt(current.getId()));
+            current.setX(location.getKey());
+            current.setY(location.getValue());
+
+            pane.getChildren().add(current);
+
+            visited.add(current);
 
             for (Integer i : current.getOutgoingEdges()) {
-                drawGraphUtil(visited, graph.getNode(i), radius, depth + 1);
+                drawGraphUtil(visited, graph.getNode(i), radius, depth + 1, location, true);
             }
             for (Integer i : current.getIncomingEdges()) {
-                drawGraphUtil(visited, graph.getNode(i), radius, depth + 1);
+                drawGraphUtil(visited, graph.getNode(i), radius, depth + 1, location, false);
             }
         }
     }

@@ -33,6 +33,6 @@ public final class Backlog extends Stage {
     }
 
     public void printContent(final String cont) {
-        textArea.appendText(cont);
+        textArea.appendText(cont + "\n");
     }
 }

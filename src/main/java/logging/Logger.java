@@ -3,14 +3,6 @@ package logging;
 import filesystem.FileSystem;
 import screens.Window;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.SynchronousQueue;
@@ -70,34 +62,4 @@ public final class Logger implements ILogger {
                 " | ORIGIN: '" + this.cl.getName() + "' | " + type + ": '" + msg + "'";
     }
 
-    public void clearFile(String fileName) {
-        File file = null;
-        try {
-            file = this.getProjectFile(fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        assert file != null;
-        try (final OutputStream outputStream = new FileOutputStream(file);
-             final Writer w = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-             final PrintWriter pw = new PrintWriter(w, false)) {
-            pw.flush();
-            pw.close();
-            w.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public File getProjectFile(final String fileName) throws IOException {
-        File file = new File(fileName);
-        // The only reason we do this is to suppress a FindBugs warning
-        final boolean didntExist = file.createNewFile();
-        if (didntExist) {
-            System.out.println("New file called \"" + fileName + "\" created");
-        }
-
-        return new File(fileName);
-    }
 }

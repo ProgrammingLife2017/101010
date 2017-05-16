@@ -90,6 +90,7 @@ public class Window extends Application{
                         newStage.setTitle("Information screen");
                         newStage.setScene(scene);
                         newStage.show();
+                        logger.info("a new window has been opened");
                     }
                 }
         );
@@ -99,6 +100,7 @@ public class Window extends Application{
                     @Override
                     public void handle(ActionEvent event) {
                         getBackLog().show();
+                        logger.info("a new window has been opened");
                     }
                 }
         );

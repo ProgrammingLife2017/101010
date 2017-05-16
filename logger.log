@@ -1,4 +1,8 @@
-2017-05-16 13:02:41.564 | ORIGIN: 'logging.LoggerFactory' | INFO: 'a new logger factory has been created'
+2017-05-16 13:34:08.347 | ORIGIN: 'logging.LoggerFactory' | INFO: 'a new logger factory has been created'
 Pending logging tasks: 1
-2017-05-16 13:02:42.064 | ORIGIN: 'screens.Window' | INFO: 'the main application has started'
+2017-05-16 13:34:08.754 | ORIGIN: 'screens.Window' | INFO: 'the main application has started'
 Pending logging tasks: 1
+2017-05-16 13:34:10.997 | ORIGIN: 'screens.Window' | INFO: 'a new window has been opened'
+Pending logging tasks: 0
+Pending logging tasks: 0
+2017-05-16 13:34:23.838 | ORIGIN: 'screens.Window' | INFO: 'a new window has been opened'

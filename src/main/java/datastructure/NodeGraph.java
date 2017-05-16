@@ -16,6 +16,8 @@ public class NodeGraph {
      */
     private SegmentDB segments;
 
+    private static NodeGraph currentNodeGraph;
+
     /**
      * Empty constructor for NodeGraph.
      */
@@ -50,7 +52,7 @@ public class NodeGraph {
         int[] temp = nodes.get(id).getIncomingEdges();
         nodes.set(id, node);
         nodes.get(id).setIncomingEdges(temp);
-        segments.addSegment(id, segment);
+        //segments.addSegment(id, segment);
     }
 
     /**
@@ -84,5 +86,13 @@ public class NodeGraph {
      */
     public Node getNode(int id) {
         return nodes.get(id);
+    }
+
+    public static NodeGraph getCurrentInstance() {
+        return currentNodeGraph;
+    }
+
+    public static void setCurrentInstance(NodeGraph g) {
+        currentNodeGraph = g;
     }
 }

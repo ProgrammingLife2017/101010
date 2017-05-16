@@ -1,5 +1,6 @@
-package Window;
+package screens;
 
+import filesystem.FileSystem;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,6 +11,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import logging.ILogger;
+import logging.LoggerFactory;
 
 import java.io.File;
 
@@ -18,8 +21,13 @@ import java.io.File;
  */
 public class Window extends Application{
 
+    private static ILogger logger;
+    public static LoggerFactory loggerFactory;
+    private static FileSystem fileSystem;
+
     @Override
     public void start(Stage stage) throws Exception{
+        this.setupService();
 
         BorderPane mainPane = new BorderPane();
         mainPane.setMinSize(1000, 500);
@@ -40,8 +48,14 @@ public class Window extends Application{
 
         //Displaying the contents of the stage
         stage.show();
+        this.logger.info("the main application has started");
     }
 
+    private void setupService() {
+        this.fileSystem = new FileSystem();
+        this.loggerFactory = new LoggerFactory(fileSystem);
+        this.logger = this.loggerFactory.createLogger(this.getClass());
+    }
 
     public MenuBar createMenuBar(final Stage stage) {
         MenuBar menuBar = new MenuBar();

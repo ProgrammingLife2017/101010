@@ -1,12 +1,15 @@
 package logging;
 
-import javax.annotation.Nonnull;
-import java.io.BufferedWriter;
+import filesystem.FileSystem;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.SynchronousQueue;
@@ -19,33 +22,16 @@ import java.util.concurrent.TimeUnit;
 public final class Logger implements ILogger {
 
     private final Class cl;
-
-    private final Writer logWriter;
+    private final FileSystem fileSystem;
 
 
     private static final ThreadPoolExecutor LOGGING_THREAD_EXECUTOR = new ThreadPoolExecutor(
             0, 50000, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()
     );
 
-    public Logger(final Class targetClass, String logFile) {
+    public Logger(final Class targetClass, FileSystem fs) {
         this.cl = targetClass;
-        File file = new File(logFile);
-
-        Writer fw = new Writer() {
-            public void write(@Nonnull final char[] cbuf, final int off, final int len) throws IOException {}
-
-            public void flush() throws IOException {}
-
-            public void close() throws IOException {}
-        };
-
-        try {
-            fw = new OutputStreamWriter(new FileOutputStream(file));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        logWriter = new BufferedWriter(fw);
+        this.fileSystem = fs;
     }
 
 
@@ -64,30 +50,52 @@ public final class Logger implements ILogger {
         this.appendStringToTextFile(str);
     }
 
-    public void log(String content) {
-        try {
-            this.logWriter.write(content + "\n");
-            this.logWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void appendStringToTextFile(final String str) {
-        Runnable runnable = () -> this.log(str);
+        Runnable runnable = () -> this.fileSystem.log(str);
         Logger.LOGGING_THREAD_EXECUTOR.execute(runnable);
 
         long submitted = Logger.LOGGING_THREAD_EXECUTOR.getTaskCount();
         long completed = Logger.LOGGING_THREAD_EXECUTOR.getCompletedTaskCount();
         long notCompleted = submitted - completed;
 
-        this.log("Pending logging tasks: " + notCompleted);
+        this.fileSystem.log("Pending logging tasks: " + notCompleted);
     }
 
     private String generateMessage(String type, String msg) {
         Date date = new Date();
         return new Timestamp(date.getTime()) +
                 " | ORIGIN: '" + this.cl.getName() + "' | " + type + ": '" + msg + "'";
+    }
+
+    public void clearFile(String fileName) {
+        File file = null;
+        try {
+            file = this.getProjectFile(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert file != null;
+        try (final OutputStream outputStream = new FileOutputStream(file);
+             final Writer w = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+             final PrintWriter pw = new PrintWriter(w, false)) {
+            pw.flush();
+            pw.close();
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public File getProjectFile(final String fileName) throws IOException {
+        File file = new File(fileName);
+        // The only reason we do this is to suppress a FindBugs warning
+        final boolean didntExist = file.createNewFile();
+        if (didntExist) {
+            System.out.println("New file called \"" + fileName + "\" created");
+        }
+
+        return new File(fileName);
     }
 }

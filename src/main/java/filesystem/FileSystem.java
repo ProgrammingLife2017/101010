@@ -1,6 +1,5 @@
 package filesystem;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,7 +21,7 @@ public final class FileSystem {
     public FileSystem() {
         Writer fw = new Writer() {
             @Override
-            public void write(@Nonnull final char[] cbuf, final int off, final int len) throws IOException {
+            public void write(final char[] cbuf, final int off, final int len) throws IOException {
             }
 
             @Override

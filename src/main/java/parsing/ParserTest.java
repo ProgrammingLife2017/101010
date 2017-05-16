@@ -19,7 +19,15 @@ class ParserTest {
     @Test
     void parse() {
         Parser parser = Parser.getInstance();
-        NodeGraph data = parser.parse("/TB10.gfa");
+        NodeGraph data = parser.parse("/test2.gfa");
+        Node node = data.getNode(3);
+        assertEquals(4, node.getOutgoingEdges()[0]);
+
+        Node node2 = data.getNode(7);
+        int[] tempArray1 = node2.getIncomingEdges();
+        assertEquals(5, tempArray1[0]);
+
+
     }
 
 }

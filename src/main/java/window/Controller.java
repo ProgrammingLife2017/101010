@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
  * Created by 101010 on 8-5-2017.
  */
 public class Controller {
-
     /**
      * Main frame making up the window.
      */
@@ -51,11 +50,8 @@ public class Controller {
     @FXML private void openFile(final ActionEvent event) throws IOException {
         Stage stage = (Stage) menu.getScene().getWindow();
         Parent root;
-        final FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("GFA files (*.gfa)", "*.gfa");
-        fileChooser.getExtensionFilters().add(extFilter);
         final Button openButton = new Button("Open");
-        File file = fileChooser.showOpenDialog(stage);
+        File file = FileSelector.showOpenDialog(stage);
     }
 
     /**
@@ -67,11 +63,8 @@ public class Controller {
         Stage stage = (Stage) browse.getScene().getWindow();
         Parent root;
         if (event.getSource() == browse) {
-            final FileChooser fileChooser = new FileChooser();
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("GFA files (*.gfa)", "*.gfa");
-            fileChooser.getExtensionFilters().add(extFilter);
             final Button openButton = new Button("Open");
-            File file = fileChooser.showOpenDialog(stage);
+            File file = FileSelector.showOpenDialog(stage);
             if (file != null) {
                 stage.setTitle("Graph visualization");
                 root = null;

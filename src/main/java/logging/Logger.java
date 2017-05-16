@@ -1,6 +1,7 @@
 package logging;
 
 import filesystem.FileSystem;
+import screens.Window;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +53,7 @@ public final class Logger implements ILogger {
 
 
     private void appendStringToTextFile(final String str) {
+        Window.getBackLog().printContent(str);
         Runnable runnable = () -> this.fileSystem.log(str);
         Logger.LOGGING_THREAD_EXECUTOR.execute(runnable);
 

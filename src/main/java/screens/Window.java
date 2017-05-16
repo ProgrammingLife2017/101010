@@ -25,10 +25,12 @@ public class Window extends Application{
     public static LoggerFactory loggerFactory;
     private static FileSystem fileSystem;
 
+    private static Backlog backLog;
+
     @Override
     public void start(Stage stage) throws Exception{
         this.setupService();
-
+        backLog = getBackLog();
         BorderPane mainPane = new BorderPane();
         mainPane.setMinSize(1000, 500);
 
@@ -57,6 +59,13 @@ public class Window extends Application{
         this.logger = this.loggerFactory.createLogger(this.getClass());
     }
 
+    public static Backlog getBackLog() {
+        if (backLog == null) {
+            return new Backlog();
+        }
+        return backLog;
+    }
+
     public MenuBar createMenuBar(final Stage stage) {
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("File");
@@ -71,7 +80,7 @@ public class Window extends Application{
         );
         menu1.getItems().add(item1);
 
-        Menu menu2 = new Menu("Console");
+        Menu menu2 = new Menu("Tools");
         MenuItem item2 = new MenuItem("Info");
         item2.setOnAction(
                 new EventHandler<ActionEvent>() {
@@ -84,7 +93,22 @@ public class Window extends Application{
                     }
                 }
         );
+        MenuItem item3 = new MenuItem("Console log");
+        item3.setOnAction(
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        Scene scene = new Scene(backLog);
+                        Stage newStage = new Stage();
+                        newStage.setTitle("Backlog");
+                        newStage.setScene(scene);
+                        newStage.sizeToScene();
+                        newStage.show();
+                    }
+                }
+        );
         menu2.getItems().add(item2);
+        menu2.getItems().add(item3);
         menuBar.getMenus().add(menu1);
         menuBar.getMenus().add(menu2);
         return menuBar;

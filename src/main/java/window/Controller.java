@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.Pane;
+import javafx.event.EventHandler;
 
 import java.io.IOException;
 import java.io.File;
@@ -51,6 +52,14 @@ public class Controller {
      * TextArea used to print information about the running process.
      */
     @FXML private TextArea console;
+
+    EventHandler<MouseEvent> rectClick = event -> {
+
+        if( event.getSource() instanceof Node) {
+            Node rect = (Node) (event.getSource());
+            System.out.println(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().getId(rect)));
+        }
+    };
 
     /**
      * Handling file opening when the open button in the menu bar is clicked.
@@ -145,7 +154,7 @@ public class Controller {
             } else {
                 location = new Pair<>(location.getKey() - 100, location.getValue());
             }
-
+            current.setOnMousePressed(rectClick);
             current.setX(location.getKey());
             current.setY(location.getValue());
             current.setWidth(50);

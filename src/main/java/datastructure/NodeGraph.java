@@ -52,7 +52,7 @@ public class NodeGraph {
         int[] temp = nodes.get(id).getIncomingEdges();
         nodes.set(id, node);
         nodes.get(id).setIncomingEdges(temp);
-        //segments.addSegment(id, segment);
+        segments.addSegment(id, segment);
     }
 
     /**
@@ -94,5 +94,9 @@ public class NodeGraph {
 
     public static void setCurrentInstance(NodeGraph g) {
         currentNodeGraph = g;
+    }
+
+    public int getId(Node n) {
+        return this.nodes.indexOf(n);
     }
 }

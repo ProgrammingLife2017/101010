@@ -14,30 +14,53 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Logger implements ILogger {
 
+    /**
+     * Reference to the class of the logger.
+     */
     private final Class cl;
+
+    /**
+     * Reference to the FileSystem to write.
+     */
     private final FileSystem fileSystem;
 
-
+    /**
+     * The ThreadPoolExecutor is responsible for executing all logging code on a separate thread to prevent stalling.
+     */
     private static final ThreadPoolExecutor LOGGING_THREAD_EXECUTOR = new ThreadPoolExecutor(
             0, 50000, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()
     );
 
+    /**
+     * Constructor.
+     *
+     * @param targetClass The class that this logger is serving.
+     * @param fs FileSystem object to write with.
+     */
     public Logger(final Class targetClass, FileSystem fs) {
         this.cl = targetClass;
         this.fileSystem = fs;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public void error(final String msg) {
         String str = this.generateMessage("ERROR", msg);
         this.appendStringToTextFile(str);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void error(final Exception exception) {
         String str = this.generateMessage("ERROR", exception.getMessage());
         this.appendStringToTextFile(str);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void info(final String msg) {
         String str = this.generateMessage("INFO", msg);
         this.appendStringToTextFile(str);
@@ -56,6 +79,13 @@ public final class Logger implements ILogger {
         this.fileSystem.log("Pending logging tasks: " + notCompleted);
     }
 
+    /**
+     * Generate the full message to log.
+     *
+     * @param type The type of message.
+     * @param msg  The message to log.
+     * @return The generated message.
+     */
     private String generateMessage(String type, String msg) {
         Date date = new Date();
         return new Timestamp(date.getTime()) +

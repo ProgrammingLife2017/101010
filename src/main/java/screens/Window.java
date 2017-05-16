@@ -17,16 +17,36 @@ import logging.LoggerFactory;
 import java.io.File;
 
 /**
- * Created by 101010 on 101010.
+ * Main application.
  */
 public class Window extends Application{
 
+    /**
+     * Logger that keeps track of actions executed by this class.
+     */
     private static ILogger logger;
+
+    /**
+     * Factory that creates all loggers.
+     */
     public static LoggerFactory loggerFactory;
+
+    /**
+     * FileSystem that handles writing to files.
+     */
     private static FileSystem fileSystem;
 
+    /**
+     * Backlog window to print all actions.
+     */
     private static Backlog backLog;
 
+    /**
+     * Starts the frame.
+     *
+     * @param stage Main stage where the content is placed.
+     * @throws Exception Thrown when application can't be started.
+     */
     @Override
     public void start(Stage stage) throws Exception{
         this.setupService();
@@ -53,12 +73,20 @@ public class Window extends Application{
         this.logger.info("the main application has started");
     }
 
+    /**
+     * Sets up the necessary services.
+     */
     private void setupService() {
         this.fileSystem = new FileSystem();
         this.loggerFactory = new LoggerFactory(fileSystem);
         this.logger = this.loggerFactory.createLogger(this.getClass());
     }
 
+    /**
+     * Gets the backlog of this class.
+     *
+     * @return BackLog object.
+     */
     public static Backlog getBackLog() {
         if (backLog == null) {
             return new Backlog();
@@ -66,6 +94,12 @@ public class Window extends Application{
         return backLog;
     }
 
+    /**
+     * Creates the menu bar with its items.
+     *
+     * @param stage Main stage.
+     * @return
+     */
     public MenuBar createMenuBar(final Stage stage) {
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("File");
@@ -111,7 +145,11 @@ public class Window extends Application{
         return menuBar;
     }
 
-
+    /**
+     * The initialization of the game.
+     *
+     * @param args the arguments to run.
+     */
     public static void main(String[] args) {
         launch(args);
     }

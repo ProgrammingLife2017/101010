@@ -11,13 +11,23 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Created by Michael on 5/16/2017.
+ * Default implementation for FileSystem that handles writing to (log)files/
  */
 public final class FileSystem {
 
+    /**
+     * Writer to log files.
+     */
     private final Writer logWriter;
+
+    /**
+     * Name of the file where the writer puts the content.
+     */
     public static String LOGFILE_NAME = "logger.log";
 
+    /**
+     * Constructor.
+     */
     public FileSystem() {
         Writer fw = new Writer() {
             @Override
@@ -43,6 +53,11 @@ public final class FileSystem {
         this.logWriter = new BufferedWriter(fw);
     }
 
+    /**
+     * Writes the content to the logfile.
+     *
+     * @param content Message to print
+     */
     public void log(String content) {
         try {
             this.logWriter.write(content + "\n");
@@ -53,6 +68,11 @@ public final class FileSystem {
 
     }
 
+    /**
+     * Empties the file.
+     *
+     * @param filename Name of the file to clear.
+     */
     public void clearFile(final String filename) {
         File file = null;
         try {
@@ -73,6 +93,13 @@ public final class FileSystem {
         }
     }
 
+    /**
+     * Loads the project file specified by {@code filename} and checks if it is a valid file.
+     *
+     * @param filename Name of the file to get.
+     * @return File object.
+     * @throws IOException
+     */
     public File getProjectFile(final String filename) throws IOException {
         File file = new File(filename);
         // The only reason we do this is to suppress a FindBugs warning

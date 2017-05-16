@@ -8,11 +8,17 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 /**
- * Created by Michael on 5/16/2017.
+ * Implementation of the backlog screen to keep track of actions that are performed by the application.
  */
 public final class Backlog extends Stage {
+    /**
+     * Area to write content of the logger.
+     */
     private TextArea textArea;
 
+    /**
+     * Constructor
+     */
     public Backlog() {
         textArea = new TextArea();
         textArea.setEditable(false);
@@ -32,6 +38,11 @@ public final class Backlog extends Stage {
         this.setScene(scene);
     }
 
+    /**
+     * Prints log message in the textArea.
+     *
+     * @param cont Message to print.
+     */
     public void printContent(final String cont) {
         textArea.appendText(cont + "\n");
     }

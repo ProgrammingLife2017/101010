@@ -97,7 +97,7 @@ public class Parser {
             }
 
             while (line != null) {
-               if (line.startsWith("S") && newCache) {
+               if (line.startsWith("S")) {
                     int id;
                     String segment;
                     line = line.substring(line.indexOf("\t") + 1);
@@ -106,30 +106,22 @@ public class Parser {
 
                     line = line.substring(line.indexOf("\t") + 1);
                     segment = line.substring(0, line.indexOf("\t"));
-
-                    graph.addNode(id, new Node(segment.length(), new int[0], new int[0]), segment);
-
-                    line = in.readLine();
-
-                    while (line != null && line.startsWith("L")) {
-                        int from;
-                        int to;
-                        line = line.substring(line.indexOf("\t") + 1);
-                        from = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
-                        line = line.substring(line.indexOf("+") + 2);
-                        to = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
-                        graph.addEdge(from, to);
+                    if (newCache) {
+                        graph.addNode(id, new Node(segment.length(), new int[0], new int[0]), segment);
                         line = in.readLine();
+                        while (line != null && line.startsWith("L")) {
+                            int from;
+                            int to;
+                            line = line.substring(line.indexOf("\t") + 1);
+                            from = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
+                            line = line.substring(line.indexOf("+") + 2);
+                            to = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
+                            graph.addEdge(from, to);
+                            line = in.readLine();
+                        }
+                    } else {
+                        graph.addSegment(id, segment);
                     }
-               } else if (line.startsWith("S") && !newCache) {
-                   int id;
-                   String segment;
-                   line = line.substring(line.indexOf("\t") + 1);
-                   id = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
-                   line = line.substring(line.indexOf("\t") + 1);
-                   segment = line.substring(0, line.indexOf("\t"));
-                   graph.addSegment(id, segment);
-
                } else {
                     line = in.readLine();
                 }

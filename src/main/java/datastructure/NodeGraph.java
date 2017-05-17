@@ -58,6 +58,11 @@ public class NodeGraph {
         nodes.get(id).setIncomingEdges(temp);
     }
 
+    /**
+     * Adds a node to the graph from the cached file.
+     * @param id The id of the node.
+     * @param node The node that gets added.
+     */
     public void addNodeCache(int id, Node node) {
         while (nodes.size() <= id) {
             nodes.add(new Node());
@@ -105,6 +110,10 @@ public class NodeGraph {
      */
     public int getSize() { return size; }
 
+    /**
+     * Sets the segmentdb to a new segmentDB.
+     * @param db The new segmentDB.
+     */
     public void setSegmentDB(SegmentDB db) {
         segments = db;
     }

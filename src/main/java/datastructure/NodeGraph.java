@@ -16,6 +16,9 @@ public class NodeGraph {
      */
     private SegmentDB segments;
 
+    /**
+     * Instance of the current graph.
+     */
     private static NodeGraph currentNodeGraph;
 
     /**
@@ -88,14 +91,27 @@ public class NodeGraph {
         return nodes.get(id);
     }
 
+    /**
+     * Getter for the instance of this graph.
+     * @return The graph we are workig with at this moment.
+     */
     public static NodeGraph getCurrentInstance() {
         return currentNodeGraph;
     }
 
+    /**
+     * Setter for the current instance of graph.
+     * @param g the graph we want to be the current graph.
+     */
     public static void setCurrentInstance(NodeGraph g) {
         currentNodeGraph = g;
     }
 
+    /**
+     * Returns the index of a node.
+     * @param n the node we want the index of.
+     * @return the index of this node.
+     */
     public int indexOf(Node n) {
         for (int i = 0; i < getCurrentInstance().nodes.size(); i++) {
             if (getCurrentInstance().nodes.get(i) == n) {

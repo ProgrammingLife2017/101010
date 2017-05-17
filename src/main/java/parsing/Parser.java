@@ -6,7 +6,6 @@ import datastructure.NodeGraph;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileReader;
 
@@ -37,7 +36,7 @@ public class Parser {
 
     /**
      * Parses the data of the inputted file.
-     * @param filename The name of the file.
+     * @param file The name of the file.
      * @return The graph created from the .gfa file.
      */
     public NodeGraph parse(final File file) {
@@ -47,7 +46,7 @@ public class Parser {
 
     /**
      * Parses a .gfa file to a graph.
-     * @param filename The name of the target .gfa file.
+     * @param file The name of the target .gfa file.
      * @param graph The graph the data gets put into.
      * @return The graph created from the .gfa file.
      */

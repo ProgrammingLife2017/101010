@@ -23,7 +23,6 @@ import java.io.File;
 import javafx.util.Pair;
 import parsing.Parser;
 
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +31,9 @@ import java.util.Set;
  */
 public class Controller {
 
+    /**
+     * The graph we are displaying.
+     */
     private NodeGraph graph;
 
     /**
@@ -54,9 +56,12 @@ public class Controller {
      */
     @FXML private TextArea console;
 
-    EventHandler<MouseEvent> click = event -> {
+    /**
+     * Event handler for when a node or edge is clicked.
+     */
+    private EventHandler<MouseEvent> click = event -> {
 
-        if( event.getSource() instanceof Node) {
+        if (event.getSource() instanceof Node) {
             Node rect = (Node) (event.getSource());
             console.appendText(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().indexOf(rect)) + "\n");
         } else if (event.getSource() instanceof Line) {
@@ -125,15 +130,13 @@ public class Controller {
 
     /**
      * Draw method for drawing the graph.
-     * @param center The node that will be the center of the drawn graph.
-     * @param radius The maximum depth we want to draw.
      */
     @FXML
     public void drawGraph() {
         Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(1), 10, depth, new Pair<>((mainPane.getWidth() / 2) - 115, (mainPane.getHeight() / 2)), true);
+        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(1), 10, depth, new Pair<>((mainPane.getWidth() / 2) - 115, (mainPane.getHeight() / 2)), true, 0);
     }
 
     /**
@@ -144,13 +147,14 @@ public class Controller {
      * @param depth The current depth we are on.
      * @param location The current location we are drawing on.
      * @param direction True if we went from parent to child and false visa versa.
+     * @param child Child counter.
      */
-    private void drawGraphUtil(Set<Node> visited, Node current, int radius, int depth, Pair<Double, Double> location, boolean direction) {
+    private void drawGraphUtil(Set<Node> visited, Node current, int radius, int depth, Pair<Double, Double> location, boolean direction, int child) {
         if (depth <= radius && !visited.contains(current)) {
             if (direction) {
-                location = new Pair<>(location.getKey() + 100, location.getValue() + Math.random()*40 - 20);
+                location = new Pair<>(location.getKey() + 100, location.getValue() + child * 40);
             } else {
-                location = new Pair<>(location.getKey() - 100, location.getValue()+ Math.random()*40 - 20);
+                location = new Pair<>(location.getKey() - 100, location.getValue() + child * 40);
             }
             NodeGraph ng = NodeGraph.getCurrentInstance();
             System.out.println(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)));
@@ -165,8 +169,9 @@ public class Controller {
             visited.add(current);
             mainPane.applyCss();
             mainPane.layout();
+            child = 0;
             for (Integer i : current.getOutgoingEdges()) {
-                drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true);
+                drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true, child);
                 Line l = new Line();
                 l.setOnMousePressed(click);
                 l.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)) + "-" + Integer.toString(i));
@@ -175,9 +180,11 @@ public class Controller {
                 l.setEndX(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
                 l.setEndY(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
                 mainPane.getChildren().add(l);
+                child += 1;
             }
             for (Integer i : current.getIncomingEdges()) {
-                drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false);
+                drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false, child);
+                child += 1;
             }
         }
     }

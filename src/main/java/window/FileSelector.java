@@ -6,18 +6,37 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Window;
 
 /**
- * Created by Martijn on 16-5-2017.
+ * Created by 101010 on 16-5-2017.
  */
-public class FileSelector {
+public final class FileSelector {
+
+    /**
+     * Instance of this singleton class.
+     */
     private static FileChooser instance = null;
+
+    /**
+     * The last directory accessed during file selection.
+     */
     private static SimpleObjectProperty<File> lastDir = new SimpleObjectProperty<>();
 
-    private FileSelector() {}
+    /**
+     * Private constructor.
+     */
+    private FileSelector() { }
 
+    /**
+     * Default showOpenDialog method which invokes the non-default one with parameter null.
+     * @return The file we want to parse.
+     */
     public static File showOpenDialog() {
         return showOpenDialog(null);
     }
 
+    /**
+     * Getter for the instance of this singleton class.
+     * @return The instance of this class.
+     */
     public static FileChooser getInstance() {
         if (instance == null) {
             instance = new FileChooser();
@@ -28,24 +47,14 @@ public class FileSelector {
         return instance;
     }
 
-    public static File showOpenDialog(Window ownerWindow){
+    /**
+     * Non-default showOpenDialog. This method lets the user select the file they want to have visualized.
+     * @param ownerWindow The stage from which this method is called.
+     * @return The file we want to parse.
+     */
+    public static File showOpenDialog(Window ownerWindow) {
         File chosenFile = getInstance().showOpenDialog(ownerWindow);
-        if(chosenFile != null){
-            //Set the property to the directory of the chosenFile so the fileChooser will open here next
-            lastDir.setValue(chosenFile.getParentFile());
-
-        }
-        return chosenFile;
-    }
-
-    public static File showSaveDialog(){
-        return showSaveDialog(null);
-    }
-
-    public static File showSaveDialog(Window ownerWindow){
-        File chosenFile = getInstance().showSaveDialog(ownerWindow);
-        if(chosenFile != null){
-            //Set the property to the directory of the chosenFile so the fileChooser will open here next
+        if (chosenFile != null) {
             lastDir.setValue(chosenFile.getParentFile());
         }
         return chosenFile;

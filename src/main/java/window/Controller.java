@@ -23,7 +23,6 @@ import java.io.File;
 import javafx.util.Pair;
 import parsing.Parser;
 
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +36,7 @@ public class Controller {
     /**
      * Main frame making up the window.
      */
-    @FXML private Pane mainPane;
+    @FXML private Pane drawPane;
 
     /**
      * Button when clicked allows the user to browse to gfa file in directory.
@@ -77,7 +76,9 @@ public class Controller {
         Parent root;
         final Button openButton = new Button("Open");
         File file = FileSelector.showOpenDialog(stage);
-        mainPane.getChildren().add(new Rectangle(mainPane.getWidth(), 100));
+        if (file != null) {
+            NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
+        }
     }
 
     /**
@@ -94,7 +95,6 @@ public class Controller {
             if (file != null) {
                 stage.setTitle("Graph visualization");
                 NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-                //drawGraph();
                 root = null;
                 try {
                      root = FXMLLoader.load(getClass().getResource("/window.fxml"));
@@ -130,10 +130,11 @@ public class Controller {
      */
     @FXML
     public void drawGraph() {
+        drawPane.getChildren().clear();
         Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(1), 3, depth, new Pair<>((mainPane.getWidth() / 2) - 115, (mainPane.getHeight() / 2)), true);
+        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(0), 3, depth, new Pair<>((drawPane.getWidth() / 2) - 115, (drawPane.getHeight() / 2)), true);
     }
 
     /**
@@ -161,10 +162,10 @@ public class Controller {
             current.setWidth(50);
             current.setHeight(10);
 
-            mainPane.getChildren().add(current);
+            drawPane.getChildren().add(current);
             visited.add(current);
-            mainPane.applyCss();
-            mainPane.layout();
+            drawPane.applyCss();
+            drawPane.layout();
             for (Integer i : current.getOutgoingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true);
                 if (depth != radius) {
@@ -173,9 +174,9 @@ public class Controller {
                     l.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)) + "-" + Integer.toString(i));
                     l.setStartX(location.getKey() + 25);
                     l.setStartY(location.getValue() + 5);
-                    l.setEndX(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
-                    l.setEndY(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
-                    mainPane.getChildren().add(l);
+                    l.setEndX(drawPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
+                    l.setEndY(drawPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
+                    drawPane.getChildren().add(l);
                 }
             }
             for (Integer i : current.getIncomingEdges()) {

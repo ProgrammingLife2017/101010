@@ -133,7 +133,7 @@ public class Controller {
         Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(1), 10, depth, new Pair<>((mainPane.getWidth() / 2) - 115, (mainPane.getHeight() / 2)), true);
+        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(1), 3, depth, new Pair<>((mainPane.getWidth() / 2) - 115, (mainPane.getHeight() / 2)), true);
     }
 
     /**
@@ -148,9 +148,9 @@ public class Controller {
     private void drawGraphUtil(Set<Node> visited, Node current, int radius, int depth, Pair<Double, Double> location, boolean direction) {
         if (depth <= radius && !visited.contains(current)) {
             if (direction) {
-                location = new Pair<>(location.getKey() + 100, location.getValue() + Math.random()*40 - 20);
+                location = new Pair<>(location.getKey() + 100, location.getValue() + Math.random() * 40 - 20);
             } else {
-                location = new Pair<>(location.getKey() - 100, location.getValue()+ Math.random()*40 - 20);
+                location = new Pair<>(location.getKey() - 100, location.getValue()+ Math.random() * 40 - 20);
             }
             NodeGraph ng = NodeGraph.getCurrentInstance();
             System.out.println(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)));
@@ -167,14 +167,16 @@ public class Controller {
             mainPane.layout();
             for (Integer i : current.getOutgoingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true);
-                Line l = new Line();
-                l.setOnMousePressed(click);
-                l.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)) + "-" + Integer.toString(i));
-                l.setStartX(location.getKey() + 25);
-                l.setStartY(location.getValue() + 5);
-                l.setEndX(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
-                l.setEndY(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
-                mainPane.getChildren().add(l);
+                if (depth != radius) {
+                    Line l = new Line();
+                    l.setOnMousePressed(click);
+                    l.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)) + "-" + Integer.toString(i));
+                    l.setStartX(location.getKey() + 25);
+                    l.setStartY(location.getValue() + 5);
+                    l.setEndX(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
+                    l.setEndY(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
+                    mainPane.getChildren().add(l);
+                }
             }
             for (Integer i : current.getIncomingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false);

@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -150,10 +151,13 @@ public class Controller {
     private void drawGraphUtil(Set<Node> visited, Node current, int radius, int depth, Pair<Double, Double> location, boolean direction) {
         if (depth <= radius && !visited.contains(current)) {
             if (direction) {
-                location = new Pair<>(location.getKey() + 100, location.getValue());
+                location = new Pair<>(location.getKey() + 100, location.getValue() + Math.random()*40 - 20);
             } else {
-                location = new Pair<>(location.getKey() - 100, location.getValue());
+                location = new Pair<>(location.getKey() - 100, location.getValue()+ Math.random()*40 - 20);
             }
+            NodeGraph ng = NodeGraph.getCurrentInstance();
+            System.out.println(Integer.toString(NodeGraph.getCurrentInstance().getId(current)));
+            current.setId(Integer.toString(NodeGraph.getCurrentInstance().getId(current)));
             current.setOnMousePressed(rectClick);
             current.setX(location.getKey());
             current.setY(location.getValue());
@@ -161,11 +165,17 @@ public class Controller {
             current.setHeight(10);
 
             mainPane.getChildren().add(current);
-
             visited.add(current);
-
+            mainPane.applyCss();
+            mainPane.layout();
             for (Integer i : current.getOutgoingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true);
+                Line l = new Line();
+                l.setStartX(location.getKey() + 25);
+                l.setStartY(location.getValue() + 5);
+                l.setEndX(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
+                l.setEndY(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
+                mainPane.getChildren().add(l);
             }
             for (Integer i : current.getIncomingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false);

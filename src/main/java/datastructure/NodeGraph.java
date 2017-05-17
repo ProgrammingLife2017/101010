@@ -97,6 +97,7 @@ public class NodeGraph {
     }
 
     public int getId(Node n) {
-        return this.nodes.indexOf(n);
+        System.out.println(getCurrentInstance().nodes.toString());
+        return getCurrentInstance().nodes.indexOf(n);
     }
 }

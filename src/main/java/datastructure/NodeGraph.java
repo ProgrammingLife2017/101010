@@ -96,8 +96,12 @@ public class NodeGraph {
         currentNodeGraph = g;
     }
 
-    public int getId(Node n) {
-        System.out.println(getCurrentInstance().nodes.toString());
-        return getCurrentInstance().nodes.indexOf(n);
+    public int indexOf(Node n) {
+        for (int i = 0; i < getCurrentInstance().nodes.size(); i++) {
+            if (getCurrentInstance().nodes.get(i) == n) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

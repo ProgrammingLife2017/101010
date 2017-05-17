@@ -54,11 +54,16 @@ public class Controller {
      */
     @FXML private TextArea console;
 
-    EventHandler<MouseEvent> rectClick = event -> {
+    EventHandler<MouseEvent> click = event -> {
 
         if( event.getSource() instanceof Node) {
             Node rect = (Node) (event.getSource());
-            System.out.println(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().getId(rect)));
+            console.appendText(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().indexOf(rect)) + "\n");
+        } else if (event.getSource() instanceof Line) {
+            Line l = (Line) (event.getSource());
+            String edgeNodes = l.getId();
+            System.out.println(edgeNodes);
+            console.appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
         }
     };
 
@@ -100,14 +105,6 @@ public class Controller {
             stage.show();
             }
         }
-    }
-
-    /**
-     * Handling printing the console when a node is clicked.
-     * @param event Information about the mouse action.
-     */
-    @FXML protected void handleNode(MouseEvent event) {
-        console.appendText("[" + new SimpleDateFormat("HH:mm").format(System.currentTimeMillis()) + "] - " + "ATCTGGTTCATG\n");
     }
 
     /**
@@ -156,9 +153,9 @@ public class Controller {
                 location = new Pair<>(location.getKey() - 100, location.getValue()+ Math.random()*40 - 20);
             }
             NodeGraph ng = NodeGraph.getCurrentInstance();
-            System.out.println(Integer.toString(NodeGraph.getCurrentInstance().getId(current)));
-            current.setId(Integer.toString(NodeGraph.getCurrentInstance().getId(current)));
-            current.setOnMousePressed(rectClick);
+            System.out.println(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)));
+            current.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)));
+            current.setOnMousePressed(click);
             current.setX(location.getKey());
             current.setY(location.getValue());
             current.setWidth(50);
@@ -171,6 +168,8 @@ public class Controller {
             for (Integer i : current.getOutgoingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true);
                 Line l = new Line();
+                l.setOnMousePressed(click);
+                l.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)) + "-" + Integer.toString(i));
                 l.setStartX(location.getKey() + 25);
                 l.setStartY(location.getValue() + 5);
                 l.setEndX(mainPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);

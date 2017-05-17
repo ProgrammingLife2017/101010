@@ -138,4 +138,10 @@ public class Node {
     public void setIncomingEdges(int[] incoming) {
         from = incoming;
     }
+
+    /**
+     * Sets the length of the segment of the node.
+     * @param length the length of the segment of the node.
+     */
+    public void setLength(int length) { this.length = length; }
 }

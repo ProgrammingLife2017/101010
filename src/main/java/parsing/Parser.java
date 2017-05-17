@@ -121,6 +121,7 @@ public class Parser {
                         }
                     } else {
                         graph.addSegment(id, segment);
+                        graph.getNode(id).setLength(segment.length());
                     }
                } else {
                     line = in.readLine();

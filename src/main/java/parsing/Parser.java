@@ -4,7 +4,10 @@ import datastructure.Node;
 import datastructure.NodeGraph;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -54,6 +57,9 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(getClass().getResourceAsStream(filename)));
+            File temp = new File("C:/Users/DexterQuintin/Desktop/genomeGraphDB.txt");
+            temp.createNewFile();
+            BufferedWriter out = new BufferedWriter(new FileWriter(temp, true));
             String line = in.readLine();
 
             while (line != null) {
@@ -66,7 +72,10 @@ public class Parser {
                     line = line.substring(line.indexOf("\t") + 1);
                     segment = line.substring(0, line.indexOf("\t"));
 
-                    graph.addNode(id, new Node(segment.length(), new int[0], new int[0]), segment);
+                    graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
+
+                    out.write(segment + "\n");
+                    out.flush();
 
                     line = in.readLine();
                     segment = null;

@@ -137,7 +137,7 @@ public class Controller {
         Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(0), 3, depth, new Pair<>((drawPane.getWidth() / 2) - 115, (drawPane.getHeight() / 2)), true, 0);
+        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(4), 4, depth, new Pair<>((drawPane.getWidth() / 2) - 115, (drawPane.getHeight() / 2)), true, 0);
     }
 
     /**
@@ -186,6 +186,7 @@ public class Controller {
                     child += 1;
                 }
             }
+            child = 0;
             for (Integer i : current.getIncomingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false, child);
                 child += 1;

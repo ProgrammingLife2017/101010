@@ -2,9 +2,9 @@ package screens;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
@@ -31,8 +31,13 @@ public final class Backlog extends Stage {
                     }
                 }
         );
-
-        Group root = new Group();
+        this.setTitle("Backlog");
+        AnchorPane root = new AnchorPane();
+        root.setPrefSize(600.0, 300.0);
+        root.setTopAnchor(textArea, 10.0);
+        root.setLeftAnchor(textArea, 10.0);
+        root.setRightAnchor(textArea, 10.0);
+        root.setBottomAnchor(textArea, 10.0);
         root.getChildren().add(textArea);
         Scene scene = new Scene(root);
         this.setScene(scene);

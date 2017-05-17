@@ -10,9 +10,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Michael on 5/15/2017.
+ * Implementation of the logger that writes to a log file.
  */
-public final class Logger implements ILogger {
+public final class Logger {
 
     /**
      * Reference to the class of the logger.
@@ -28,7 +28,7 @@ public final class Logger implements ILogger {
      * The ThreadPoolExecutor is responsible for executing all logging code on a separate thread to prevent stalling.
      */
     private static final ThreadPoolExecutor LOGGING_THREAD_EXECUTOR = new ThreadPoolExecutor(
-            0, 50000, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()
+            0, 50000, 60L, TimeUnit.SECONDS, new SynchronousQueue<>()
     );
 
     /**
@@ -43,7 +43,9 @@ public final class Logger implements ILogger {
     }
 
     /**
-     * {@inheritDoc}
+     * Print an error to the log.
+     *
+     * @param msg The message to the log.
      */
     public void error(final String msg) {
         String str = this.generateMessage("ERROR", msg);
@@ -51,7 +53,8 @@ public final class Logger implements ILogger {
     }
 
     /**
-     * {@inheritDoc}
+     * Print an error from an exception to the log.
+     * @param exception The message to the log.
      */
     public void error(final Exception exception) {
         String str = this.generateMessage("ERROR", exception.getMessage());
@@ -59,14 +62,19 @@ public final class Logger implements ILogger {
     }
 
     /**
-     * {@inheritDoc}
+     * Print information to the log.
+     * @param msg The message to the log.
      */
     public void info(final String msg) {
         String str = this.generateMessage("INFO", msg);
         this.appendStringToTextFile(str);
     }
 
-
+    /**
+     * Write message at the end of file.
+     *
+     * @param str message to write.
+     */
     private void appendStringToTextFile(final String str) {
         Window.getBackLog().printContent(str);
         Runnable runnable = () -> this.fileSystem.log(str);

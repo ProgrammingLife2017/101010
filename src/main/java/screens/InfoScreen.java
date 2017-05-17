@@ -6,7 +6,7 @@ import javafx.scene.layout.GridPane;
 /**
  * Implementation of the window that handles showing information of the graph.
  */
-public class InfoScreen extends GridPane {
+/*package*/ class InfoScreen extends GridPane {
 
     /**
      * Constructor.

@@ -3,13 +3,14 @@ package logging;
 import filesystem.FileSystem;
 
 /**
- * Created by Michael on 5/16/2017.
+ * Implementation of the factory that creates loggers for other classes.
  */
 public final class LoggerFactory {
     /**
      * Logger that keeps track of actions executed by the factory.
      */
-    private final ILogger logger;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final Logger logger;
 
     /**
      * FileSystem for writing to file.
@@ -34,8 +35,8 @@ public final class LoggerFactory {
      * @param cl Class that the new logger serves.
      * @return A new logger object.
      */
-    public ILogger createLogger(final Class<?> cl) {
+    public Logger createLogger(final Class<?> cl) {
+        logger.info("a new logger has been created");
         return new Logger(cl, fileSystem);
-
     }
 }

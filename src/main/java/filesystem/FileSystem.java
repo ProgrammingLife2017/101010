@@ -18,39 +18,27 @@ public final class FileSystem {
     /**
      * Writer to log files.
      */
-    private final Writer logWriter;
+    private Writer logWriter;
 
     /**
      * Name of the file where the writer puts the content.
      */
-    public static String LOGFILE_NAME = "logger.log";
+    public final static String LOGFILE_NAME = "logger.log";
 
     /**
      * Constructor.
      */
     public FileSystem() {
-        Writer fw = new Writer() {
-            @Override
-            public void write(final char[] cbuf, final int off, final int len) throws IOException {
-            }
-
-            @Override
-            public void flush() throws IOException {
-            }
-
-            @Override
-            public void close() throws IOException {
-            }
-        };
         File logFile = new File(FileSystem.LOGFILE_NAME);
 
         try {
-            fw = new OutputStreamWriter(new FileOutputStream(logFile), StandardCharsets.UTF_8);
+           Writer fw = new OutputStreamWriter(new FileOutputStream(logFile), StandardCharsets.UTF_8);
+           this.logWriter = new BufferedWriter(fw);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        this.logWriter = new BufferedWriter(fw);
+
     }
 
     /**
@@ -98,9 +86,9 @@ public final class FileSystem {
      *
      * @param filename Name of the file to get.
      * @return File object.
-     * @throws IOException
+     * @throws IOException Thrown file can't be found.
      */
-    public File getProjectFile(final String filename) throws IOException {
+    private File getProjectFile(final String filename) throws IOException {
         File file = new File(filename);
         // The only reason we do this is to suppress a FindBugs warning
         final boolean didntExist = file.createNewFile();

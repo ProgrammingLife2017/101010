@@ -20,7 +20,7 @@ public class Parser {
     /**
      * Constructor of the parser.
      */
-    protected Parser() { }
+    private Parser() { }
 
     /**
      * Getter for the Singleton parser.
@@ -35,12 +35,11 @@ public class Parser {
 
     /**
      * Parses the data of the inputted file.
-     * @param filename The name of the file.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final String filename) {
+    public NodeGraph parse() {
         NodeGraph graph = new NodeGraph();
-        return parse(filename, graph);
+        return parse("/TB10.gfa", graph);
     }
 
     /**
@@ -49,7 +48,7 @@ public class Parser {
      * @param graph The graph the data gets put into.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final String filename, NodeGraph graph) {
+    private NodeGraph parse(final String filename, NodeGraph graph) {
 
         try {
             BufferedReader in = new BufferedReader(

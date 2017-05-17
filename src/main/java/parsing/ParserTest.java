@@ -18,7 +18,7 @@ class ParserTest {
     @Test
     void parse() {
         Parser parser = Parser.getInstance();
-        NodeGraph data = parser.parse("/TB10.gfa");
+        NodeGraph data = parser.parse();
     }
 
 }

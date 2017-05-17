@@ -1,9 +1,11 @@
 package datastructure;
 
+import javafx.scene.shape.Rectangle;
+
 /**
  * Created by 101010.
  */
-public class Node {
+public class Node extends Rectangle {
     /**
      * The length of the segment corresponding to the node.
      */
@@ -105,7 +107,7 @@ public class Node {
     }
 
     /**
-     *
+     * Equals method which return true if two nodes are exactly the same.
      * @param other the object to compare to.
      * @return whether this Node is equal to the other object.
      */

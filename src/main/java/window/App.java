@@ -13,7 +13,7 @@ public class App extends javafx.application.Application {
 
     /**
      * Method that starts the application.
-     * @param args the arguments of the main.
+     * @param args Parameters to run this application with.
      */
     public static void main(final String[] args) {
         launch(args);

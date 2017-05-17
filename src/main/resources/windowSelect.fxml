@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
 <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="902.0" prefWidth="1601.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="window.Controller">
     <Text x="20" y="50" text="Please select a file: "></Text>
     <Button fx:id="browse" layoutX="200" layoutY="30" text="Browse" onAction="#handleBrowseButton"></Button>

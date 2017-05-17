@@ -89,6 +89,8 @@ public class Parser {
                 int graphSize = Integer.parseInt(line);
                 for (int i = 0; i < graphSize; i++) {
                     line = in2.readLine();
+                    int length = Integer.parseInt(line);
+                    line = in2.readLine();
                     int inLength = Integer.parseInt(line);
                     int[] ingoing = new int[inLength];
                     for (int j = 0; j < inLength; j++) {
@@ -102,23 +104,24 @@ public class Parser {
                         line = in2.readLine();
                         outgoing[j] = Integer.parseInt(line);
                     }
-                    Node temp = new Node(0, outgoing, ingoing);
+                    Node temp = new Node( length, outgoing, ingoing);
                     graph.addNodeCache(i, temp);
                 }
             }
 
-            while (line != null) {
-                if (line.startsWith("S")) {
-                    int id;
-                    String segment;
-                    line = line.substring(line.indexOf("\t") + 1);
-                    id = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
-                    line = line.substring(line.indexOf("\t") + 1);
-                    segment = line.substring(0, line.indexOf("\t"));
-                    graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
-                    out.write(segment + "\n");
-                    out.flush();
-                    line = in.readLine();
+            if (newCache) {
+                while (line != null) {
+                    if (line.startsWith("S")) {
+                        int id;
+                        String segment;
+                        line = line.substring(line.indexOf("\t") + 1);
+                        id = Integer.parseInt(line.substring(0, line.indexOf("\t"))) - 1;
+                        line = line.substring(line.indexOf("\t") + 1);
+                        segment = line.substring(0, line.indexOf("\t"));
+                        graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
+                        out.write(segment + "\n");
+                        out.flush();
+                        line = in.readLine();
                         while (line != null && line.startsWith("L")) {
                             int from;
                             int to;
@@ -129,11 +132,10 @@ public class Parser {
                             graph.addEdge(from, to);
                             line = in.readLine();
                         }
-                } else {
-                    line = in.readLine();
+                    } else {
+                        line = in.readLine();
+                    }
                 }
-            }
-            if (newCache) {
                 createCache(cacheName, graph);
             }
         } catch (FileNotFoundException e) {
@@ -163,13 +165,16 @@ public class Parser {
 
             File file = new File(absoluteFilePath + ".txt");
             int graphSize = graph.getSize();
-            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file));
+            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);
             writer.write("" + graphSize);
             writer.newLine();
             int size;
             for (int i = 0; i < graphSize; i++) {
                 Node temp = graph.getNode(i);
+                int length = temp.getLength();
+                writer.write("" + length);
+                writer.newLine();
                 int[] tempList = temp.getIncomingEdges();
                 size = tempList.length;
                 writer.write("" + size);

@@ -69,7 +69,7 @@ public class Parser {
             String absoluteFilePath;
 
             absoluteFilePath = workingDirectory + File.separator + line;
-            String cacheName = line;
+            String cacheName = filename.substring(0, filename.length() - 4);
             File file = new File(absoluteFilePath + ".txt");
             if (file.exists()) {
                 newCache = false;
@@ -159,7 +159,7 @@ public class Parser {
             int graphSize = graph.getSize();
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file));
             BufferedWriter writer = new BufferedWriter(ow);
-            writer.write("" + graphSize + "");
+            writer.write("" + graphSize);
             writer.newLine();
             int size;
             for (int i = 0; i < graphSize; i++) {

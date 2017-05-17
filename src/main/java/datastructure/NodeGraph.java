@@ -25,6 +25,11 @@ public class NodeGraph {
     }
 
     /**
+     * The amount of nodes in the graph.
+     */
+    private int size;
+
+    /**
      * Constructor for NodeGraph
      * @param nodes
      *        The list of nodes for the graph.
@@ -34,6 +39,7 @@ public class NodeGraph {
     public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments) {
         this.nodes = nodes;
         this.segments = segments;
+        size = 0;
     }
 
     /**
@@ -41,14 +47,23 @@ public class NodeGraph {
      * @param id The id of the node.
      * @param node The node that gets added.
      */
-    public void addNode(final int id, Node node) {
+    public void addNode(int id, Node node) {
         while (nodes.size() <= id) {
             nodes.add(new Node());
         }
 
+        size++;
         int[] temp = nodes.get(id).getIncomingEdges();
         nodes.set(id, node);
         nodes.get(id).setIncomingEdges(temp);
+    }
+
+    public void addNodeCache(int id, Node node) {
+        while (nodes.size() <= id) {
+            nodes.add(new Node());
+        }
+        nodes.set(id, node);
+        size++;
     }
 
     /**
@@ -82,5 +97,15 @@ public class NodeGraph {
      */
     public Node getNode(int id) {
         return nodes.get(id);
+    }
+
+    /**
+     * Returns the amount of nodes.
+     * @return the size of the graph.
+     */
+    public int getSize() { return size; }
+
+    public void setSegmentDB(SegmentDB db) {
+        segments = db;
     }
 }

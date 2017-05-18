@@ -26,6 +26,7 @@ import javafx.stage.Stage;
         );
         vbox.getChildren().add(textArea);
         Scene scene = new Scene(vbox);
+        this.setTitle("Information");
         this.setScene(scene);
     }
 

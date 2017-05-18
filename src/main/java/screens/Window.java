@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -7,10 +8,11 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import logging.Logger;
 import logging.LoggerFactory;
+import parsing.Parser;
+import window.FileSelector;
 
 import java.io.File;
 
@@ -98,10 +100,13 @@ public class Window extends Application{
         MenuBar menuBar = new MenuBar();
         Menu menu1 = new Menu("File");
         MenuItem item1 = new MenuItem("New file");
-        final FileChooser fileChooser = new FileChooser();
         item1.setOnAction(
                 event -> {
-                    File file = fileChooser.showOpenDialog(stage);
+                    File file = FileSelector.showOpenDialog(stage);
+                    if (file != null) {
+                        NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
+                        logger.info("file has been selected");
+                    }
                 }
         );
         menu1.getItems().add(item1);

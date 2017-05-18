@@ -104,7 +104,7 @@ public class Parser {
                         line = in2.readLine();
                         outgoing[j] = Integer.parseInt(line);
                     }
-                    Node temp = new Node( length, outgoing, ingoing);
+                    Node temp = new Node(length, outgoing, ingoing);
                     graph.addNodeCache(i, temp);
                 }
             }

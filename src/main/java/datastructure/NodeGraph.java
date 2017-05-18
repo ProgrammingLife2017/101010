@@ -25,12 +25,7 @@ public class NodeGraph {
     }
 
     /**
-     * The amount of nodes in the graph.
-     */
-    private int size;
-
-    /**
-     * Constructor for NodeGraph
+     * Constructor for NodeGraph.
      * @param nodes
      *        The list of nodes for the graph.
      * @param segments
@@ -39,7 +34,6 @@ public class NodeGraph {
     public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments) {
         this.nodes = nodes;
         this.segments = segments;
-        size = 0;
     }
 
     /**
@@ -52,7 +46,6 @@ public class NodeGraph {
             nodes.add(new Node());
         }
 
-        size++;
         int[] temp = nodes.get(id).getIncomingEdges();
         nodes.set(id, node);
         nodes.get(id).setIncomingEdges(temp);
@@ -68,7 +61,6 @@ public class NodeGraph {
             nodes.add(new Node());
         }
         nodes.set(id, node);
-        size++;
     }
 
     /**
@@ -108,7 +100,9 @@ public class NodeGraph {
      * Returns the amount of nodes.
      * @return the size of the graph.
      */
-    public int getSize() { return size; }
+    public int getSize() {
+        return nodes.size();
+    }
 
     /**
      * Sets the segmentdb to a new segmentDB.

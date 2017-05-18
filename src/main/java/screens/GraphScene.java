@@ -16,8 +16,9 @@ import java.util.Set;
  */
  /*package*/ class GraphScene extends Pane {
 
-     private static GraphScene graphScene = null;
-
+    private final INodeHandler center;
+    private final INodeHandler info;
+    private INodeHandler state;
      /**
      * Event handler for when a node or edge is clicked.
      */
@@ -25,7 +26,7 @@ import java.util.Set;
 
         if (event.getSource() instanceof Node) {
             Node rect = (Node) (event.getSource());
-            Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().indexOf(rect)) + "\n");
+            state.handle(rect);
         } else if (event.getSource() instanceof Line) {
             Line l = (Line) (event.getSource());
             String edgeNodes = l.getId();
@@ -35,18 +36,11 @@ import java.util.Set;
      };
 
 
-     private GraphScene() {     }
-
-     public static GraphScene getInstance() {
-         if (graphScene == null){
-             graphScene = new GraphScene();
-         }
-         return graphScene;
+     /*package*/ GraphScene() {
+         center = new NodeCenter(this);
+         info = new NodeInfo(this);
+         state = info;
      }
-
-
-
-
 
     public void drawGraph() {
         this.getChildren().clear();
@@ -109,4 +103,22 @@ import java.util.Set;
             }
         }
     }
+
+//    public void switchHandler(INodeHandler handler) {
+//        if (handler == radius) {
+//            state = info;
+//        } else {
+//            state = radius;
+//        }
+//    }
+
+    public void switchToCenter() {
+        state = center;
+    }
+
+    public void switchToInfo() {
+        state = info;
+    }
+
+   // public INodeHandler getState() { return state; }
 }

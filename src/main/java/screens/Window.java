@@ -3,6 +3,7 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -37,11 +38,13 @@ public class Window extends Application{
      */
     private static Backlog backLog = null;
 
-    private static GraphScene graphScene = null;
-
+    private static GraphScene graphScene;
+    /**
+     * Window to print information of nodes or edges.
+     */
     private static InfoScreen infoScreen = null;
 
-    /**
+        /**
      * Starts the frame.
      *
      * @param stage Main stage where the content is placed.
@@ -52,10 +55,11 @@ public class Window extends Application{
         this.setupService();
         backLog = getBackLog();
         BorderPane mainPane = new BorderPane();
-        mainPane.setMinSize(1080, 760);
+
+        mainPane.setMinSize(1200, 700);
 
         mainPane.setTop(createMenuBar(stage));
-        mainPane.setCenter(GraphScene.getInstance());
+        mainPane.setCenter(graphScene);
 
 
         //Creating a scene object
@@ -67,6 +71,7 @@ public class Window extends Application{
 
         //Adding scene to the stage
         stage.setScene(scene);
+        stage.setOnCloseRequest(e -> Platform.exit());
 
         //Displaying the contents of the stage
         stage.show();
@@ -80,6 +85,7 @@ public class Window extends Application{
         FileSystem fileSystem = new FileSystem();
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
+        graphScene = new GraphScene();
     }
 
     /**
@@ -118,7 +124,7 @@ public class Window extends Application{
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
                         logger.info("file has been selected");
                     }
-                    GraphScene.getInstance().drawGraph();
+                    graphScene.drawGraph();
                 }
         );
         menu1.getItems().add(item1);
@@ -128,18 +134,26 @@ public class Window extends Application{
         item2.setOnAction(
                 event -> {
                     getInfoScreen().show();
-                    logger.info("a new window has been opened");
+                    logger.info("information screen has been opened");
                 }
         );
         MenuItem item3 = new MenuItem("Console log");
         item3.setOnAction(
                 event -> {
                     getBackLog().show();
-                    logger.info("a new window has been opened");
+                    logger.info("console window has been opened");
+                }
+        );
+        MenuItem item4 = new MenuItem("Center");
+        item4.setOnAction(
+                event -> {
+                    graphScene.switchToCenter();
+                    logger.info("state has been switched to center");
                 }
         );
         menu2.getItems().add(item2);
         menu2.getItems().add(item3);
+        menu2.getItems().add(item4);
         menuBar.getMenus().add(menu1);
         menuBar.getMenus().add(menu2);
         return menuBar;

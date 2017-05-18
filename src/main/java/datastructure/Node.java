@@ -1,11 +1,9 @@
 package datastructure;
 
-import javafx.scene.shape.Rectangle;
-
 /**
  * Created by 101010.
  */
-public class Node extends Rectangle {
+public class Node {
     /**
      * The length of the segment corresponding to the node.
      */
@@ -27,6 +25,10 @@ public class Node extends Rectangle {
 
     private int child;
 
+    private int x;
+
+    private int y;
+
     /**
      * Empty constructor for Node.
      */
@@ -35,6 +37,8 @@ public class Node extends Rectangle {
         this.to = new int[0];
         this.from = new int[0];
         this.child = 0;
+        this.x = 0;
+        this.y = 0;
     }
 
     /**
@@ -50,7 +54,17 @@ public class Node extends Rectangle {
         this.to = outgoingEdges;
         this.from = incomingEdges;
         this.child = 0;
+        this.x = 0;
+        this.y = 0;
     }
+
+    public int getX() { return this.x;}
+
+    public int getY() { return this.y;}
+
+    public void setX(int newX) { this.x = newX;}
+
+    public void setY(int newY) { this.y = newY;}
 
     public int getChild() {
         return this.child;

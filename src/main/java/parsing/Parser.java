@@ -91,13 +91,14 @@ public class Parser {
                 BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(newFile)));
                 line = in2.readLine();
                 int graphSize = Integer.parseInt(line);
+                graph.getNodes().ensureCapacity(graphSize);
                 for (int i = 0; i < graphSize; i++) {
                     line = in2.readLine();
                     int length = Integer.parseInt(line);
                     line = in2.readLine();
-                    double x = Double.parseDouble(line);
+                    int x = Integer.parseInt(line);
                     line = in2.readLine();
-                    double y = Double.parseDouble(line);
+                    int y = Integer.parseInt(line);
 //                    int inLength = Integer.parseInt(line);
 //                    int[] ingoing = new int[inLength];
 //                    for (int j = 0; j < inLength; j++) {
@@ -117,7 +118,14 @@ public class Parser {
                     graph.addNodeCache(i, temp);
                 }
             }
-
+            BufferedReader br2 = new BufferedReader(new FileReader(file));
+            String lastline = br2.readLine();
+            String currentLine = "";
+            while ((currentLine = br2.readLine()) != null)
+                lastline = currentLine;
+            lastline = lastline.substring(lastline.indexOf("\t") + 1);
+            int noOfNodes = Integer.parseInt(lastline.substring(0, lastline.indexOf("\t"))) - 1;
+            graph.getNodes().ensureCapacity(noOfNodes);
             if (newCache) {
                 while (line != null) {
                     if (line.startsWith("S")) {
@@ -210,8 +218,8 @@ public class Parser {
                 int length = temp.getLength();
                 writer.write("" + length);
                 writer.newLine();
-                double x = temp.getX();
-                double y = temp.getY();
+                int x = temp.getX();
+                int y = temp.getY();
                 writer.write("" + x);
                 writer.newLine();
                 writer.write("" + y);

@@ -29,6 +29,11 @@ public class NodeGraph {
         segments = new SegmentDB();
     }
 
+    public NodeGraph(int size) {
+        this.nodes = new ArrayList<>(size);
+        segments = new SegmentDB();
+    }
+
     /**
      * Constructor for NodeGraph.
      * @param nodes
@@ -145,4 +150,6 @@ public class NodeGraph {
     public void setSegmentDB(SegmentDB db) {
         segments = db;
     }
+
+    public ArrayList<Node> getNodes() { return this.nodes; }
 }

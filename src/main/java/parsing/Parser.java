@@ -70,14 +70,12 @@ public class Parser {
             line = line.substring(line.indexOf("\t") + 1);
             line = line.replaceAll(":", "");
             String cacheName = file.getName().substring(0, file.getName().length() - 4);
-            String workingDirectory = System.getProperty("user.dir");
-
-            String absoluteFilePath;
-
-            absoluteFilePath = workingDirectory + File.separator + cacheName;
+            String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
 
             graph.setSegmentDB(new SegmentDB(absoluteFilePath + "Segments.txt"));
             File segments = new File(absoluteFilePath + "Segments.txt");
+
+            System.out.println(absoluteFilePath + "Segments.txt");
 
             if (!segments.exists()) {
                 segments.createNewFile();
@@ -94,12 +92,15 @@ public class Parser {
                     line = in2.readLine();
                     int length = Integer.parseInt(line);
                     line = in2.readLine();
-                    int inLength = Integer.parseInt(line);
-                    int[] ingoing = new int[inLength];
-                    for (int j = 0; j < inLength; j++) {
-                        line = in2.readLine();
-                        ingoing[j] = Integer.parseInt(line);
-                    }
+                    double x = Double.parseDouble(line);
+                    line = in2.readLine();
+                    double y = Double.parseDouble(line);
+//                    int inLength = Integer.parseInt(line);
+//                    int[] ingoing = new int[inLength];
+//                    for (int j = 0; j < inLength; j++) {
+//                        line = in2.readLine();
+//                        ingoing[j] = Integer.parseInt(line);
+//                    }
                     line = in2.readLine();
                     int outLength = Integer.parseInt(line);
                     int[] outgoing = new int[outLength];
@@ -107,7 +108,9 @@ public class Parser {
                         line = in2.readLine();
                         outgoing[j] = Integer.parseInt(line);
                     }
-                    Node temp = new Node(length, outgoing, ingoing);
+                    Node temp = new Node(length, outgoing, new int[0]);
+                    temp.setX(x);
+                    temp.setY(y);
                     graph.addNodeCache(i, temp);
                 }
             }
@@ -140,7 +143,7 @@ public class Parser {
                     }
                 }
                 setCoords(graph.getNode(0), new HashSet<Node>(), new Pair<>(503.0, 291.0), graph, true, 0);
-                createCache(cacheName, graph);
+                createCache(absoluteFilePath, graph);
             }
         } catch (FileNotFoundException e) {
             System.out.println("Wrong file Destination");
@@ -196,13 +199,7 @@ public class Parser {
      */
     private void createCache(String filename, NodeGraph graph) {
         try {
-            String workingDirectory = System.getProperty("user.dir");
-
-            String absoluteFilePath;
-
-            absoluteFilePath = workingDirectory + File.separator + filename;
-
-            File file = new File(absoluteFilePath + ".txt");
+            File file = new File(filename + ".txt");
             int graphSize = graph.getSize();
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);
@@ -214,15 +211,21 @@ public class Parser {
                 int length = temp.getLength();
                 writer.write("" + length);
                 writer.newLine();
-                int[] tempList = temp.getIncomingEdges();
-                size = tempList.length;
-                writer.write("" + size);
+                double x = temp.getX();
+                double y = temp.getY();
+                writer.write("" + x);
                 writer.newLine();
-                for (int j = 0; j < size; j++) {
-                    writer.write("" + tempList[j]);
-                    writer.newLine();
-                }
-                tempList = temp.getOutgoingEdges();
+                writer.write("" + y);
+                writer.newLine();
+//                int[] tempList = temp.getIncomingEdges();
+//                size = tempList.length;
+//                writer.write("" + size);
+//                writer.newLine();
+//                for (int j = 0; j < size; j++) {
+//                    writer.write("" + tempList[j]);
+//                    writer.newLine();
+//                }
+                int[] tempList = temp.getOutgoingEdges();
                 size = tempList.length;
                 writer.write("" + size);
                 writer.newLine();

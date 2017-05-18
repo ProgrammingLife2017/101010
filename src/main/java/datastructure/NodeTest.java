@@ -1,6 +1,8 @@
 package datastructure;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertFalse;
 
 /**
  * Created by 101010.
@@ -8,38 +10,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class NodeTest {
     private Node node = null;
 
-    @org.junit.jupiter.api.BeforeEach
+    @org.junit.Before
     void setUp() {
         node = new Node();
     }
 
-    @org.junit.jupiter.api.AfterEach
+    @org.junit.After
     void tearDown() {
         node = null;
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void getLength() {
         assertEquals(0, node.getLength());
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void getOutgoingEdges() {
         assertEquals(0, node.getOutgoingEdges().length);
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void getIncomingEdges() {
         assertEquals(0, node.getIncomingEdges().length);
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void equals() {
         assertTrue(node.equals(new Node(0, new int[0], new int[0])));
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void equalsNull() {
         assertFalse(node.equals(null));
     }
+
 }

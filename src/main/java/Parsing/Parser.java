@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +29,7 @@ public class Parser {
     /**
      * Constructor of the parser.
      */
-    protected Parser() { }
+    private Parser() { }
 
     /**
      * Getter for the Singleton parser.
@@ -43,30 +44,29 @@ public class Parser {
 
     /**
      * Parses the data of the inputted file.
-     * @param filename The name of the file.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final String filename) {
+    public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
-        return parse(filename, graph);
+        return parse(file, graph);
     }
 
     /**
      * Parses a .gfa file to a graph.
-     * @param filename The name of the target .gfa file.
+     * @param file The name of the target .gfa file.
      * @param graph The graph the data gets put into.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final String filename, NodeGraph graph) {
+    private NodeGraph parse(final File file, NodeGraph graph) {
 
         try {
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(getClass().getResourceAsStream(filename)));
+                    new FileReader(file));
             String line = in.readLine();
             boolean newCache = true;
             line = line.substring(line.indexOf("\t") + 1);
             line = line.replaceAll(":", "");
-            String cacheName = filename.substring(0, filename.length() - 4);
+            String cacheName = file.getName().substring(0, file.getName().length() - 4);
             String workingDirectory = System.getProperty("user.dir");
 
             String absoluteFilePath;
@@ -81,10 +81,10 @@ public class Parser {
             }
 
             BufferedWriter out = new BufferedWriter(new FileWriter(segments, true));
-            File file = new File(absoluteFilePath + ".txt");
-            if (file.exists()) {
+            File newFile = new File(absoluteFilePath + ".txt");
+            if (newFile.exists()) {
                 newCache = false;
-                BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(newFile)));
                 line = in2.readLine();
                 int graphSize = Integer.parseInt(line);
                 for (int i = 0; i < graphSize; i++) {

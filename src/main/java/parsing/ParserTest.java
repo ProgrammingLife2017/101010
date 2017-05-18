@@ -3,6 +3,8 @@ package parsing;
 import datastructure.Node;
 import datastructure.NodeGraph;
 
+import java.io.File;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -19,7 +21,7 @@ public class ParserTest {
     @org.junit.Test
     public void parse() {
         Parser parser = Parser.getInstance();
-        NodeGraph data = parser.parse("/test2.gfa");
+        NodeGraph data = parser.parse(new File("/test2.gfa"));
         Node node = data.getNode(3);
         assertEquals(4, node.getOutgoingEdges()[0]);
 

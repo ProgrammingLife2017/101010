@@ -46,7 +46,7 @@ public class Parser {
      * @param file The name of the file.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final File file) {
+    public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
         return parse(file, graph);
     }
@@ -57,8 +57,7 @@ public class Parser {
      * @param graph The graph the data gets put into.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final File file, NodeGraph graph) {
-
+    private NodeGraph parse(final File file, NodeGraph graph) {
         try {
             BufferedReader in = new BufferedReader(
                     new FileReader(file));

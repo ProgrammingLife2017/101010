@@ -3,6 +3,8 @@ package parsing;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
+import java.util.HashSet;
+import javafx.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -137,7 +139,7 @@ public class Parser {
                         line = in.readLine();
                     }
                 }
-                //setCoords(Node current, HashSet<Node> visited, Pair<Double, Double> location, NodeGraph graph, boolean direction, int child);
+                setCoords(graph.getNode(0), new HashSet<Node>(), new Pair<>(503.0, 291.0), graph, true, 0);
                 createCache(cacheName, graph);
             }
         } catch (FileNotFoundException e) {
@@ -152,9 +154,40 @@ public class Parser {
         return graph;
     }
 
-//    private void setCoords(Node current, HashSet<Node> visited, Pair<Double, Double> location, NodeGraph graph, boolean direction, int child) {
-//
-//    }
+    private void setCoords(Node current, HashSet<Node> visited, Pair<Double, Double> location, NodeGraph graph, boolean direction, int child) {
+        if (!visited.contains(current)) {
+            if (direction) {
+                location = new Pair<>(location.getKey() + 100, location.getValue() + child * 40);
+            } else {
+                location = new Pair<>(location.getKey() - 100, location.getValue() + child * 40);
+            }
+            current.setId(Integer.toString(graph.indexOf(current)));
+            current.setX(location.getKey());
+            current.setY(location.getValue());
+
+            visited.add(current);
+            child = 0;
+            for (Integer i : current.getOutgoingEdges()) {
+                if (visited.contains(graph.getNode(i)))
+                    child += 1;
+            }
+            for (Integer i : current.getOutgoingEdges()) {
+                setCoords(graph.getNode(i), visited, location, graph, true, child);
+                if (!visited.contains(graph.getNode(i)))
+                    child += 1;
+            }
+            child = 0;
+            for (Integer i : current.getIncomingEdges()) {
+                if (visited.contains(graph.getNode(i)))
+                    child += 1;
+            }
+            for (Integer i : current.getIncomingEdges()) {
+                setCoords(graph.getNode(i), visited, location, graph, false, child);
+                if (!visited.contains(graph.getNode(i)))
+                    child += 1;
+            }
+        }
+    }
 
     /**
      * Creates cache file.

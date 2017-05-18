@@ -25,7 +25,7 @@ public class NodeGraph {
     }
 
     /**
-     * Constructor for NodeGraph
+     * Constructor for NodeGraph.
      * @param nodes
      *        The list of nodes for the graph.
      * @param segments
@@ -40,9 +40,8 @@ public class NodeGraph {
      * Adds a node to the graph.
      * @param id The id of the node.
      * @param node The node that gets added.
-     * @param segment The segment of the node.
      */
-    public void addNode(final int id, Node node, String segment) {
+    public void addNode(int id, Node node) {
         while (nodes.size() <= id) {
             nodes.add(new Node());
         }
@@ -50,7 +49,18 @@ public class NodeGraph {
         int[] temp = nodes.get(id).getIncomingEdges();
         nodes.set(id, node);
         nodes.get(id).setIncomingEdges(temp);
-        segments.addSegment(id, segment);
+    }
+
+    /**
+     * Adds a node to the graph from the cached file.
+     * @param id The id of the node.
+     * @param node The node that gets added.
+     */
+    public void addNodeCache(int id, Node node) {
+        while (nodes.size() <= id) {
+            nodes.add(new Node());
+        }
+        nodes.set(id, node);
     }
 
     /**
@@ -84,5 +94,21 @@ public class NodeGraph {
      */
     public Node getNode(int id) {
         return nodes.get(id);
+    }
+
+    /**
+     * Returns the amount of nodes.
+     * @return the size of the graph.
+     */
+    public int getSize() {
+        return nodes.size();
+    }
+
+    /**
+     * Sets the segmentdb to a new segmentDB.
+     * @param db The new segmentDB.
+     */
+    public void setSegmentDB(SegmentDB db) {
+        segments = db;
     }
 }

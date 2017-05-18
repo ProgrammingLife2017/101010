@@ -95,7 +95,6 @@ public final class FileSystem {
         if (didntExist) {
             System.out.println("New file called \"" + filename + "\" created");
         }
-
-        return new File(filename);
+        return file;
     }
 }

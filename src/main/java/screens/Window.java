@@ -35,7 +35,11 @@ public class Window extends Application{
     /**
      * Backlog window to print all actions.
      */
-    private static Backlog backLog;
+    private static Backlog backLog = null;
+
+    private static GraphScene graphScene = null;
+
+    private static InfoScreen infoScreen = null;
 
     /**
      * Starts the frame.
@@ -48,10 +52,10 @@ public class Window extends Application{
         this.setupService();
         backLog = getBackLog();
         BorderPane mainPane = new BorderPane();
-        mainPane.setMinSize(1000, 500);
+        mainPane.setMinSize(1080, 760);
 
         mainPane.setTop(createMenuBar(stage));
-        mainPane.setCenter(new GraphScene());
+        mainPane.setCenter(GraphScene.getInstance());
 
 
         //Creating a scene object
@@ -90,6 +94,13 @@ public class Window extends Application{
         return backLog;
     }
 
+    public static InfoScreen getInfoScreen() {
+        if (infoScreen == null) {
+            infoScreen = new InfoScreen();
+        }
+        return infoScreen;
+    }
+
     /**
      * Creates the menu bar with its items.
      *
@@ -107,6 +118,7 @@ public class Window extends Application{
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
                         logger.info("file has been selected");
                     }
+                    GraphScene.getInstance().drawGraph();
                 }
         );
         menu1.getItems().add(item1);
@@ -115,11 +127,7 @@ public class Window extends Application{
         MenuItem item2 = new MenuItem("Info");
         item2.setOnAction(
                 event -> {
-                    Scene scene = new Scene(new InfoScreen(), 200, 200);
-                    Stage newStage = new Stage();
-                    newStage.setTitle("Information screen");
-                    newStage.setScene(scene);
-                    newStage.show();
+                    getInfoScreen().show();
                     logger.info("a new window has been opened");
                 }
         );

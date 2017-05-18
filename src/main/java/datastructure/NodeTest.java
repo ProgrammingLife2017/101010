@@ -1,9 +1,8 @@
 package datastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertFalse;
 
 /**
  * Created by 101010.
@@ -14,59 +13,40 @@ class NodeTest {
      */
     private Node node = null;
 
-    /**
-     * Before each test we set the node to a new node.
-     */
-    @org.junit.jupiter.api.BeforeEach
+    @org.junit.Before
     void setUp() {
         node = new Node();
     }
 
-    /**
-     * After each test we set the node back to null.
-     */
-    @org.junit.jupiter.api.AfterEach
+    @org.junit.After
     void tearDown() {
         node = null;
     }
 
-    /**
-     * Check if a new node has length 0.
-     */
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void getLength() {
         assertEquals(0, node.getLength());
     }
 
-    /**
-     * Check if a new node has no outgoing edges.
-     */
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void getOutgoingEdges() {
         assertEquals(0, node.getOutgoingEdges().length);
     }
 
-    /**
-     * Check if a new node has no incoming edges.
-     */
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void getIncomingEdges() {
         assertEquals(0, node.getIncomingEdges().length);
     }
 
-    /**
-     * Check if the default constructor is the same as constructing with size 0 integer arrays.
-     */
-    @org.junit.jupiter.api.Test
+
+    @org.junit.Test
     void equals() {
         assertTrue(node.equals(new Node(0, new int[0], new int[0])));
     }
 
-    /**
-     * Check if a new node is not null.
-     */
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     void equalsNull() {
         assertFalse(node.equals(null));
     }
+
 }

@@ -107,10 +107,13 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Equals method which return true if two nodes are exactly the same.
+     * Compares this Node to an object.
+     * Returns true if that object is a Node equal to this Node.
+     * Returns false otherwise.
      * @param other the object to compare to.
      * @return whether this Node is equal to the other object.
      */
+    @Override
     public boolean equals(final Object other) {
         if (other instanceof Node) {
             Node that = (Node) other;
@@ -131,6 +134,25 @@ public class Node extends Rectangle {
             }
         }
         return false;
+    }
+
+    /**
+     * Converts this Node to a hashcode.
+     * @return The hashcode of this node.
+     */
+    @Override
+    public int hashCode() {
+        int res = 0;
+
+        for (int i = 0; i < from.length; i++) {
+            res += from[i];
+        }
+
+        for (int j = 0; j < to.length; j++) {
+            res += to[j];
+        }
+
+        return res + length;
     }
 
     /**

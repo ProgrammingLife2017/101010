@@ -18,7 +18,7 @@ import java.io.File;
  * Main application.
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class Window extends Application{
+public class Window extends Application {
 
     /**
      * Logger that keeps track of actions executed by this class.

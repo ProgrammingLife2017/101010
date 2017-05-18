@@ -123,8 +123,8 @@ public class NodeGraph {
      * @return the index of this node.
      */
     public int indexOf(Node n) {
-        for (int i = 0; i < getCurrentInstance().nodes.size(); i++) {
-            if (getCurrentInstance().nodes.get(i) == n) {
+        for (int i = 0; i < this.nodes.size(); i++) {
+            if (this.nodes.get(i) == n) {
                 return i;
             }
         }

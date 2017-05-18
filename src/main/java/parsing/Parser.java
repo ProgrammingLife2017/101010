@@ -165,26 +165,29 @@ public class Parser {
 
     private void kahnAlgorithm(NodeGraph graph) {
         Queue<Node> q = new ArrayDeque<>();
-        int visited = 0;
         int x = 503;
         int y = 291;
+        int child = 0;
         for (int i = 0; i < graph.getSize(); i++) {
             if (graph.getNode(i).getIncomingEdges().length == 0)
                 q.add(graph.getNode(i));
         }
         while (!q.isEmpty()) {
             Node current = q.poll();
-            x += 40;
+            if (current.getChild() == 0)
+                x += 40;
+            y = 291 + 40 * current.getChild();
             current.setX(x);
             current.setY(y);
+            child = 0;
             for (int i : current.getOutgoingEdges()) {
-                System.out.println(i);
+                graph.getNode(i).setChild(child);
                 graph.getNode(i).setInDegree(graph.getNode(i).getInDegree() - 1);
                 if (graph.getNode(i).getInDegree() == 0) {
                     q.add(graph.getNode(i));
                 }
+                child += 1;
             }
-            visited++;
         }
     }
 

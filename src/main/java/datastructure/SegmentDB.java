@@ -1,13 +1,8 @@
 package datastructure;
 
-
-import javax.sql.rowset.serial.SerialClob;
-import java.sql.Clob;
-import java.sql.PreparedStatement;
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Created by 101010.
@@ -22,79 +17,16 @@ public class SegmentDB {
      * Empty constructor for SegmentDB.
      */
     public SegmentDB() {
-        dbLoc = "jdbc:h2:~/h2/genomedb";
-        dbInit();
+        dbLoc = "/resources/GenomeDB.txt";
     }
 
     /**
      * Constructor for SegmentDB.
      *
-     * @param newDbLoc the location of the database.
+     * @param dbLocation the location of the database.
      */
-    public SegmentDB(final String newDbLoc) {
-        if (newDbLoc.startsWith("jdbc:h2:~/")) {
-            this.dbLoc = newDbLoc;
-        } else {
-            this.dbLoc = "jdbc:h2:~/" + newDbLoc;
-        }
-        dbInit();
-    }
-
-    /**
-     * Initializes the database by creating a new empty database
-     * and creating the necessary tables in that database.
-     * The following tables are created:
-     * segment - PRIMARY KEY:    node_id (INT)
-     *           OTHER:          segment (CLOB, NOT NULL)
-     */
-    private void dbInit() {
-        try {
-            Class.forName("org.h2.Driver");
-            Connection con;
-            con = DriverManager.getConnection(dbLoc);
-            con.prepareStatement("DROP TABLE IF EXISTS segment").execute();
-            con.prepareStatement("CREATE TABLE segment(node_id INT PRIMARY KEY, "
-                    + "segment CLOB NOT NULL)").execute();
-            con.close();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Inserts a node and edges into the database
-     * based on the provided parameters.
-     *
-     * @param id             the id of the node.
-     * @param segment        the segment of the node.
-     */
-    public void addSegment(final int id,
-                        final String segment) {
-        try {
-            String iSegment =
-                    "INSERT INTO SEGMENT \n"
-                            + "VALUES (?, ?)";
-
-            Class.forName("org.h2.Driver");
-            Connection con = DriverManager.getConnection(dbLoc);
-
-            PreparedStatement insertNode = con.prepareStatement(iSegment);
-            insertNode.setInt(1, id);
-            insertNode.setClob(2, new SerialClob(segment.toCharArray()));
-            insertNode.execute();
-
-            con.close();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+    public SegmentDB(String dbLocation) {
+        this.dbLoc = dbLocation;
     }
 
     /**
@@ -104,25 +36,18 @@ public class SegmentDB {
      * @param id The id of the node.
      * @return The segment corresponding to the id.
      */
-    public String getSegment(final int id) {
+    public String getSegment(int id) {
         String res = "";
-
         try {
-            Class.forName("org.h2.Driver");
-            Connection con = DriverManager.getConnection(dbLoc);
-            PreparedStatement stmt = con.prepareStatement(
-                    "SELECT segment FROM SEGMENT WHERE node_id = ?"
-            );
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            rs.first();
-            Clob tempClob = rs.getClob(1);
-            res = tempClob.getSubString(1, (int) tempClob.length());
-            con.close();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (SQLException e) {
+            BufferedReader br = new BufferedReader(new FileReader(dbLoc));
+
+            res = br.readLine();
+
+            while (id > 0 && res != null) {
+                res = br.readLine();
+                id--;
+            }
+        } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }

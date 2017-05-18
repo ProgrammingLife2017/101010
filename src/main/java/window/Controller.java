@@ -171,7 +171,7 @@ public class Controller {
             drawPane.layout();
             child = 0;
             for (Integer i : current.getOutgoingEdges()) {
-                if (visited.contains(drawPane.lookup("#" + Integer.toString(i))))
+                if (visited.contains(NodeGraph.getCurrentInstance().getNode(i)))
                     child += 1;
             }
             for (Integer i : current.getOutgoingEdges()) {
@@ -186,18 +186,18 @@ public class Controller {
                     l.setEndX(drawPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
                     l.setEndY(drawPane.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 10);
                     drawPane.getChildren().add(l);
-                    if (!visited.contains(drawPane.lookup("#" + Integer.toString(i))))
+                    if (!visited.contains(NodeGraph.getCurrentInstance().getNode(i)))
                         child += 1;
                 }
             }
             child = 0;
             for (Integer i : current.getIncomingEdges()) {
-                if (visited.contains(drawPane.lookup("#" + Integer.toString(i))))
+                if (visited.contains(NodeGraph.getCurrentInstance().getNode(i)))
                     child += 1;
             }
             for (Integer i : current.getIncomingEdges()) {
                 drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false, child);
-                if (!visited.contains(drawPane.lookup("#" + Integer.toString(i))))
+                if (!visited.contains(NodeGraph.getCurrentInstance().getNode(i)))
                     child += 1;
             }
         }

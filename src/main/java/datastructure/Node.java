@@ -23,6 +23,8 @@ public class Node extends Rectangle {
      */
     private int[] from;
 
+    private int inDegree;
+
     /**
      * Empty constructor for Node.
      */
@@ -44,6 +46,14 @@ public class Node extends Rectangle {
         this.length = length;
         this.to = outgoingEdges;
         this.from = incomingEdges;
+    }
+
+    public int getInDegree() {
+        return this.inDegree;
+    }
+
+    public void setInDegree(int newIn) {
+        this.inDegree = newIn;
     }
 
     /**

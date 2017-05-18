@@ -155,25 +155,23 @@ public class Controller {
         double y = center.getY();
         for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
             Node current = NodeGraph.getCurrentInstance().getNode(i);
-            if (current.getX() >= x - 40 * radius || current.getX() >= x + 40 * radius) {
+            if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
                 current.setId(Integer.toString(i));
                 current.setOnMousePressed(click);
                 current.setWidth(20);
                 current.setHeight(10);
                 drawPane.getChildren().add(current);
-            }
-            for (Integer j: current.getOutgoingEdges()) {
-                Line l = new Line();
-                l.setId(i + "-" + j);
-                l.setStartX(current.getBoundsInLocal().getMaxX());
-                l.setStartY(current.getBoundsInLocal().getMinY() + 5);
-                l.setEndX(NodeGraph.getCurrentInstance().getNode(j).getBoundsInLocal().getMinX());
-                l.setEndY(NodeGraph.getCurrentInstance().getNode(j).getBoundsInLocal().getMinY() + 5);
-                l.setOnMousePressed(click);
-                drawPane.getChildren().add(l);
+                for (Integer j: current.getOutgoingEdges()) {
+                    Line l = new Line();
+                    l.setId(i + "-" + j);
+                    l.setStartX(current.getBoundsInLocal().getMaxX());
+                    l.setStartY(current.getBoundsInLocal().getMinY() + 5);
+                    l.setEndX(NodeGraph.getCurrentInstance().getNode(j).getBoundsInLocal().getMinX());
+                    l.setEndY(NodeGraph.getCurrentInstance().getNode(j).getBoundsInLocal().getMinY() + 5);
+                    l.setOnMousePressed(click);
+                    drawPane.getChildren().add(l);
+                }
             }
         }
-        drawPane.setScaleX(42 / radius);
-        drawPane.setScaleY(42 / radius);
     }
 }

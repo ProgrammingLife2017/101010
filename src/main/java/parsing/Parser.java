@@ -3,6 +3,8 @@ package parsing;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
+
+import java.util.ArrayDeque;
 import java.util.HashSet;
 import javafx.util.Pair;
 
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Queue;
 
 
 /**
@@ -142,7 +145,10 @@ public class Parser {
                         line = in.readLine();
                     }
                 }
-                setCoords(graph.getNode(0), new HashSet<Node>(), new Pair<>(503.0, 291.0), graph, true, 0);
+                for (int i = 0; i < graph.getSize(); i++) {
+                    graph.getNode(i).setInDegree(graph.getNode(i).getIncomingEdges().length);
+                }
+                kahnAlgorithm(graph);
                 createCache(absoluteFilePath, graph);
             }
         } catch (FileNotFoundException e) {
@@ -157,38 +163,28 @@ public class Parser {
         return graph;
     }
 
-    private void setCoords(Node current, HashSet<Node> visited, Pair<Double, Double> location, NodeGraph graph, boolean direction, int child) {
-        if (!visited.contains(current)) {
-            if (direction) {
-                location = new Pair<>(location.getKey() + 100, location.getValue() + child * 40);
-            } else {
-                location = new Pair<>(location.getKey() - 100, location.getValue() + child * 40);
+    private void kahnAlgorithm(NodeGraph graph) {
+        Queue<Node> q = new ArrayDeque<>();
+        int visited = 0;
+        int x = 503;
+        int y = 291;
+        for (int i = 0; i < graph.getSize(); i++) {
+            if (graph.getNode(i).getIncomingEdges().length == 0)
+                q.add(graph.getNode(i));
+        }
+        while (!q.isEmpty()) {
+            Node current = q.poll();
+            x += 40;
+            current.setX(x);
+            current.setY(y);
+            for (int i : current.getOutgoingEdges()) {
+                System.out.println(i);
+                graph.getNode(i).setInDegree(graph.getNode(i).getInDegree() - 1);
+                if (graph.getNode(i).getInDegree() == 0) {
+                    q.add(graph.getNode(i));
+                }
             }
-            current.setId(Integer.toString(graph.indexOf(current)));
-            current.setX(location.getKey());
-            current.setY(location.getValue());
-
-            visited.add(current);
-            child = 0;
-            for (Integer i : current.getOutgoingEdges()) {
-                if (visited.contains(graph.getNode(i)))
-                    child += 1;
-            }
-            for (Integer i : current.getOutgoingEdges()) {
-                setCoords(graph.getNode(i), visited, location, graph, true, child);
-                if (!visited.contains(graph.getNode(i)))
-                    child += 1;
-            }
-            child = 0;
-            for (Integer i : current.getIncomingEdges()) {
-                if (visited.contains(graph.getNode(i)))
-                    child += 1;
-            }
-            for (Integer i : current.getIncomingEdges()) {
-                setCoords(graph.getNode(i), visited, location, graph, false, child);
-                if (!visited.contains(graph.getNode(i)))
-                    child += 1;
-            }
+            visited++;
         }
     }
 

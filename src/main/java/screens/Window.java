@@ -122,9 +122,9 @@ public class Window extends Application {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null) {
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
+                        graphScene.drawGraph();
                         logger.info("file has been selected");
                     }
-                    graphScene.drawGraph();
                 }
         );
         menu1.getItems().add(item1);

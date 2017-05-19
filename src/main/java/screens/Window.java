@@ -5,10 +5,14 @@ import filesystem.FileSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import logging.Logger;
 import logging.LoggerFactory;
@@ -43,6 +47,8 @@ public class Window extends Application {
      * Window to print information of nodes or edges.
      */
     private static InfoScreen infoScreen = null;
+
+    private static LoadingScreen loadingScreen;
 
         /**
      * Starts the frame.
@@ -86,6 +92,7 @@ public class Window extends Application {
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
         graphScene = new GraphScene();
+        loadingScreen = new LoadingScreen();
     }
 
     /**
@@ -105,6 +112,10 @@ public class Window extends Application {
             infoScreen = new InfoScreen();
         }
         return infoScreen;
+    }
+
+    public static LoadingScreen getLoadingScreen() {
+        return loadingScreen;
     }
 
     /**
@@ -144,16 +155,45 @@ public class Window extends Application {
                     logger.info("console window has been opened");
                 }
         );
-        MenuItem item4 = new MenuItem("Center");
+        MenuItem item4 = new MenuItem("Center from click");
         item4.setOnAction(
                 event -> {
                     graphScene.switchToCenter();
                     logger.info("state has been switched to center");
                 }
         );
+        MenuItem item5 = new MenuItem("Center from text");
+        item5.setOnAction(
+                event -> {
+                    Stage newstage = new Stage();
+                    stage.setTitle("Select the radius");
+                    GridPane box = new GridPane();
+                    TextField textField = new TextField();
+                    TextField textField2 = new TextField();
+                    Button btn = new Button("Submit");
+                    btn.setOnAction(
+                            event2 -> {
+                                Window.getInfoScreen().getTextArea().appendText("Node id: " + textField.getText() + "\n");
+                                Window.getInfoScreen().getTextArea().appendText("Radius: " + textField2.getText() + "\n");
+                                graphScene.switchToInfo();
+                                newstage.close();
+                            }
+                    );
+                    box.add(new Label("Node Id:"), 1, 1);
+                    box.add(textField, 1, 2, 3 , 1);
+                    box.add(new Label("Radius:"), 1, 3);
+                    box.add(textField2, 1, 4, 3, 1);
+                    box.add(btn, 1, 5);
+                    Scene scene = new Scene(box);
+                    newstage.setScene(scene);
+                    newstage.show();
+                    logger.info("state has been switched to centerId");
+                }
+        );
         menu2.getItems().add(item2);
         menu2.getItems().add(item3);
         menu2.getItems().add(item4);
+        menu2.getItems().add(item5);
         menuBar.getMenus().add(menu1);
         menuBar.getMenus().add(menu2);
         return menuBar;

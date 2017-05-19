@@ -7,7 +7,6 @@
     <groupId>1</groupId>
     <artifactId>1</artifactId>
     <version>1.0-SNAPSHOT</version>
-<<<<<<< HEAD
 	<build>
 		<plugins>
 			<plugin>
@@ -21,14 +20,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-=======
-	<dependencies>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.0.0-M2</version>
-		</dependency>
->>>>>>> VisualizeGraphs
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -40,27 +31,9 @@
 			<version>1.10.19</version>
 		</dependency>
 		<dependency>
-<<<<<<< HEAD
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<version>5.0.0-M4</version>
-=======
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.195</version>
->>>>>>> VisualizeGraphs
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<configuration>
-				<source>1.8</source>
-				<target>1.8</target>
-			</configuration>
-		</plugin>
-	</plugins>
-</build>
 </project>

@@ -104,21 +104,10 @@ import java.util.Set;
         }
     }
 
-//    public void switchHandler(INodeHandler handler) {
-//        if (handler == radius) {
-//            state = info;
-//        } else {
-//            state = radius;
-//        }
-//    }
-
-    public void switchToCenter() {
-        state = center;
-    }
+    public void switchToCenter() { state = center; }
 
     public void switchToInfo() {
         state = info;
     }
 
-   // public INodeHandler getState() { return state; }
 }

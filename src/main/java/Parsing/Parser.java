@@ -3,6 +3,8 @@ package parsing;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
+import screens.LoadingScreen;
+import screens.Window;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -41,6 +43,7 @@ public class Parser {
         return instance;
     }
 
+
     /**
      * Parses the data of the inputted file.
      * @param file The name of the file.
@@ -58,10 +61,16 @@ public class Parser {
      * @return The graph created from the .gfa file.
      */
     private NodeGraph parse(final File file, NodeGraph graph) {
+        LoadingScreen loadingScreen = Window.getLoadingScreen();
+        loadingScreen.setPercentage(0.0);
+        Window.getLoadingScreen().show();
+        long size = file.length();
+        System.out.println(size);
         try {
             BufferedReader in = new BufferedReader(
                     new FileReader(file));
             String line = in.readLine();
+
             boolean newCache = true;
             line = line.substring(line.indexOf("\t") + 1);
             line = line.replaceAll(":", "");
@@ -105,10 +114,14 @@ public class Parser {
                     }
                     Node temp = new Node(length, outgoing, ingoing);
                     graph.addNodeCache(i, temp);
+                    loadingScreen.setPercentage(((double) i + 1) / (double) graphSize);
                 }
+                in2.close();
+                loadingScreen.close();
             }
 
             if (newCache) {
+
                 while (line != null) {
                     if (line.startsWith("S")) {
                         int id;
@@ -137,6 +150,7 @@ public class Parser {
                 }
                 createCache(cacheName, graph);
             }
+            in.close();
         } catch (FileNotFoundException e) {
             System.out.println("Wrong file Destination");
             e.printStackTrace();
@@ -190,7 +204,6 @@ public class Parser {
                     writer.write("" + tempList[j]);
                     writer.newLine();
                 }
-
             }
             writer.close();
         } catch (IOException e) {

@@ -16,7 +16,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import parsing.Parser;
 
 import java.io.File;
@@ -141,13 +140,8 @@ public class Controller {
 
     /**
      * The recursive method used to draw all nodes within the radius from the center node.
-     * @param visited Set of visited nodes we do not need to visit again.
-     * @param current The current node we want to draw.
+     * @param center The current node we want to draw.
      * @param radius The maximum depth we want to go.
-     * @param depth The current depth we are on.
-     * @param location The current location we are drawing on.
-     * @param direction True if we went from parent to child and false visa versa.
-     * @param child Child counter.
      */
     private void drawGraphUtil(Node center, int radius) {
         double x = center.getX();

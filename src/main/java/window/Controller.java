@@ -12,16 +12,23 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
+
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+
+import javafx.scene.layout.Pane;
+import javafx.event.EventHandler;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import java.io.File;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import parsing.Parser;
-
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -59,8 +66,8 @@ public class Controller {
      */
     private EventHandler<MouseEvent> click = event -> {
         if (event.getSource() instanceof Rectangle) {
-            DrawNode rect = (DrawNode) (event.getSource());
-            console.appendText(NodeGraph.getCurrentInstance().getSegment(rect.getIndex()) + "\n");
+            DrawNode node = (DrawNode) (event.getSource());
+            console.appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
         } else if (event.getSource() instanceof Line) {
             Line l = (Line) (event.getSource());
             String edgeNodes = l.getId();
@@ -79,6 +86,7 @@ public class Controller {
         final Button openButton = new Button("Open");
         File file = FileSelector.showOpenDialog(stage);
         if (file != null) {
+            drawPane.getChildren().clear();
             NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
         }
     }
@@ -131,7 +139,6 @@ public class Controller {
      */
     @FXML
     public void drawGraph() {
-        drawPane.getChildren().clear();
         drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 200);
     }
 
@@ -148,22 +155,22 @@ public class Controller {
                 NodeGraph.getCurrentInstance().setMaxX(current.getX() - 543);
             }
             if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
-                DrawNode newRect = new DrawNode(i);
-                newRect.setId(Integer.toString(i));
-                newRect.setOnMousePressed(click);
-                newRect.setX(current.getX() - x + 503);
-                newRect.setY(current.getY());
-                newRect.setWidth(20);
-                newRect.setHeight(10);
-                drawPane.getChildren().add(newRect);
+                DrawNode newNode = new DrawNode(i);
+                newNode.setId(Integer.toString(i));
+                newNode.setOnMousePressed(click);
+                newNode.setX(current.getX() - x + 503);
+                newNode.setY(current.getY());
+                newNode.setWidth(20);
+                newNode.setHeight(10);
+                drawPane.getChildren().add(newNode);
                 for (Integer j: current.getOutgoingEdges()) {
                     Node out = NodeGraph.getCurrentInstance().getNode(j);
                     Line l = new Line();
                     l.setId(i + "-" + j);
                     l.setStrokeWidth(2);
-                    l.setStartX(newRect.getBoundsInLocal().getMaxX());
-                    l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX()- x + 503);
+                    l.setStartX(newNode.getBoundsInLocal().getMaxX());
+                    l.setStartY(newNode.getBoundsInLocal().getMinY() + 5);
+                    l.setEndX(out.getX() - x + 503);
                     l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
                     drawPane.getChildren().add(l);
@@ -178,7 +185,6 @@ public class Controller {
         Rectangle position = new Rectangle(5, 10);
         position.setFill(Color.RED);
         double relPos = x / max * scroll.getWidth() + 5;
-        System.out.println(x / max);
         position.setX(relPos);
         position.setY(drawPane.getHeight() - 15);
         drawPane.getChildren().add(position);

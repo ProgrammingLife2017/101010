@@ -138,7 +138,7 @@ public class NodeGraph {
         return -1;
     }
 
-    /**
+     /**
      * Returns the amount of nodes.
      * @return the size of the graph.
      */

@@ -15,9 +15,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+
 import java.util.ArrayDeque;
 import java.util.Queue;
-
 
 /**
  * Created by 101010.
@@ -31,7 +31,7 @@ public class Parser {
     /**
      * Constructor of the parser.
      */
-    protected Parser() { }
+    private Parser() { }
 
     /**
      * Getter for the Singleton parser.
@@ -44,12 +44,13 @@ public class Parser {
         return instance;
     }
 
+
     /**
      * Parses the data of the inputted file.
      * @param file The name of the file.
      * @return The graph created from the .gfa file.
      */
-    public NodeGraph parse(final File file) {
+    public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
 
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
@@ -80,6 +81,8 @@ public class Parser {
             line = line.replaceAll(":", "");
 
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
+
+            graph.setSegmentDB(new SegmentDB(absoluteFilePath + "Segments.txt"));
             File segments = new File(absoluteFilePath + "Segments.txt");
 
             segments.createNewFile();
@@ -124,15 +127,12 @@ public class Parser {
             System.out.println("Error while reading file");
             e.printStackTrace();
         }
+
+
         return graph;
     }
 
-    /**
-     * Parses from a cached file.
-     * @param graph The NodeGraph the data is parsed into.
-     * @param cache The file the cache is read from.
-     * @return A NodeGraph containing the data from the cache.
-     */
+
     public NodeGraph parseCache(NodeGraph graph, File cache) {
         try {
             BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
@@ -164,6 +164,7 @@ public class Parser {
         }
         return graph;
     }
+
 
     /**
      * Uses Kahn's Algorithm to determine the coordinates of nodes.

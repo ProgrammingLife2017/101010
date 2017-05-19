@@ -1,11 +1,10 @@
 package parsing;
 
+import datastructure.Node;
+import datastructure.NodeGraph;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-
-import datastructure.Node;
-import datastructure.NodeGraph;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

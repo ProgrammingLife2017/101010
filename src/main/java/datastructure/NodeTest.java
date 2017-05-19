@@ -36,7 +36,7 @@ class NodeTest {
     void getLength() {
         assertEquals(0, node.getLength());
     }
-
+    
     /**
      * Check if a new node has no outgoing edges.
      */
@@ -69,3 +69,4 @@ class NodeTest {
         assertFalse(node.equals(null));
     }
 }
+

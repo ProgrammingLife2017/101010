@@ -15,6 +15,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -22,8 +23,6 @@ import parsing.Parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Implementation of the controller.
@@ -59,7 +58,6 @@ public class Controller {
      * Event handler for when a node or edge is clicked.
      */
     private EventHandler<MouseEvent> click = event -> {
-
         if (event.getSource() instanceof Rectangle) {
             DrawNode rect = (DrawNode) (event.getSource());
             console.appendText(NodeGraph.getCurrentInstance().getSegment(rect.getIndex()) + "\n");
@@ -107,6 +105,7 @@ public class Controller {
             }
             stage.setScene(new Scene(root, 1600, 900));
             stage.show();
+                stage.setResizable(false);
             }
         }
     }
@@ -133,27 +132,26 @@ public class Controller {
     @FXML
     public void drawGraph() {
         drawPane.getChildren().clear();
-        Set<Node> visited = new HashSet<>();
-        int depth = 0;
-
         drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 200);
     }
 
     /**
      * The recursive method used to draw all nodes within the radius from the center node.
-     * @param center The current node we want to draw.
+     * @param center The center node round which should be drawn.
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(Node center, int radius) {
         double x = center.getX();
-        Node test = NodeGraph.getCurrentInstance().getNode(1);
         for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
             Node current = NodeGraph.getCurrentInstance().getNode(i);
+            if (current.getX() - 543 > NodeGraph.getCurrentInstance().getMaxX()) {
+                NodeGraph.getCurrentInstance().setMaxX(current.getX() - 543);
+            }
             if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
                 DrawNode newRect = new DrawNode(i);
                 newRect.setId(Integer.toString(i));
                 newRect.setOnMousePressed(click);
-                newRect.setX(current.getX());
+                newRect.setX(current.getX() - x + 503);
                 newRect.setY(current.getY());
                 newRect.setWidth(20);
                 newRect.setHeight(10);
@@ -165,12 +163,24 @@ public class Controller {
                     l.setStrokeWidth(2);
                     l.setStartX(newRect.getBoundsInLocal().getMaxX());
                     l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX());
+                    l.setEndX(out.getX()- x + 503);
                     l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
                     drawPane.getChildren().add(l);
                 }
             }
         }
+        int max = NodeGraph.getCurrentInstance().getMaxX();
+        x = x - 543;
+        Rectangle scroll = new Rectangle(5, drawPane.getHeight() - 15, drawPane.getWidth() - 10, 10);
+        scroll.setFill(Color.GRAY);
+        drawPane.getChildren().add(scroll);
+        Rectangle position = new Rectangle(5, 10);
+        position.setFill(Color.RED);
+        double relPos = x / max * scroll.getWidth() + 5;
+        System.out.println(x / max);
+        position.setX(relPos);
+        position.setY(drawPane.getHeight() - 15);
+        drawPane.getChildren().add(position);
     }
 }

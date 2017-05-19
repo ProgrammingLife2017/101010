@@ -54,7 +54,7 @@ public class Parser {
         NodeGraph graph = new NodeGraph();
 
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
-
+        graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
 
         if (cache.exists()) {
@@ -80,8 +80,6 @@ public class Parser {
             line = line.replaceAll(":", "");
 
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
-
-            graph.setSegmentDB(new SegmentDB(absoluteFilePath + "Segments.txt"));
             File segments = new File(absoluteFilePath + "Segments.txt");
             segments.createNewFile();
 
@@ -130,7 +128,12 @@ public class Parser {
         return graph;
     }
 
-
+    /**
+     * Parses from a cached file.
+     * @param graph The NodeGraph the data is parsed into.
+     * @param cache The file the cache is read from.
+     * @return A NodeGraph containing the data from the cache.
+     */
     public NodeGraph parseCache(NodeGraph graph, File cache) {
         try {
             BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
@@ -163,19 +166,25 @@ public class Parser {
         return graph;
     }
 
+    /**
+     * Uses Kahn's Algorithm to determine the coordinates of nodes.
+     * @param graph The NodeGraph for which the coordinates of nodes are computed.
+     */
     private void kahnAlgorithm(NodeGraph graph) {
         Queue<Node> q = new ArrayDeque<>();
         int x = 503;
         int y = 291;
         int child = 0;
         for (int i = 0; i < graph.getSize(); i++) {
-            if (graph.getNode(i).getIncomingEdges().length == 0)
+            if (graph.getNode(i).getIncomingEdges().length == 0) {
                 q.add(graph.getNode(i));
+            }
         }
         while (!q.isEmpty()) {
             Node current = q.poll();
-            if (current.getChild() == 0)
+            if (current.getChild() == 0) {
                 x += 40;
+            }
             y = 291 + 40 * current.getChild();
             current.setX(x);
             current.setY(y);

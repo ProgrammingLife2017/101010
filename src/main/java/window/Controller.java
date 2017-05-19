@@ -59,7 +59,7 @@ public class Controller {
      */
     private EventHandler<MouseEvent> click = event -> {
         if (event.getSource() instanceof Rectangle) {
-            DrawNode rect = (DrawNode) (event.getSource());
+            DrawNode node = (DrawNode) (event.getSource());
             console.appendText(NodeGraph.getCurrentInstance().getSegment(rect.getIndex()) + "\n");
         } else if (event.getSource() instanceof Line) {
             Line l = (Line) (event.getSource());
@@ -148,22 +148,22 @@ public class Controller {
                 NodeGraph.getCurrentInstance().setMaxX(current.getX() - 543);
             }
             if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
-                DrawNode newRect = new DrawNode(i);
-                newRect.setId(Integer.toString(i));
-                newRect.setOnMousePressed(click);
-                newRect.setX(current.getX() - x + 503);
-                newRect.setY(current.getY());
-                newRect.setWidth(20);
-                newRect.setHeight(10);
-                drawPane.getChildren().add(newRect);
+                DrawNode newNode = new DrawNode(i);
+                newNode.setId(Integer.toString(i));
+                newNode.setOnMousePressed(click);
+                newNode.setX(current.getX() - x + 503);
+                newNode.setY(current.getY());
+                newNode.setWidth(20);
+                newNode.setHeight(10);
+                drawPane.getChildren().add(newNode);
                 for (Integer j: current.getOutgoingEdges()) {
                     Node out = NodeGraph.getCurrentInstance().getNode(j);
                     Line l = new Line();
                     l.setId(i + "-" + j);
                     l.setStrokeWidth(2);
-                    l.setStartX(newRect.getBoundsInLocal().getMaxX());
-                    l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX()- x + 503);
+                    l.setStartX(newNode.getBoundsInLocal().getMaxX());
+                    l.setStartY(newNode.getBoundsInLocal().getMinY() + 5);
+                    l.setEndX(out.getX() - x + 503);
                     l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
                     drawPane.getChildren().add(l);

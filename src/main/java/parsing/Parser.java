@@ -124,8 +124,6 @@ public class Parser {
             System.out.println("Error while reading file");
             e.printStackTrace();
         }
-
-
         return graph;
     }
 
@@ -234,7 +232,6 @@ public class Parser {
                     writer.write("" + tempList[j]);
                     writer.newLine();
                 }
-
             }
             writer.close();
         } catch (IOException e) {

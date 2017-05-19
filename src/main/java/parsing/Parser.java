@@ -53,7 +53,7 @@ public class Parser {
         NodeGraph graph = new NodeGraph();
 
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
-
+        graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
 
         if (cache.exists()) {
@@ -80,8 +80,6 @@ public class Parser {
             line = line.replaceAll(":", "");
 
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
-
-            graph.setSegmentDB(new SegmentDB(absoluteFilePath + "Segments.txt"));
             File segments = new File(absoluteFilePath + "Segments.txt");
 
             segments.createNewFile();

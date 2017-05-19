@@ -17,11 +17,22 @@ public class NodeGraph {
     private SegmentDB segments;
 
     /**
+     * Instance of the current graph.
+     */
+    private static NodeGraph currentNodeGraph;
+
+    /**
+     * The largest assigned x-coordinate in the graph.
+     */
+    private int maxX;
+
+    /**
      * Empty constructor for NodeGraph.
      */
     public NodeGraph() {
         this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
+        this.maxX = 0;
     }
 
     /**
@@ -34,6 +45,7 @@ public class NodeGraph {
     public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments) {
         this.nodes = nodes;
         this.segments = segments;
+        this.maxX = 0;
     }
 
     /**
@@ -97,6 +109,36 @@ public class NodeGraph {
     }
 
     /**
+     * Getter for the instance of this graph.
+     * @return The graph we are workig with at this moment.
+     */
+    public static NodeGraph getCurrentInstance() {
+        return currentNodeGraph;
+    }
+
+    /**
+     * Setter for the current instance of graph.
+     * @param g the graph we want to be the current graph.
+     */
+    public static void setCurrentInstance(NodeGraph g) {
+        currentNodeGraph = g;
+    }
+
+    /**
+     * Returns the index of a node.
+     * @param n the node we want the index of.
+     * @return the index of this node.
+     */
+    public int indexOf(Node n) {
+        for (int i = 0; i < this.nodes.size(); i++) {
+            if (this.nodes.get(i) == n) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+     /**
      * Returns the amount of nodes.
      * @return the size of the graph.
      */
@@ -110,5 +152,27 @@ public class NodeGraph {
      */
     public void setSegmentDB(SegmentDB db) {
         segments = db;
+    }
+
+    /**
+     * Getter for the list of nodes.
+     * @return the list of all nodes in the graph.
+     */
+    public ArrayList<Node> getNodes() { return this.nodes; }
+
+    /**
+     * Getter for the maximum x-coordinate.
+     * @return the maximum x-coordinate found in the graph.
+     */
+    public int getMaxX() {
+        return this.maxX;
+    }
+
+    /**
+     * Setter for the maximum x-coordinate.
+     * @param newX the new maximum x-coordinate.
+     */
+    public void setMaxX(int newX) {
+        this.maxX = newX;
     }
 }

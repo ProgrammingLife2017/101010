@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+
 /**
  * Implementation of the application.
  */
@@ -13,7 +14,7 @@ public class App extends javafx.application.Application {
 
     /**
      * Method that starts the application.
-     * @param args the arguments of the main.
+     * @param args Parameters to run this application with.
      */
     public static void main(final String[] args) {
         launch(args);

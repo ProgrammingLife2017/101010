@@ -69,4 +69,3 @@ class NodeTest {
         assertFalse(node.equals(null));
     }
 }
-

@@ -1,0 +1,12 @@
+2017-05-17 15:02:31.087 | ORIGIN: 'logging.LoggerFactory' | INFO: 'a new logger factory has been created'
+Pending logging tasks: 1
+Pending logging tasks: 0
+2017-05-17 15:02:31.242 | ORIGIN: 'logging.LoggerFactory' | INFO: 'a new logger has been created'
+2017-05-17 15:02:31.523 | ORIGIN: 'screens.Window' | INFO: 'the main application has started'
+Pending logging tasks: 0
+2017-05-17 15:02:33.567 | ORIGIN: 'screens.Window' | INFO: 'a new window has been opened'
+Pending logging tasks: 0
+2017-05-17 15:02:38.084 | ORIGIN: 'screens.Window' | INFO: 'a new window has been opened'
+Pending logging tasks: 0
+Pending logging tasks: 0
+2017-05-17 15:02:40.896 | ORIGIN: 'screens.Window' | INFO: 'a new window has been opened'

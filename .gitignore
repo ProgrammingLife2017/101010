@@ -5,3 +5,6 @@ target/maven-status/
 out/
 Output/
 *.iml
+
+#Generated files
+*.log

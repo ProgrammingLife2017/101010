@@ -225,25 +225,6 @@ public class Node {
     }
 
     /**
-     * Converts this Node to a hashcode.
-     * @return The hashcode of this node.
-     */
-//    @Override
-//    public int hashCode() {
-//        int res = 0;
-//
-//        for (int i = 0; i < from.length; i++) {
-//            res += from[i];
-//        }
-//
-//        for (int j = 0; j < to.length; j++) {
-//            res += to[j];
-//        }
-//
-//        return res + length;
-//    }
-
-    /**
      * Sets the incoming edges.
      * @param incoming The incoming edges.
      */

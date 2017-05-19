@@ -1,9 +1,11 @@
 package parsing;
 
-import datastructure.Node;
-import datastructure.NodeGraph;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
+
+import datastructure.Node;
+import datastructure.NodeGraph;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,7 +23,12 @@ public class ParserTest {
     @org.junit.Test
     public void parse() {
         Parser parser = Parser.getInstance();
-        NodeGraph data = parser.parse(new File("/test2.gfa"));
+
+        String workingDirectory = System.getProperty("user.dir");
+
+        String absoluteFilePath = workingDirectory + File.separator;
+        NodeGraph data = parser.parse(new File(absoluteFilePath + "/test/test2.gfa"));
+
         Node node = data.getNode(3);
         assertEquals(4, node.getOutgoingEdges()[0]);
 

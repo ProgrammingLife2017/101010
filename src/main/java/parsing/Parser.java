@@ -179,13 +179,15 @@ public class Parser {
         int y = 291;
         int child = 0;
         for (int i = 0; i < graph.getSize(); i++) {
-            if (graph.getNode(i).getIncomingEdges().length == 0)
+            if (graph.getNode(i).getIncomingEdges().length == 0) {
                 q.add(graph.getNode(i));
+            }
         }
         while (!q.isEmpty()) {
             Node current = q.poll();
-            if (current.getChild() == 0)
+            if (current.getChild() == 0) {
                 x += 40;
+            }
             y = 291 + 40 * current.getChild();
             current.setX(x);
             current.setY(y);

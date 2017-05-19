@@ -42,8 +42,6 @@ public class Controller {
      */
     @FXML private Pane drawPane;
 
-    @FXML private Pane mainPane;
-
     /**
      * Button when clicked allows the user to browse to gfa file in directory.
      */
@@ -63,7 +61,6 @@ public class Controller {
      * Event handler for when a node or edge is clicked.
      */
     private EventHandler<MouseEvent> click = event -> {
-
         if (event.getSource() instanceof Rectangle) {
             DrawNode rect = (DrawNode) (event.getSource());
             console.appendText(NodeGraph.getCurrentInstance().getSegment(rect.getIndex()) + "\n");
@@ -111,6 +108,7 @@ public class Controller {
             }
             stage.setScene(new Scene(root, 1600, 900));
             stage.show();
+                stage.setResizable(false);
             }
         }
     }
@@ -137,21 +135,13 @@ public class Controller {
     @FXML
     public void drawGraph() {
         drawPane.getChildren().clear();
-        Set<Node> visited = new HashSet<>();
-        int depth = 0;
-
         drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 200);
     }
 
     /**
      * The recursive method used to draw all nodes within the radius from the center node.
-     * @param visited Set of visited nodes we do not need to visit again.
-     * @param current The current node we want to draw.
+     * @param center The center node round which should be drawn.
      * @param radius The maximum depth we want to go.
-     * @param depth The current depth we are on.
-     * @param location The current location we are drawing on.
-     * @param direction True if we went from parent to child and false visa versa.
-     * @param child Child counter.
      */
     private void drawGraphUtil(Node center, int radius) {
         double x = center.getX();

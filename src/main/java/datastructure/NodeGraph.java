@@ -21,6 +21,9 @@ public class NodeGraph {
      */
     private static NodeGraph currentNodeGraph;
 
+    /**
+     * The largest assigned x-coordinate in the graph.
+     */
     private int maxX;
 
     /**
@@ -28,12 +31,6 @@ public class NodeGraph {
      */
     public NodeGraph() {
         this.nodes = new ArrayList<>(0);
-        segments = new SegmentDB();
-        this.maxX = 0;
-    }
-
-    public NodeGraph(int size) {
-        this.nodes = new ArrayList<>(size);
         segments = new SegmentDB();
         this.maxX = 0;
     }
@@ -156,12 +153,24 @@ public class NodeGraph {
         segments = db;
     }
 
+    /**
+     * Getter for the list of nodes.
+     * @return the list of all nodes in the graph.
+     */
     public ArrayList<Node> getNodes() { return this.nodes; }
 
+    /**
+     * Getter for the maximum x-coordinate.
+     * @return the maximum x-coordinate found in the graph.
+     */
     public int getMaxX() {
         return this.maxX;
     }
 
+    /**
+     * Setter for the maximum x-coordinate.
+     * @param newX the new maximum x-coordinate.
+     */
     public void setMaxX(int newX) {
         this.maxX = newX;
     }

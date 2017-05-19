@@ -36,8 +36,7 @@ class NodeTest {
     void getLength() {
         assertEquals(0, node.getLength());
     }
-
-    @org.junit.Test
+    
     /**
      * Check if a new node has no outgoing edges.
      */

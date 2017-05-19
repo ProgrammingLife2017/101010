@@ -1,8 +1,8 @@
 package screens;
 
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
@@ -14,8 +14,8 @@ public class LoadingScreen extends Stage{
 
     public LoadingScreen() {
         progressBar = new ProgressBar();
-        BorderPane pane = new BorderPane();
-        pane.setCenter(progressBar);
+        Group pane = new Group();
+        pane.getChildren().add(progressBar);
         Scene scene = new Scene(pane, 200, 100);
         setTitle("Loading bar");
         setScene(scene);

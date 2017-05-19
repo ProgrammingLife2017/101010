@@ -3,7 +3,6 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -77,7 +76,7 @@ public class Window extends Application {
 
         //Adding scene to the stage
         stage.setScene(scene);
-        stage.setOnCloseRequest(e -> Platform.exit());
+        stage.setResizable(false);
 
         //Displaying the contents of the stage
         stage.show();

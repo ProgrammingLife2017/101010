@@ -21,17 +21,21 @@ public class NodeGraph {
      */
     private static NodeGraph currentNodeGraph;
 
+    private int maxX;
+
     /**
      * Empty constructor for NodeGraph.
      */
     public NodeGraph() {
         this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
+        this.maxX = 0;
     }
 
     public NodeGraph(int size) {
         this.nodes = new ArrayList<>(size);
         segments = new SegmentDB();
+        this.maxX = 0;
     }
 
     /**
@@ -44,6 +48,7 @@ public class NodeGraph {
     public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments) {
         this.nodes = nodes;
         this.segments = segments;
+        this.maxX = 0;
     }
 
     /**
@@ -152,4 +157,12 @@ public class NodeGraph {
     }
 
     public ArrayList<Node> getNodes() { return this.nodes; }
+
+    public int getMaxX() {
+        return this.maxX;
+    }
+
+    public void setMaxX(int newX) {
+        this.maxX = newX;
+    }
 }

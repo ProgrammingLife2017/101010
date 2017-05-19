@@ -131,7 +131,12 @@ public class Parser {
         return graph;
     }
 
-
+    /**
+     * Parses from a cached file.
+     * @param graph The NodeGraph the data is parsed into.
+     * @param cache The file the cache is read from.
+     * @return A NodeGraph containing the data from the cache.
+     */
     public NodeGraph parseCache(NodeGraph graph, File cache) {
         try {
             BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
@@ -164,6 +169,10 @@ public class Parser {
         return graph;
     }
 
+    /**
+     * Uses Kahn's Algorithm to determine the coordinates of nodes.
+     * @param graph The NodeGraph for which the coordinates of nodes are computed.
+     */
     private void kahnAlgorithm(NodeGraph graph) {
         Queue<Node> q = new ArrayDeque<>();
         int x = 503;

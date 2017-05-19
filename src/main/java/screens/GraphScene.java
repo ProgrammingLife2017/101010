@@ -8,9 +8,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Implementation of the window that handles graph visualization.
  */
@@ -42,12 +39,9 @@ import java.util.Set;
          state = info;
      }
 
-    public void drawGraph() {
+    public void drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-        Set<Node> visited = new HashSet<>();
-        int depth = 0;
-
-        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 200);
+        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
     }
 
     /**
@@ -57,7 +51,7 @@ import java.util.Set;
      */
     private void drawGraphUtil(Node center, int radius) {
         double x = center.getX();
-        Node test = NodeGraph.getCurrentInstance().getNode(1);
+        //Node test = NodeGraph.getCurrentInstance().getNode(1);
         for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
             Node current = NodeGraph.getCurrentInstance().getNode(i);
             if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {

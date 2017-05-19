@@ -132,7 +132,7 @@ public class Window extends Application {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null) {
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-                        graphScene.drawGraph();
+                        graphScene.drawGraph(0, 200);
                         logger.info("file has been selected");
                     }
                 }
@@ -172,8 +172,7 @@ public class Window extends Application {
                     Button btn = new Button("Submit");
                     btn.setOnAction(
                             event2 -> {
-                                Window.getInfoScreen().getTextArea().appendText("Node id: " + textField.getText() + "\n");
-                                Window.getInfoScreen().getTextArea().appendText("Radius: " + textField2.getText() + "\n");
+                                graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
                                 graphScene.switchToInfo();
                                 newstage.close();
                             }

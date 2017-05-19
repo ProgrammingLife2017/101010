@@ -27,8 +27,7 @@ public class NodeCenter implements INodeHandler {
         Button btn = new Button("Submit");
         btn.setOnAction(
                 event -> {
-                    Window.getInfoScreen().getTextArea().appendText("Node id: " + node.getId() + "\n");
-                    Window.getInfoScreen().getTextArea().appendText("Radius: " + textField.getText() + "\n");
+                    graphScene.drawGraph(node.getIndex(), Integer.parseInt(textField.getText()));
                     graphScene.switchToInfo();
                     stage.close();
                 }

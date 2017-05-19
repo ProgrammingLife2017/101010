@@ -1,5 +1,6 @@
 package window;
 
+import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.application.Platform;
@@ -15,6 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import parsing.Parser;
 
@@ -58,13 +60,12 @@ public class Controller {
      */
     private EventHandler<MouseEvent> click = event -> {
 
-        if (event.getSource() instanceof Node) {
-            Node rect = (Node) (event.getSource());
-            console.appendText(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().indexOf(rect)) + "\n");
+        if (event.getSource() instanceof Rectangle) {
+            DrawNode rect = (DrawNode) (event.getSource());
+            console.appendText(NodeGraph.getCurrentInstance().getSegment(rect.getIndex()) + "\n");
         } else if (event.getSource() instanceof Line) {
             Line l = (Line) (event.getSource());
             String edgeNodes = l.getId();
-            System.out.println(edgeNodes);
             console.appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
         }
     };
@@ -135,7 +136,7 @@ public class Controller {
         Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 500);
+        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 200);
     }
 
     /**
@@ -145,22 +146,27 @@ public class Controller {
      */
     private void drawGraphUtil(Node center, int radius) {
         double x = center.getX();
-        double y = center.getY();
+        Node test = NodeGraph.getCurrentInstance().getNode(1);
         for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
             Node current = NodeGraph.getCurrentInstance().getNode(i);
             if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
-                current.setId(Integer.toString(i));
-                current.setOnMousePressed(click);
-                current.setWidth(20);
-                current.setHeight(10);
-                drawPane.getChildren().add(current);
+                DrawNode newRect = new DrawNode(i);
+                newRect.setId(Integer.toString(i));
+                newRect.setOnMousePressed(click);
+                newRect.setX(current.getX());
+                newRect.setY(current.getY());
+                newRect.setWidth(20);
+                newRect.setHeight(10);
+                drawPane.getChildren().add(newRect);
                 for (Integer j: current.getOutgoingEdges()) {
+                    Node out = NodeGraph.getCurrentInstance().getNode(j);
                     Line l = new Line();
                     l.setId(i + "-" + j);
-                    l.setStartX(current.getBoundsInLocal().getMaxX());
-                    l.setStartY(current.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(NodeGraph.getCurrentInstance().getNode(j).getBoundsInLocal().getMinX());
-                    l.setEndY(NodeGraph.getCurrentInstance().getNode(j).getBoundsInLocal().getMinY() + 5);
+                    l.setStrokeWidth(2);
+                    l.setStartX(newRect.getBoundsInLocal().getMaxX());
+                    l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
+                    l.setEndX(out.getX());
+                    l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
                     drawPane.getChildren().add(l);
                 }

@@ -1,11 +1,11 @@
 package screens;
 
-import datastructure.Node;
+import datastructure.DrawNode;
 
 /**
  *
  */
 public interface INodeHandler {
 
-    public void handle(Node node);
+    void handle(DrawNode node);
 }

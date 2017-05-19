@@ -1,6 +1,6 @@
 package screens;
 
-import datastructure.Node;
+import datastructure.DrawNode;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -19,7 +19,7 @@ public class NodeCenter implements INodeHandler {
 
     }
 
-    public void handle(Node node) {
+    public void handle(DrawNode node) {
         Stage stage = new Stage();
         stage.setTitle("Select the radius");
         VBox box = new VBox();

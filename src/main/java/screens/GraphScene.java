@@ -1,12 +1,12 @@
 package screens;
 
+import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +24,8 @@ import java.util.Set;
      */
      private EventHandler<MouseEvent> click = event -> {
 
-        if (event.getSource() instanceof Node) {
-            Node rect = (Node) (event.getSource());
+        if (event.getSource() instanceof DrawNode) {
+            DrawNode rect = (DrawNode) (event.getSource());
             state.handle(rect);
         } else if (event.getSource() instanceof Line) {
             Line l = (Line) (event.getSource());
@@ -47,59 +47,40 @@ import java.util.Set;
         Set<Node> visited = new HashSet<>();
         int depth = 0;
 
-        drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(4), 4, depth, new Pair<>((this.getWidth() / 2) - 115, (this.getHeight() / 2)), true, 0);
+        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(0), 200);
     }
 
     /**
      * The recursive method used to draw all nodes within the radius from the center node.
-     * @param visited Set of visited nodes we do not need to visit again.
-     * @param current The current node we want to draw.
+     * @param center The node to take as center.
      * @param radius The maximum depth we want to go.
-     * @param depth The current depth we are on.
-     * @param location The current location we are drawing on.
-     * @param direction True if we went from parent to child and false visa versa.
-     * @param child Child counter.
      */
-    private void drawGraphUtil(Set<Node> visited, Node current, int radius, int depth, Pair<Double, Double> location, boolean direction, int child) {
-        if (depth <= radius && !visited.contains(current)) {
-            if (direction) {
-                location = new Pair<>(location.getKey() + 100, location.getValue() + child * 40);
-            } else {
-                location = new Pair<>(location.getKey() - 100, location.getValue() + child * 40);
-            }
-            NodeGraph ng = NodeGraph.getCurrentInstance();
-            System.out.println(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)));
-            current.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)));
-            current.setOnMousePressed(click);
-            current.setX(location.getKey());
-            current.setY(location.getValue());
-            current.setWidth(50);
-            current.setHeight(10);
-
-            this.getChildren().add(current);
-            visited.add(current);
-
-            this.applyCss();
-            this.layout();
-            child = 0;
-            for (Integer i : current.getOutgoingEdges()) {
-                drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, true, child);
-                if (depth != radius) {
+    private void drawGraphUtil(Node center, int radius) {
+        double x = center.getX();
+        Node test = NodeGraph.getCurrentInstance().getNode(1);
+        for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
+            Node current = NodeGraph.getCurrentInstance().getNode(i);
+            if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
+                DrawNode newRect = new DrawNode(i);
+                newRect.setId(Integer.toString(i));
+                newRect.setOnMousePressed(click);
+                newRect.setX(current.getX());
+                newRect.setY(current.getY());
+                newRect.setWidth(20);
+                newRect.setHeight(10);
+                this.getChildren().add(newRect);
+                for (Integer j: current.getOutgoingEdges()) {
+                    Node out = NodeGraph.getCurrentInstance().getNode(j);
                     Line l = new Line();
+                    l.setId(i + "-" + j);
+                    l.setStrokeWidth(2);
+                    l.setStartX(newRect.getBoundsInLocal().getMaxX());
+                    l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
+                    l.setEndX(out.getX());
+                    l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
-                    l.setId(Integer.toString(NodeGraph.getCurrentInstance().indexOf(current)) + "-" + Integer.toString(i));
-                    l.setStartX(location.getKey() + 25);
-                    l.setStartY(location.getValue() + 5);
-                    l.setEndX(this.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinX() + 25);
-                    l.setEndY(this.lookup("#" + Integer.toString(i)).getBoundsInLocal().getMinY() + 5);
                     this.getChildren().add(l);
-                    child += 1;
                 }
-            }
-            child = 0;
-            for (Integer i : current.getIncomingEdges()) {
-                drawGraphUtil(visited, NodeGraph.getCurrentInstance().getNode(i), radius, depth + 1, location, false, child);
-                child += 1;
             }
         }
     }

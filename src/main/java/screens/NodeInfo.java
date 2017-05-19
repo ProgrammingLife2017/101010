@@ -1,6 +1,6 @@
 package screens;
 
-import datastructure.Node;
+import datastructure.DrawNode;
 import datastructure.NodeGraph;
 
 /**
@@ -13,7 +13,7 @@ public class NodeInfo implements INodeHandler {
         this.scene = sc;
     }
 
-    public void handle(Node node) {
-        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(NodeGraph.getCurrentInstance().indexOf(node)) + "\n");
+    public void handle(DrawNode node) {
+        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
     }
 }

@@ -60,7 +60,7 @@ public class Controller {
     private EventHandler<MouseEvent> click = event -> {
         if (event.getSource() instanceof Rectangle) {
             DrawNode node = (DrawNode) (event.getSource());
-            console.appendText(NodeGraph.getCurrentInstance().getSegment(rect.getIndex()) + "\n");
+            console.appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
         } else if (event.getSource() instanceof Line) {
             Line l = (Line) (event.getSource());
             String edgeNodes = l.getId();

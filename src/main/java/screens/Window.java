@@ -188,12 +188,29 @@ public class Window extends Application {
                     logger.info("state has been switched to centerId");
                 }
         );
+        Menu menu3 = new Menu("Clear");
+        MenuItem item6 = new MenuItem("Info");
+        item6.setOnAction(
+                event -> {
+                    getInfoScreen().getTextArea().clear();
+                    logger.info("info screen has been switched to center");
+                }
+        );
+        MenuItem item7 = new MenuItem("Graph");
+        item7.setOnAction(
+                event -> {
+                    graphScene.drawGraph(0, 200);
+                    logger.info("drawing returned to original");
+                }
+        );
         menu2.getItems().add(item2);
         menu2.getItems().add(item3);
         menu2.getItems().add(item4);
         menu2.getItems().add(item5);
+        menu3.getItems().addAll(item6, item7);
         menuBar.getMenus().add(menu1);
         menuBar.getMenus().add(menu2);
+        menuBar.getMenus().add(menu3);
         return menuBar;
     }
 

@@ -3,6 +3,7 @@ package screens;
 import datastructure.DrawNode;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -21,8 +22,8 @@ public class NodeCenter implements INodeHandler {
 
     public void handle(DrawNode node) {
         Stage stage = new Stage();
-        stage.setTitle("Select the radius");
         VBox box = new VBox();
+        Label label = new Label("Enter radius:");
         TextField textField = new TextField();
         Button btn = new Button("Submit");
         btn.setOnAction(
@@ -32,9 +33,10 @@ public class NodeCenter implements INodeHandler {
                     stage.close();
                 }
         );
-        box.getChildren().addAll(textField, btn);
-        Scene scene = new Scene(box, 70.0, 50.0);
+        box.getChildren().addAll(label, textField, btn);
+        Scene scene = new Scene(box, 100.0, 100.0);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 

@@ -72,6 +72,7 @@ public class Parser {
      * @return The graph created from the .gfa file.
      */
     public NodeGraph parse(final File file, File newCache, NodeGraph graph) {
+
         try {
             BufferedReader in = new BufferedReader(
                     new FileReader(file));
@@ -80,7 +81,10 @@ public class Parser {
             line = line.replaceAll(":", "");
 
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
+
+            graph.setSegmentDB(new SegmentDB(absoluteFilePath + "Segments.txt"));
             File segments = new File(absoluteFilePath + "Segments.txt");
+
             segments.createNewFile();
 
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
@@ -128,12 +132,7 @@ public class Parser {
         return graph;
     }
 
-    /**
-     * Parses from a cached file.
-     * @param graph The NodeGraph the data is parsed into.
-     * @param cache The file the cache is read from.
-     * @return A NodeGraph containing the data from the cache.
-     */
+
     public NodeGraph parseCache(NodeGraph graph, File cache) {
         try {
             BufferedReader in2 = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
@@ -165,6 +164,7 @@ public class Parser {
         }
         return graph;
     }
+
 
     /**
      * Uses Kahn's Algorithm to determine the coordinates of nodes.
@@ -207,13 +207,7 @@ public class Parser {
      */
     private void createCache(String filename, NodeGraph graph) {
         try {
-            String workingDirectory = System.getProperty("user.dir");
-
-            String absoluteFilePath;
-
-            absoluteFilePath = workingDirectory + File.separator + filename;
-
-            File file = new File(absoluteFilePath + ".txt");
+            File file = new File(filename + ".txt");
             int graphSize = graph.getSize();
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);

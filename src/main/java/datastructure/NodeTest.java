@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+
 /**
  * Created by 101010.
  */
@@ -69,4 +70,3 @@ class NodeTest {
         assertFalse(node.equals(null));
     }
 }
-

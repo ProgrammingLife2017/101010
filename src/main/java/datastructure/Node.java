@@ -228,6 +228,7 @@ public class Node {
      * Converts this Node to a hashcode.
      * @return The hashcode of this node.
      */
+<<<<<<< HEAD
 //    @Override
 //    public int hashCode() {
 //        int res = 0;
@@ -242,6 +243,22 @@ public class Node {
 //
 //        return res + length;
 //    }
+=======
+    @Override
+    public int hashCode() {
+        int res = 0;
+
+        for (int i = 0; i < from.length; i++) {
+            res += from[i];
+        }
+
+        for (int j = 0; j < to.length; j++) {
+            res += to[j];
+        }
+
+        return res + length;
+    }
+>>>>>>> master
 
     /**
      * Sets the incoming edges.

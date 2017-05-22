@@ -6,12 +6,19 @@ import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 
 /**
- * Created by Michael on 5/19/2017.
+ *
+ * Implementation of the screen for displaying progress.
  */
-public class LoadingScreen extends Stage{
+public class LoadingScreen extends Stage {
 
+    /**
+     * Progress bar for displaying progress during execution.
+     */
     private final ProgressBar progressBar;
 
+    /**
+     * Constructor.
+     */
     public LoadingScreen() {
         progressBar = new ProgressBar();
         Group pane = new Group();
@@ -21,6 +28,11 @@ public class LoadingScreen extends Stage{
         setScene(scene);
     }
 
+    /**
+     * Sets the number to display on the progress bar.
+     *
+     * @param percentage Number to display.
+     */
     public void setPercentage(double percentage) {
         this.progressBar.setProgress(percentage);
     }

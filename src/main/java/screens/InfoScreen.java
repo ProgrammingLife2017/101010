@@ -10,12 +10,15 @@ import javafx.stage.Stage;
  */
 /*package*/ class InfoScreen extends Stage {
 
+    /**
+     * Text area for printing information.
+     */
     private final TextArea textArea;
 
     /**
      * Constructor.
      */
-    public InfoScreen() {
+    /*package*/ InfoScreen() {
         VBox vbox = new VBox();
         vbox.setMinSize(300f, 600f);
         textArea = new TextArea();
@@ -30,8 +33,12 @@ import javafx.stage.Stage;
         this.setScene(scene);
     }
 
-    public TextArea getTextArea() { return textArea; }
-
-
+    /**
+     * Gets the text area of this object.
+     * @return TextArea object.
+     */
+    public TextArea getTextArea() {
+        return textArea;
+    }
 
 }

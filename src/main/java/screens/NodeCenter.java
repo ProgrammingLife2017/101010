@@ -12,14 +12,23 @@ import javafx.stage.Stage;
  * Implementation of the state that handles click events regarding the center query of selected node.
  */
 public class NodeCenter implements INodeHandler {
+
+    /**
+     * Screen that displays the graph.
+     */
     private GraphScene graphScene;
 
-
+    /**
+     * Constructor.
+     * @param sc Scene for displaying graphs.
+     */
     public NodeCenter(GraphScene sc) {
         this.graphScene = sc;
 
     }
 
+
+    @Override
     public void handle(DrawNode node) {
         Stage stage = new Stage();
         VBox box = new VBox();
@@ -40,7 +49,4 @@ public class NodeCenter implements INodeHandler {
         stage.show();
     }
 
-    public void createStage() {
-
-    }
 }

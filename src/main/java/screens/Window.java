@@ -41,12 +41,19 @@ public class Window extends Application {
      */
     private static Backlog backLog = null;
 
+    /**
+     * Pane used for displaying graphs.
+     */
     private static GraphScene graphScene;
+
     /**
      * Window to print information of nodes or edges.
      */
     private static InfoScreen infoScreen = null;
 
+    /**
+     * Window for showing the progress bar.
+     */
     private static LoadingScreen loadingScreen;
 
         /**
@@ -56,7 +63,7 @@ public class Window extends Application {
      * @throws Exception Thrown when application can't be started.
      */
     @Override
-    public void start(Stage stage) throws Exception{
+    public void start(Stage stage) throws Exception {
         this.setupService();
         backLog = getBackLog();
         BorderPane mainPane = new BorderPane();
@@ -106,6 +113,11 @@ public class Window extends Application {
         return backLog;
     }
 
+    /**
+     * Creates instance of InfoScreen.
+     *
+     * @return InfoScreen object.
+     */
     public static InfoScreen getInfoScreen() {
         if (infoScreen == null) {
             infoScreen = new InfoScreen();
@@ -113,6 +125,11 @@ public class Window extends Application {
         return infoScreen;
     }
 
+    /**
+     * Gets the loading screen window.
+     *
+     * @return LoadingScreen object.
+     */
     public static LoadingScreen getLoadingScreen() {
         return loadingScreen;
     }
@@ -165,7 +182,7 @@ public class Window extends Application {
         item5.setOnAction(
                 event -> {
                     Stage newstage = new Stage();
-                    stage.setTitle("Select the radius");
+                    newstage.setTitle("Select the radius");
                     GridPane box = new GridPane();
                     TextField textField = new TextField();
                     TextField textField2 = new TextField();
@@ -178,7 +195,7 @@ public class Window extends Application {
                             }
                     );
                     box.add(new Label("Node Id:"), 1, 1);
-                    box.add(textField, 1, 2, 3 , 1);
+                    box.add(textField, 1, 2, 3, 1);
                     box.add(new Label("Radius:"), 1, 3);
                     box.add(textField2, 1, 4, 3, 1);
                     box.add(btn, 1, 5);

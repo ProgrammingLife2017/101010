@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Default implementation for FileSystem that handles writing to (log)files/
+ * Default implementation for FileSystem that handles writing to (log)files.
  */
 public final class FileSystem {
 
@@ -23,7 +23,7 @@ public final class FileSystem {
     /**
      * Name of the file where the writer puts the content.
      */
-    public final static String LOGFILE_NAME = "logger.log";
+    public static final String LOGFILE_NAME = "logger.log";
 
     /**
      * Constructor.

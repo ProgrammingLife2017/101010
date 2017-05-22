@@ -1,7 +1,7 @@
 .idea
 GFA-specification.txt
 *.class
-target/maven-status/
+/target/
 out/
 Output/
 *.iml

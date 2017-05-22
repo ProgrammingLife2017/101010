@@ -96,8 +96,8 @@ public final class Logger {
      */
     private String generateMessage(String type, String msg) {
         Date date = new Date();
-        return new Timestamp(date.getTime()) +
-                " | ORIGIN: '" + this.cl.getName() + "' | " + type + ": '" + msg + "'";
+        return new Timestamp(date.getTime())
+                + " | ORIGIN: '" + this.cl.getName() + "' | " + type + ": '" + msg + "'";
     }
 
 }

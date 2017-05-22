@@ -15,7 +15,7 @@ public final class Backlog extends Stage {
     private final TextArea textArea;
 
     /**
-     * Constructor
+     * Backlog window constructor.
      */
     public Backlog() {
         textArea = new TextArea();

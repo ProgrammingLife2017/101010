@@ -63,7 +63,7 @@ public final class FileSelector {
     public static File showOpenDialog(Window ownerWindow) {
         FileSystem fileSystem = new FileSystem();
         logger = new LoggerFactory(fileSystem).createLogger(FileSelector.class);
-        String currentDir = openDirectory();
+        String currentDir = getDirectory();
         if (!currentDir.equals("")) {
             File file = new File(currentDir);
             getInstance().setInitialDirectory(file);

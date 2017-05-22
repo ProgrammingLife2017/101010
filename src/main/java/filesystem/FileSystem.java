@@ -97,4 +97,15 @@ public final class FileSystem {
         }
         return file;
     }
+
+
+    /**
+     * Closes all writers.
+     *
+     * @throws IOException thrown when writer can not be closed.
+     */
+   public void closeWriter() throws IOException {
+        logWriter.close();
+        System.out.println("Writer has been closed");
+   }
 }

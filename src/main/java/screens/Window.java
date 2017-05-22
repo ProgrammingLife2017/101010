@@ -3,6 +3,7 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,12 +14,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import logging.Logger;
 import logging.LoggerFactory;
 import parsing.Parser;
 import window.FileSelector;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Main application.
@@ -84,6 +87,16 @@ public class Window extends Application {
         //Adding scene to the stage
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                try {
+                    Window.loggerFactory.getFileSystem().closeWriter();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //Displaying the contents of the stage
         stage.show();

@@ -39,4 +39,13 @@ public final class LoggerFactory {
         logger.info("a new logger has been created");
         return new Logger(cl, fileSystem);
     }
+
+    /**
+     * FileSystem get method.
+     *
+     * @return FileSystem object.
+     */
+    public FileSystem getFileSystem() {
+        return fileSystem;
+    }
 }

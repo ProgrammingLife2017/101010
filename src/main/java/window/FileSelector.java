@@ -80,7 +80,7 @@ public final class FileSelector {
      * Finds the last used directory from which a file was chosen.
      * @return the path of the directory.
      */
-    private static String openDirectory() {
+    private static String getDirectory() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("directory.txt")));
             String dir = br.readLine();

@@ -57,7 +57,7 @@ class NodeTest {
      * Check if the default constructor is the same as constructing with size 0 integer arrays.
      */
     @org.junit.jupiter.api.Test
-    void equals() {
+    void equalsTrue() {
         assertTrue(node.equals(new Node(0, new int[0], new int[0])));
     }
 
@@ -66,7 +66,7 @@ class NodeTest {
      */
     @org.junit.jupiter.api.Test
     void equalsNull() {
-        assertFalse(node.equals(null));
+        assertFalse(node == null);
     }
 }
 

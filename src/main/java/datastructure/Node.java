@@ -1,5 +1,7 @@
 package datastructure;
 
+import java.util.Arrays;
+
 /**
  * Created by 101010.
  */
@@ -205,23 +207,25 @@ public class Node {
     public boolean equals(final Object other) {
         if (other instanceof Node) {
             Node that = (Node) other;
-            if (this.to.length == that.to.length
-                    && this.from.length == that.from.length
+            if (this.to.equals(that.to)
+                    && this.from.equals(that.from)
                     && this.length == that.length) {
-                for (int i = 0; i < this.to.length; i++) {
-                    if (this.to[i] != that.to[i]) {
-                        return false;
-                    }
-                }
-                for (int j = 0; j < this.from.length; j++) {
-                    if (this.from[j] != that.from[j]) {
-                        return false;
-                    }
-                }
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Generates hashCode of this Node object.
+     * @return The hashCode of this Node object.
+     */
+    @Override
+    public int hashCode() {
+        int result = length;
+        result = 31 * result + Arrays.hashCode(to);
+        result = 31 * result + Arrays.hashCode(from);
+        return result;
     }
 
     /**

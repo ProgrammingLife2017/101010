@@ -2,6 +2,7 @@ package window;
 
 import filesystem.FileSystem;
 import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 import java.io.File;
 import java.io.BufferedReader;
@@ -11,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import javafx.stage.Window;
 import logging.Logger;
 import logging.LoggerFactory;
 

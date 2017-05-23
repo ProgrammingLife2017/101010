@@ -66,7 +66,9 @@ public final class FileSelector {
         String currentDir = getDirectory();
         if (!currentDir.equals("")) {
             File file = new File(currentDir);
-            getInstance().setInitialDirectory(file);
+            if (file.exists()) {
+                getInstance().setInitialDirectory(file);
+            }
         }
         File chosenFile = getInstance().showOpenDialog(ownerWindow);
         logger.info("Selected file: " + chosenFile.getName());

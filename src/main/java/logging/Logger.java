@@ -33,7 +33,6 @@ public final class Logger {
 
     /**
      * Constructor.
-     *
      * @param targetClass The class that this logger is serving.
      * @param fs FileSystem object to write with.
      */
@@ -72,7 +71,6 @@ public final class Logger {
 
     /**
      * Write message at the end of file.
-     *
      * @param str message to write.
      */
     private void appendStringToTextFile(final String str) {
@@ -89,7 +87,6 @@ public final class Logger {
 
     /**
      * Generate the full message to log.
-     *
      * @param type The type of message.
      * @param msg  The message to log.
      * @return The generated message.

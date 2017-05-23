@@ -30,7 +30,6 @@ public class LoadingScreen extends Stage {
 
     /**
      * Sets the number to display on the progress bar.
-     *
      * @param percentage Number to display.
      */
     public void setPercentage(double percentage) {

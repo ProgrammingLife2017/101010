@@ -43,7 +43,6 @@ public final class FileSystem {
 
     /**
      * Writes the content to the logfile.
-     *
      * @param content Message to print
      */
     public void log(String content) {
@@ -58,7 +57,6 @@ public final class FileSystem {
 
     /**
      * Empties the file.
-     *
      * @param filename Name of the file to clear.
      */
     public void clearFile(final String filename) {
@@ -83,7 +81,6 @@ public final class FileSystem {
 
     /**
      * Loads the project file specified by {@code filename} and checks if it is a valid file.
-     *
      * @param filename Name of the file to get.
      * @return File object.
      * @throws IOException Thrown file can't be found.
@@ -100,8 +97,7 @@ public final class FileSystem {
 
 
     /**
-     * Closes all writers.
-     *
+     * Close all writers.
      * @throws IOException thrown when writer can not be closed.
      */
    public void closeWriter() throws IOException {

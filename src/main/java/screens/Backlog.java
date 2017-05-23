@@ -38,7 +38,6 @@ public final class Backlog extends Stage {
 
     /**
      * Prints log message in the textArea.
-     *
      * @param cont Message to print.
      */
     public void printContent(final String cont) {

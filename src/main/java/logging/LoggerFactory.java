@@ -19,7 +19,6 @@ public final class LoggerFactory {
 
     /**
      * Constructor.
-     *
      * @param fs FileSystem for writing to file.
      */
    public LoggerFactory(FileSystem fs) {
@@ -31,7 +30,6 @@ public final class LoggerFactory {
 
     /**
      * Creates a new logger that keeps track of actions performed by the given class.
-     *
      * @param cl Class that the new logger serves.
      * @return A new logger object.
      */
@@ -42,7 +40,6 @@ public final class LoggerFactory {
 
     /**
      * FileSystem get method.
-     *
      * @return FileSystem object.
      */
     public FileSystem getFileSystem() {

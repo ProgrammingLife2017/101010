@@ -42,15 +42,15 @@ public final class Logger {
         this.fileSystem = fs;
     }
 
-//    /**
-//     * Print an error to the log.
-//     *
-//     * @param msg The message to the log.
-//     */
-//    public void error(final String msg) {
-//        String str = this.generateMessage("ERROR", msg);
-//        this.appendStringToTextFile(str);
-//    }
+    /**
+     * Print an error to the log.
+     *
+     * @param msg The message to the log.
+     */
+    public void error(final String msg) {
+        String str = this.generateMessage("ERROR", msg);
+        this.appendStringToTextFile(str);
+    }
 //
 //    /**
 //     * Print an error from an exception to the log.

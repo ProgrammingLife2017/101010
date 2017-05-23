@@ -59,9 +59,8 @@ public class Window extends Application {
      */
     private static LoadingScreen loadingScreen;
 
-        /**
+    /**
      * Starts the frame.
-     *
      * @param stage Main stage where the content is placed.
      * @throws Exception Thrown when application can't be started.
      */
@@ -116,7 +115,6 @@ public class Window extends Application {
 
     /**
      * Gets the backlog of this class.
-     *
      * @return BackLog object.
      */
     public static Backlog getBackLog() {
@@ -128,7 +126,6 @@ public class Window extends Application {
 
     /**
      * Creates instance of InfoScreen.
-     *
      * @return InfoScreen object.
      */
     public static InfoScreen getInfoScreen() {
@@ -140,7 +137,6 @@ public class Window extends Application {
 
     /**
      * Gets the loading screen window.
-     *
      * @return LoadingScreen object.
      */
     public static LoadingScreen getLoadingScreen() {
@@ -149,7 +145,6 @@ public class Window extends Application {
 
     /**
      * Creates the menu bar with its items.
-     *
      * @param stage Main stage.
      * @return The menu bar object.
      */
@@ -246,7 +241,6 @@ public class Window extends Application {
 
     /**
      * The initialization of the game.
-     *
      * @param args the arguments to run.
      */
     public static void main(String[] args) {

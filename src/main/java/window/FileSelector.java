@@ -30,7 +30,7 @@ public final class FileSelector {
      * Getter for the instance of this singleton class.
      * @return The instance of this class.
      */
-    public static FileChooser getInstance() {
+    private static FileChooser getInstance() {
         if (instance == null) {
             instance = new FileChooser();
             instance.initialDirectoryProperty().bindBidirectional(lastDir);

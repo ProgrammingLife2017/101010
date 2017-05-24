@@ -23,7 +23,7 @@ public final class LoggerFactory {
      */
    public LoggerFactory(FileSystem fs) {
         fileSystem = fs;
-        fileSystem.clearFile(FileSystem.LOGFILE_NAME);
+        fileSystem.clearFile();
         logger = new Logger(this.getClass(), fileSystem);
         logger.info("a new logger factory has been created");
    }

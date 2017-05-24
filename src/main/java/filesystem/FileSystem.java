@@ -57,12 +57,11 @@ public final class FileSystem {
 
     /**
      * Empties the file.
-     * @param filename Name of the file to clear.
      */
-    public void clearFile(final String filename) {
+    public void clearFile() {
         File file = null;
         try {
-            file = this.getProjectFile(filename);
+            file = this.getProjectFile(FileSystem.LOGFILE_NAME);
         } catch (IOException e) {
             e.printStackTrace();
         }

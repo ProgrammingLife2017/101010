@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 /**
  * Implementation of the window that handles showing information of the graph.
  */
-/*package*/ class InfoScreen extends Stage {
+public final class InfoScreen extends Stage {
 
     /**
      * Text area for printing information.

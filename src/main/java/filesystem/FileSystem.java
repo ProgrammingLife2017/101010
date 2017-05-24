@@ -85,7 +85,7 @@ public final class FileSystem {
      * @return File object.
      * @throws IOException Thrown file can't be found.
      */
-    private File getProjectFile(final String filename) throws IOException {
+    private File getProjectFile(String filename) throws IOException {
         File file = new File(filename);
         // The only reason we do this is to suppress a FindBugs warning
         final boolean didntExist = file.createNewFile();

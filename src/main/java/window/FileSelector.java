@@ -1,12 +1,13 @@
 package window;
 
-import javafx.stage.FileChooser;
-import java.io.File;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+import java.io.File;
+
 /**
- * Created by 101010 on 16-5-2017.
+ * Implementation of window for selecting files in the directory.
  */
 public final class FileSelector {
 
@@ -24,14 +25,6 @@ public final class FileSelector {
      * Private constructor.
      */
     private FileSelector() { }
-
-    /**
-     * Default showOpenDialog method which invokes the non-default one with parameter null.
-     * @return The file we want to parse.
-     */
-    public static File showOpenDialog() {
-        return showOpenDialog(null);
-    }
 
     /**
      * Getter for the instance of this singleton class.

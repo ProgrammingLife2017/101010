@@ -9,7 +9,6 @@ public interface INodeHandler {
 
     /**
      * Executes operations when a node is selected.
-     *
      * @param node Node to work with.
      */
     void handle(DrawNode node);

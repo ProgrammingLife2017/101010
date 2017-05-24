@@ -3,7 +3,6 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import logging.Logger;
 import logging.LoggerFactory;
 import parsing.Parser;
@@ -42,7 +40,7 @@ public class Window extends Application {
     /**
      * Backlog window to print all actions.
      */
-    private static Backlog backLog = null;
+    private static Backlog backLog;
 
     /**
      * Pane used for displaying graphs.
@@ -55,11 +53,6 @@ public class Window extends Application {
     private static InfoScreen infoScreen = null;
 
     /**
-     * Window for showing the progress bar.
-     */
-    private static LoadingScreen loadingScreen;
-
-    /**
      * Starts the frame.
      * @param stage Main stage where the content is placed.
      * @throws Exception Thrown when application can't be started.
@@ -67,7 +60,7 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.setupService();
-        backLog = getBackLog();
+        backLog = new Backlog();
         BorderPane mainPane = new BorderPane();
 
         mainPane.setMinSize(1200, 700);
@@ -86,14 +79,11 @@ public class Window extends Application {
         //Adding scene to the stage
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                try {
-                    Window.loggerFactory.getFileSystem().closeWriter();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        stage.setOnCloseRequest(event -> {
+            try {
+                Window.loggerFactory.getFileSystem().closeWriter();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 
@@ -110,7 +100,6 @@ public class Window extends Application {
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
         graphScene = new GraphScene();
-        loadingScreen = new LoadingScreen();
     }
 
     /**
@@ -135,13 +124,6 @@ public class Window extends Application {
         return infoScreen;
     }
 
-    /**
-     * Gets the loading screen window.
-     * @return LoadingScreen object.
-     */
-    public static LoadingScreen getLoadingScreen() {
-        return loadingScreen;
-    }
 
     /**
      * Creates the menu bar with its items.
@@ -150,9 +132,21 @@ public class Window extends Application {
      */
     private MenuBar createMenuBar(final Stage stage) {
         MenuBar menuBar = new MenuBar();
-        Menu menu1 = new Menu("File");
-        MenuItem item1 = new MenuItem("New file");
-        item1.setOnAction(
+        menuBar.getMenus().add(addFileSelector(stage));
+        menuBar.getMenus().add(addController());
+        menuBar.getMenus().add(addClear());
+        return menuBar;
+    }
+
+    /**
+     * Creates a menu for navigating through the file directory.
+     * @param stage The container for these GUI nodes.
+     * @return Menu object.
+     */
+    private Menu addFileSelector(Stage stage) {
+        Menu menu = new Menu("File");
+        MenuItem item = new MenuItem("New file");
+        item.setOnAction(
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null) {
@@ -162,32 +156,39 @@ public class Window extends Application {
                     }
                 }
         );
-        menu1.getItems().add(item1);
+        menu.getItems().add(item);
+        return menu;
+    }
 
-        Menu menu2 = new Menu("Tools");
-        MenuItem item2 = new MenuItem("Info");
-        item2.setOnAction(
+    /**
+     * Creates a menu that allows interaction with the graph.
+     * @return Menu object.
+     */
+    private Menu addController() {
+        Menu menu = new Menu("Tools");
+        MenuItem item1 = new MenuItem("Info");
+        item1.setOnAction(
                 event -> {
                     getInfoScreen().show();
                     logger.info("information screen has been opened");
                 }
         );
-        MenuItem item3 = new MenuItem("Console log");
-        item3.setOnAction(
+        MenuItem item2 = new MenuItem("Console log");
+        item2.setOnAction(
                 event -> {
                     getBackLog().show();
                     logger.info("console window has been opened");
                 }
         );
-        MenuItem item4 = new MenuItem("Center from click");
-        item4.setOnAction(
+        MenuItem item3 = new MenuItem("Center from click");
+        item3.setOnAction(
                 event -> {
                     graphScene.switchToCenter();
                     logger.info("state has been switched to center");
                 }
         );
-        MenuItem item5 = new MenuItem("Center from text");
-        item5.setOnAction(
+        MenuItem item4 = new MenuItem("Center from text");
+        item4.setOnAction(
                 event -> {
                     Stage newstage = new Stage();
                     newstage.setTitle("Select the radius");
@@ -213,30 +214,35 @@ public class Window extends Application {
                     logger.info("state has been switched to centerId");
                 }
         );
-        Menu menu3 = new Menu("Clear");
-        MenuItem item6 = new MenuItem("Info");
-        item6.setOnAction(
+        menu.getItems().add(item1);
+        menu.getItems().add(item2);
+        menu.getItems().add(item3);
+        menu.getItems().add(item4);
+        return menu;
+    }
+
+    /**
+     * Adds a menu that clears the info screen and returns the graph to the original view.
+     * @return Menu object.
+     */
+    private Menu addClear() {
+        Menu menu = new Menu("Clear");
+        MenuItem item1 = new MenuItem("Info");
+        item1.setOnAction(
                 event -> {
                     getInfoScreen().getTextArea().clear();
                     logger.info("info screen has been switched to center");
                 }
         );
-        MenuItem item7 = new MenuItem("Graph");
-        item7.setOnAction(
+        MenuItem item2 = new MenuItem("Graph");
+        item2.setOnAction(
                 event -> {
                     graphScene.drawGraph(0, 200);
                     logger.info("drawing returned to original");
                 }
         );
-        menu2.getItems().add(item2);
-        menu2.getItems().add(item3);
-        menu2.getItems().add(item4);
-        menu2.getItems().add(item5);
-        menu3.getItems().addAll(item6, item7);
-        menuBar.getMenus().add(menu1);
-        menuBar.getMenus().add(menu2);
-        menuBar.getMenus().add(menu3);
-        return menuBar;
+        menu.getItems().addAll(item1, item2);
+        return menu;
     }
 
     /**

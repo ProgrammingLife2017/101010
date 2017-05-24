@@ -17,7 +17,7 @@ public final class Backlog extends Stage {
     /**
      * Backlog window constructor.
      */
-    public Backlog() {
+    /* package */ Backlog() {
         textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setVisible(true);

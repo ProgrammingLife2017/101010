@@ -1,9 +1,6 @@
 .idea
-GFA-specification.txt
-*.class
 /target/
-out/
-Output/
+
 *.iml
 
 #Generated files

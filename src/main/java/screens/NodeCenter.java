@@ -27,7 +27,9 @@ public class NodeCenter implements INodeHandler {
 
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handle(DrawNode node) {
         Stage stage = new Stage();

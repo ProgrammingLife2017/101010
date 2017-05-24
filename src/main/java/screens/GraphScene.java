@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 /**
  * Implementation of the window that handles graph visualization.
  */
- /*package*/ class GraphScene extends Pane {
+ public final class GraphScene extends Pane {
 
     /**
      * State for handling center queries.
@@ -63,7 +63,7 @@ import javafx.stage.Stage;
      */
      /*package*/ GraphScene() {
          center = new NodeCenter(this);
-         info = new NodeInfo(this);
+         info = new NodeInfo();
          state = info;
      }
 

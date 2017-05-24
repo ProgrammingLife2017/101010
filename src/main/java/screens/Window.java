@@ -135,6 +135,10 @@ public class Window extends Application {
                         graphScene.drawGraph(0, 200);
                         logger.info("file has been selected");
                     }
+                    if (!file.exists()) {
+                        Thread cacheCreater = new Thread(NodeGraph.getCurrentInstance());
+                        cacheCreater.start();
+                    }
                 }
         );
         menu1.getItems().add(item1);

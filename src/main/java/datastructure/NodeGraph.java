@@ -1,11 +1,14 @@
 package datastructure;
 
+import parsing.Parser;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by 101010.
  */
-public class NodeGraph {
+public class NodeGraph implements Serializable, Runnable {
     /**
      * List of nodes.
      */
@@ -174,5 +177,28 @@ public class NodeGraph {
      */
     public void setMaxX(int newX) {
         this.maxX = newX;
+    }
+
+    public boolean equals(Object other) {
+        if (other instanceof NodeGraph) {
+            NodeGraph that = (NodeGraph) other;
+            return this.nodes.equals(that.nodes) && this.segments.equals(that.segments) && this.maxX == that.maxX;
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        int result = maxX;
+        result = 17 * result + segments.hashCode();
+        result = 17 * result + nodes.hashCode();
+        return result;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("hello");
+        Parser parser = Parser.getInstance();
+        String fileLocation = segments.getdbLoc().substring(0,segments.getdbLoc().length() - 12);
+        parser.createCache(fileLocation, this);
     }
 }

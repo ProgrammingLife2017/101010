@@ -3,20 +3,13 @@ package parsing;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 import java.util.ArrayDeque;
+import java.util.Date;
 import java.util.Queue;
 
 /**
@@ -56,11 +49,18 @@ public final class Parser {
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
         graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
-
         if (cache.exists()) {
-            return parseCache(graph, cache);
+             try {
+                BufferedReader br = new BufferedReader(new FileReader(cache));
+                if (br.readLine() != null) {
+                    System.out.println("not an empty cache");
+                    return parseCache(graph, cache);
+                }
+            } catch(IOException e){
+                System.out.println("Error parsing file");
+                e.printStackTrace();
+            }
         }
-
         return parse(file, graph);
     }
 
@@ -121,7 +121,9 @@ public final class Parser {
                 graph.getNode(i).setInDegree(graph.getNode(i).getIncomingEdges().length);
             }
             kahnAlgorithm(graph);
-            createCache(absoluteFilePath, graph);
+            Thread thread = new Thread(graph);
+            thread.start();
+//            createCache(absoluteFilePath, graph);
         } catch (FileNotFoundException e) {
             System.out.println("Wrong file Destination");
             e.printStackTrace();
@@ -142,33 +144,46 @@ public final class Parser {
      */
     public NodeGraph parseCache(NodeGraph graph, File cache) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
-            String line = in.readLine();
-            int graphSize = Integer.parseInt(line);
-            graph.getNodes().ensureCapacity(graphSize);
-            for (int i = 0; i < graphSize; i++) {
-                line = in.readLine();
-                int length = Integer.parseInt(line);
-                line = in.readLine();
-                int x = Integer.parseInt(line);
-                line = in.readLine();
-                int y = Integer.parseInt(line);
-                line = in.readLine();
-                int outLength = Integer.parseInt(line);
-                int[] outgoing = new int[outLength];
-                for (int j = 0; j < outLength; j++) {
-                    line = in.readLine();
-                    outgoing[j] = Integer.parseInt(line);
-                }
-                Node temp = new Node(length, outgoing, new int[0]);
-                temp.setX(x);
-                temp.setY(y);
-                graph.addNodeCache(i, temp);
-            }
+            FileInputStream inFile = new FileInputStream(cache);
+            FSTObjectInput in = new FSTObjectInput(inFile);
+            System.out.println("starting deserialization" + System.currentTimeMillis());
+            graph = (NodeGraph) in.readObject();
+            inFile.close();
             in.close();
+
+
+
+//            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
+//            String line = in.readLine();
+//            int graphSize = Integer.parseInt(line);
+//            graph.getNodes().ensureCapacity(graphSize);
+//            for (int i = 0; i < graphSize; i++) {
+//                line = in.readLine();
+//                int length = Integer.parseInt(line);
+//                line = in.readLine();
+//                int x = Integer.parseInt(line);
+//                line = in.readLine();
+//                int y = Integer.parseInt(line);
+//                line = in.readLine();
+//                int outLength = Integer.parseInt(line);
+//                int[] outgoing = new int[outLength];
+//                for (int j = 0; j < outLength; j++) {
+//                    line = in.readLine();
+//                    outgoing[j] = Integer.parseInt(line);
+//                }
+//                Node temp = new Node(length, outgoing, new int[0]);
+//                temp.setX(x);
+//                temp.setY(y);
+//                graph.addNodeCache(i, temp);
+//            }
+//            in.close();
         } catch (IOException e) {
             System.out.println("Error while reading cache");
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error finding class");
+        } catch (Exception e) {
+            System.out.println("Error with FST");
         }
         return graph;
     }
@@ -213,33 +228,42 @@ public final class Parser {
      * @param filename the name of the file.
      * @param graph the graph to be cached.
      */
-    private void createCache(String filename, NodeGraph graph) {
+    public void createCache(String filename, NodeGraph graph) {
         try {
             File file = new File(filename + ".txt");
-            int graphSize = graph.getSize();
-            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-            BufferedWriter writer = new BufferedWriter(ow);
-            writer.write(Integer.toString(graphSize));
-            writer.newLine();
-            int size;
-            for (int i = 0; i < graphSize; i++) {
-                Node temp = graph.getNode(i);
-                writer.write(Integer.toString(temp.getLength()));
-                writer.newLine();
-                writer.write(Integer.toString(temp.getX()));
-                writer.newLine();
-                writer.write(Integer.toString(temp.getY()));
-                writer.newLine();
-                int[] tempList = temp.getOutgoingEdges();
-                size = tempList.length;
-                writer.write(Integer.toString(size));
-                writer.newLine();
-                for (int j = 0; j < size; j++) {
-                    writer.write(Integer.toString(tempList[j]));
-                    writer.newLine();
-                }
-            }
-            writer.close();
+//            int graphSize = graph.getSize();
+//            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+//            BufferedWriter writer = new BufferedWriter(ow);
+            FileOutputStream outFile = new FileOutputStream(file);
+            FSTObjectOutput out = new FSTObjectOutput(outFile);
+            System.out.println("starting serialization" + System.currentTimeMillis());
+            out.writeObject(graph);
+
+
+
+//            writer.write(Integer.toString(graphSize));
+//            writer.newLine();
+//            int size;
+//            for (int i = 0; i < graphSize; i++) {
+//                Node temp = graph.getNode(i);
+//                writer.write(Integer.toString(temp.getLength()));
+//                writer.newLine();
+//                writer.write(Integer.toString(temp.getX()));
+//                writer.newLine();
+//                writer.write(Integer.toString(temp.getY()));
+//                writer.newLine();
+//                int[] tempList = temp.getOutgoingEdges();
+//                size = tempList.length;
+//                writer.write(Integer.toString(size));
+//                writer.newLine();
+//                for (int j = 0; j < size; j++) {
+//                    writer.write(Integer.toString(tempList[j]));
+//                    writer.newLine();
+//                }
+//            }
+//            writer.close();
+            out.close();
+            outFile.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

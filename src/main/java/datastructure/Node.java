@@ -1,11 +1,12 @@
 package datastructure;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Created by 101010.
  */
-public class Node {
+public class Node implements Serializable {
     /**
      * The length of the segment corresponding to the node.
      */

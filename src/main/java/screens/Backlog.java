@@ -15,9 +15,9 @@ public final class Backlog extends Stage {
     private final TextArea textArea;
 
     /**
-     * Constructor
+     * Backlog window constructor.
      */
-    public Backlog() {
+    /* package */ Backlog() {
         textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setVisible(true);
@@ -38,7 +38,6 @@ public final class Backlog extends Stage {
 
     /**
      * Prints log message in the textArea.
-     *
      * @param cont Message to print.
      */
     public void printContent(final String cont) {

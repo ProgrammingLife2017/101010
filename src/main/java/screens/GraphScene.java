@@ -17,34 +17,61 @@ import javafx.stage.Stage;
 /**
  * Implementation of the window that handles graph visualization.
  */
- /*package*/ class GraphScene extends Pane {
+ public final class GraphScene extends Pane {
 
+    /**
+     * State for handling center queries.
+     */
     private final INodeHandler center;
+
+    /**
+     * State for handling information display queries.
+     */
     private final INodeHandler info;
+
+    /**
+     * The current state for node events.
+     */
     private INodeHandler state;
-     /**
+
+    /**
      * Event handler for when a node or edge is clicked.
      */
      private EventHandler<MouseEvent> click = event -> {
 
         if (event.getSource() instanceof DrawNode) {
+            /**
+             * DrawNode object that is linked to the Node object.
+             */
             DrawNode rect = (DrawNode) (event.getSource());
             state.handle(rect);
         } else if (event.getSource() instanceof Line) {
+            /**
+             * Line object.
+             */
             Line l = (Line) (event.getSource());
+            /**
+             * Id of line object.
+             */
             String edgeNodes = l.getId();
-            System.out.println(edgeNodes);
             Window.getInfoScreen().getTextArea().appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
         }
      };
 
-
+    /**
+     * GraphScene pane constructor.
+     */
      /*package*/ GraphScene() {
          center = new NodeCenter(this);
-         info = new NodeInfo(this);
+         info = new NodeInfo();
          state = info;
      }
 
+    /**
+     * Draws graph on the screen.
+     * @param id Id of the node/segment.
+     * @param radius Radius.
+     */
     public void drawGraph(final int id, final int radius) {
         if (radius < 5 || radius > 500) {
             Stage newStage = new Stage();
@@ -88,7 +115,7 @@ import javafx.stage.Stage;
                     l.setStrokeWidth(2);
                     l.setStartX(newRect.getBoundsInLocal().getMaxX());
                     l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX()- x + 503);
+                    l.setEndX(out.getX() - x + 503);
                     l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
                     this.getChildren().add(l);
@@ -109,8 +136,16 @@ import javafx.stage.Stage;
         this.getChildren().add(position);
     }
 
-    public void switchToCenter() { state = center; }
+    /**
+     * Switches event handler to center queries.
+     */
+    public void switchToCenter() {
+        state = center;
+    }
 
+    /**
+     * Switches event handler to graph information handling.
+     */
     public void switchToInfo() {
         state = info;
     }

@@ -33,7 +33,6 @@ public final class Logger {
 
     /**
      * Constructor.
-     *
      * @param targetClass The class that this logger is serving.
      * @param fs FileSystem object to write with.
      */
@@ -42,24 +41,23 @@ public final class Logger {
         this.fileSystem = fs;
     }
 
-//    /**
-//     * Print an error to the log.
-//     *
-//     * @param msg The message to the log.
-//     */
-//    public void error(final String msg) {
-//        String str = this.generateMessage("ERROR", msg);
-//        this.appendStringToTextFile(str);
-//    }
-//
-//    /**
-//     * Print an error from an exception to the log.
-//     * @param exception The message to the log.
-//     */
-//    public void error(final Exception exception) {
-//        String str = this.generateMessage("ERROR", exception.getMessage());
-//        this.appendStringToTextFile(str);
-//    }
+    /**
+     * Print an error to the log.
+     * @param msg The message to the log.
+     */
+    public void error(final String msg) {
+        String str = this.generateMessage("ERROR", msg);
+        this.appendStringToTextFile(str);
+    }
+
+    /**
+     * Print an error from an exception to the log.
+     * @param exception The message to the log.
+     */
+    public void error(final Exception exception) {
+        String str = this.generateMessage("ERROR", exception.getMessage());
+        this.appendStringToTextFile(str);
+    }
 
     /**
      * Print information to the log.
@@ -72,7 +70,6 @@ public final class Logger {
 
     /**
      * Write message at the end of file.
-     *
      * @param str message to write.
      */
     private void appendStringToTextFile(final String str) {
@@ -89,15 +86,14 @@ public final class Logger {
 
     /**
      * Generate the full message to log.
-     *
      * @param type The type of message.
      * @param msg  The message to log.
      * @return The generated message.
      */
     private String generateMessage(String type, String msg) {
         Date date = new Date();
-        return new Timestamp(date.getTime()) +
-                " | ORIGIN: '" + this.cl.getName() + "' | " + type + ": '" + msg + "'";
+        return new Timestamp(date.getTime())
+                + " | ORIGIN: '" + this.cl.getName() + "' | " + type + ": '" + msg + "'";
     }
 
 }

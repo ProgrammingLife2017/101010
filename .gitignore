@@ -1,9 +1,6 @@
 .idea
-GFA-specification.txt
-*.class
-target/maven-status/
-out/
-Output/
+/target/
+
 *.iml
 
 #Generated files

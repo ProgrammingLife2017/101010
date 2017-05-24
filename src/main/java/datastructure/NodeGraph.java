@@ -1,6 +1,9 @@
 package datastructure;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.TreeSet;
 
 /**
  * Created by 101010.
@@ -17,14 +20,14 @@ public class NodeGraph {
     private SegmentDB segments;
 
     /**
+     * LinkedList of the nodes that need to be drawn.
+     */
+    private LinkedList<DrawNode> drawNodes;
+
+    /**
      * Instance of the current graph.
      */
     private static NodeGraph currentNodeGraph;
-
-    /**
-     * The largest assigned x-coordinate in the graph.
-     */
-    private int maxX;
 
     /**
      * Empty constructor for NodeGraph.
@@ -32,20 +35,19 @@ public class NodeGraph {
     public NodeGraph() {
         this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
-        this.maxX = 0;
+        drawNodes = new LinkedList<DrawNode>();
     }
 
     /**
      * Constructor for NodeGraph.
-     * @param nodes
-     *        The list of nodes for the graph.
-     * @param segments
-     *        The database containing the segments of the nodes.
+     * @param nodes The list of nodes for the graph.
+     * @param segments The database containing the segments of the nodes.
+     * @param drawNodes The LinkedList of nodes to be drawn.
      */
-    public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments) {
+    public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments, final LinkedList<DrawNode> drawNodes) {
         this.nodes = nodes;
         this.segments = segments;
-        this.maxX = 0;
+        this.drawNodes = drawNodes;
     }
 
     /**
@@ -161,18 +163,48 @@ public class NodeGraph {
     public ArrayList<Node> getNodes() { return this.nodes; }
 
     /**
-     * Getter for the maximum x-coordinate.
-     * @return the maximum x-coordinate found in the graph.
+     * Generates the list of DrawNodes based on center node id and radius.
+     * @param center Id of the center nodes.
+     * @param radius Radius (amount of nodes required).
      */
-    public int getMaxX() {
-        return this.maxX;
+    public void generateDrawNodes(int center, int radius) {
+        TreeSet<Integer> visited = new TreeSet<>();
+        Queue<Integer> q = new LinkedList<Integer>();
+        int r = Math.min(radius, nodes.size());
+        visited.add(center);
+        q.offer(center);
+        int current;
+
+        while (drawNodes.size() < r) {
+            current = q.poll();
+            addEdges(current, q, visited);
+            drawNodes.addLast(new DrawNode(current));
+        }
     }
 
     /**
-     * Setter for the maximum x-coordinate.
-     * @param newX the new maximum x-coordinate.
+     * Adds nodes based on edges of the id node to the queue and the set.
+     * @param id The origin node.
+     * @param q The queue the edges are put into.
+     * @param visited The set of nodes already visited.
      */
-    public void setMaxX(int newX) {
-        this.maxX = newX;
+    private void addEdges(int id, Queue<Integer> q, TreeSet<Integer> visited) {
+        int[] tempEdges = nodes.get(id).getIncomingEdges();
+
+        for (int i = 0; i < tempEdges.length; i++) {
+            if (!visited.contains(tempEdges[i])) {
+                visited.add(tempEdges[i]);
+                q.add(tempEdges[i]);
+            }
+        }
+
+        tempEdges = nodes.get(id).getOutgoingEdges();
+
+        for (int i = 0; i < tempEdges.length; i++) {
+            if (!visited.contains(tempEdges[i])) {
+                visited.add(tempEdges[i]);
+                q.add(tempEdges[i]);
+            }
+        }
     }
 }

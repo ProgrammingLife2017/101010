@@ -2,8 +2,9 @@ package datastructure;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.TreeSet;
+import java.util.Queue;
+import java.util.Iterator;
 
 /**
  * Created by 101010.
@@ -160,7 +161,9 @@ public class NodeGraph {
      * Getter for the list of nodes.
      * @return the list of all nodes in the graph.
      */
-    public ArrayList<Node> getNodes() { return this.nodes; }
+    public ArrayList<Node> getNodes() {
+        return this.nodes;
+    }
 
     /**
      * Generates the list of DrawNodes based on center node id and radius.
@@ -169,7 +172,7 @@ public class NodeGraph {
      */
     public void generateDrawNodes(int center, int radius) {
         TreeSet<Integer> visited = new TreeSet<>();
-        Queue<Integer> q = new LinkedList<Integer>();
+        Queue<Integer> q = new LinkedList<>();
         int r = Math.min(radius, nodes.size());
         visited.add(center);
         q.offer(center);
@@ -179,6 +182,11 @@ public class NodeGraph {
             current = q.poll();
             addEdges(current, q, visited);
             drawNodes.addLast(new DrawNode(current));
+        }
+        topoSort();
+        assignLayers();
+        for (DrawNode node : drawNodes) {
+            System.out.println(node.getIndex() + " : " + node.getX());
         }
     }
 
@@ -205,6 +213,60 @@ public class NodeGraph {
                 visited.add(tempEdges[i]);
                 q.add(tempEdges[i]);
             }
+        }
+    }
+
+    /**
+     * Sort the drawNodes.
+     */
+    private void topoSort() {
+        LinkedList<DrawNode> sorted = new LinkedList<>();
+        while (!drawNodes.isEmpty()) {
+            topoSortUtil(drawNodes.getFirst(), sorted);
+        }
+        drawNodes = sorted;
+    }
+
+    /**
+     * Recursive part of topoSort.
+     * @param current the current node.
+     * @param sorted the list which holds all sorted nodes.
+     */
+    private void topoSortUtil(DrawNode current, LinkedList<DrawNode> sorted) {
+        if (!sorted.contains(current)) {
+            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
+                for (DrawNode temp : drawNodes) {
+                    if (temp.getIndex() == i) {
+                        topoSortUtil(temp, sorted);
+                        break;
+                    }
+                }
+            }
+            sorted.addLast(current);
+            drawNodes.remove(current);
+        }
+    }
+
+    /**
+     * Assigns a layer to all drawNodes in the subgraph.
+     */
+    private void assignLayers() {
+        Iterator<DrawNode> it = drawNodes.iterator();
+        double layer = 1600;
+        DrawNode current;
+
+        while (it.hasNext()) {
+             current = it.next();
+
+             for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
+                 for (DrawNode temp : drawNodes) {
+                     if (temp.getIndex() == i && temp.getX() < layer) {
+                         layer = temp.getX();
+                     }
+                 }
+             }
+
+             current.setX(layer - 100);
         }
     }
 }

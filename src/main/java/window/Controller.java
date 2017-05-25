@@ -148,45 +148,5 @@ public class Controller {
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(Node center, int radius) {
-        double x = center.getX();
-        for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
-            Node current = NodeGraph.getCurrentInstance().getNode(i);
-            if (current.getX() - 543 > NodeGraph.getCurrentInstance().getMaxX()) {
-                NodeGraph.getCurrentInstance().setMaxX(current.getX() - 543);
-            }
-            if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
-                DrawNode newNode = new DrawNode(i);
-                newNode.setId(Integer.toString(i));
-                newNode.setOnMousePressed(click);
-                newNode.setX(current.getX() - x + 503);
-                newNode.setY(current.getY());
-                newNode.setWidth(20);
-                newNode.setHeight(10);
-                drawPane.getChildren().add(newNode);
-                for (Integer j: current.getOutgoingEdges()) {
-                    Node out = NodeGraph.getCurrentInstance().getNode(j);
-                    Line l = new Line();
-                    l.setId(i + "-" + j);
-                    l.setStrokeWidth(2);
-                    l.setStartX(newNode.getBoundsInLocal().getMaxX());
-                    l.setStartY(newNode.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX() - x + 503);
-                    l.setEndY(out.getY() + 5);
-                    l.setOnMousePressed(click);
-                    drawPane.getChildren().add(l);
-                }
-            }
-        }
-        int max = NodeGraph.getCurrentInstance().getMaxX();
-        x = x - 543;
-        Rectangle scroll = new Rectangle(5, drawPane.getHeight() - 15, drawPane.getWidth() - 10, 10);
-        scroll.setFill(Color.GRAY);
-        drawPane.getChildren().add(scroll);
-        Rectangle position = new Rectangle(5, 10);
-        position.setFill(Color.RED);
-        double relPos = x / max * scroll.getWidth() + 5;
-        position.setX(relPos);
-        position.setY(drawPane.getHeight() - 15);
-        drawPane.getChildren().add(position);
     }
 }

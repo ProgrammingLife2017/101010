@@ -38,7 +38,6 @@ import javafx.stage.Stage;
         }
      };
 
-
      /*package*/ GraphScene() {
          center = new NodeCenter(this);
          info = new NodeInfo(this);
@@ -56,7 +55,7 @@ import javafx.stage.Stage;
             newStage.show();
             return;
         }
-         this.getChildren().clear();
+        this.getChildren().clear();
         drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
     }
 
@@ -66,47 +65,7 @@ import javafx.stage.Stage;
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(Node center, int radius) {
-        double x = center.getX();
-        for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
-            Node current = NodeGraph.getCurrentInstance().getNode(i);
-            if (current.getX() - 543 > NodeGraph.getCurrentInstance().getMaxX()) {
-                NodeGraph.getCurrentInstance().setMaxX(current.getX() - 543);
-            }
-            if (current.getX() >= x - 40 * radius && current.getX() <= x + 40 * radius) {
-                DrawNode newRect = new DrawNode(i);
-                newRect.setId(Integer.toString(i));
-                newRect.setOnMousePressed(click);
-                newRect.setX(current.getX() - x + 503);
-                newRect.setY(current.getY());
-                newRect.setWidth(20);
-                newRect.setHeight(10);
-                this.getChildren().add(newRect);
-                for (Integer j: current.getOutgoingEdges()) {
-                    Node out = NodeGraph.getCurrentInstance().getNode(j);
-                    Line l = new Line();
-                    l.setId(i + "-" + j);
-                    l.setStrokeWidth(2);
-                    l.setStartX(newRect.getBoundsInLocal().getMaxX());
-                    l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX()- x + 503);
-                    l.setEndY(out.getY() + 5);
-                    l.setOnMousePressed(click);
-                    this.getChildren().add(l);
-                }
-            }
-        }
-        int max = NodeGraph.getCurrentInstance().getMaxX();
-        x = x - 543;
-        Rectangle scroll = new Rectangle(5, this.getHeight() - 15, this.getWidth() - 10, 10);
-        scroll.setFill(Color.GRAY);
-        this.getChildren().add(scroll);
-        Rectangle position = new Rectangle(5, 10);
-        position.setFill(Color.RED);
-        double relPos = x / max * scroll.getWidth() + 5;
-        System.out.println(x / max);
-        position.setX(relPos);
-        position.setY(this.getHeight() - 15);
-        this.getChildren().add(position);
+        NodeGraph.getCurrentInstance().generateDrawNodes(5, radius);
     }
 
     public void switchToCenter() { state = center; }

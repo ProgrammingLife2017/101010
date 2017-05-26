@@ -88,12 +88,12 @@ import javafx.stage.Stage;
             Scene scene = this.factory.createScene(group, 150, 100);
             this.factory.setScene(newStage, scene);
             this.factory.show(newStage);
-            return;
+        } else {
+            NavigationInfo.getInstance().setCurrentRadius(radius);
+            NavigationInfo.getInstance().setCurrentCenterNode(id);
+            this.getChildren().clear();
+            drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
         }
-        NavigationInfo.getInstance().setCurrentRadius(radius);
-        NavigationInfo.getInstance().setCurrentCenterNode(id);
-        this.getChildren().clear();
-        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
     }
 
     /**

@@ -3,6 +3,7 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,6 +11,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -100,6 +102,7 @@ public class Window extends Application {
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
         graphScene = new GraphScene();
+        setScrolling(graphScene);
     }
 
     /**
@@ -136,6 +139,37 @@ public class Window extends Application {
         menuBar.getMenus().add(addController());
         menuBar.getMenus().add(addClear());
         return menuBar;
+    }
+
+    /**
+     * 
+     * @param scene
+     */
+    private void setScrolling(GraphScene scene) {
+        scene.setOnScroll((ScrollEvent event) -> {
+            if (NodeGraph.getCurrentInstance() != null) {
+                int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
+                int oldRadius = NavigationInfo.getInstance().getCurrentRadius();
+                double deltaY = event.getDeltaY();
+                if (deltaY < 0) {
+                    if (oldRadius - 2 < 5) {
+                        scene.drawGraph(centerId, 5);
+                        NavigationInfo.getInstance().setCurrentRadius(5);
+                    } else {
+                        scene.drawGraph(centerId, oldRadius - 2);
+                        NavigationInfo.getInstance().setCurrentRadius(oldRadius - 2);
+                    }
+                } else {
+                    if (oldRadius + 2 > 500) {
+                        scene.drawGraph(centerId, 500);
+                        NavigationInfo.getInstance().setCurrentRadius(500);
+                    } else {
+                        scene.drawGraph(centerId, oldRadius + 2);
+                        NavigationInfo.getInstance().setCurrentRadius(oldRadius + 2);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -198,9 +232,20 @@ public class Window extends Application {
                     Button btn = new Button("Submit");
                     btn.setOnAction(
                             event2 -> {
-                                graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
-                                graphScene.switchToInfo();
-                                newstage.close();
+                                int radius = Integer.parseInt(textField2.getText());
+                                if (radius < 5 || radius > 500) {
+                                    Stage newStage = new Stage();
+                                    Group group = new Group();
+                                    Label label = new Label("Radius is out of bounds");
+                                    group.getChildren().add(label);
+                                    Scene scene = new Scene(group, 150, 100);
+                                    newStage.setScene(scene);
+                                    newStage.show();
+                                } else {
+                                    graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
+                                    graphScene.switchToInfo();
+                                    newstage.close();
+                                }
                             }
                     );
                     box.add(new Label("Node Id:"), 1, 1);

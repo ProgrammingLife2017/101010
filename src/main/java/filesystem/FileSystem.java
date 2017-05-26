@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Default implementation for FileSystem that handles writing to (log)files/
+ * Default implementation for FileSystem that handles writing to (log)files.
  */
 public final class FileSystem {
 
@@ -23,7 +23,7 @@ public final class FileSystem {
     /**
      * Name of the file where the writer puts the content.
      */
-    public final static String LOGFILE_NAME = "logger.log";
+    public static final String LOGFILE_NAME = "logger.log";
 
     /**
      * Constructor.
@@ -43,7 +43,6 @@ public final class FileSystem {
 
     /**
      * Writes the content to the logfile.
-     *
      * @param content Message to print
      */
     public void log(String content) {
@@ -58,13 +57,11 @@ public final class FileSystem {
 
     /**
      * Empties the file.
-     *
-     * @param filename Name of the file to clear.
      */
-    public void clearFile(final String filename) {
+    public void clearFile() {
         File file = null;
         try {
-            file = this.getProjectFile(filename);
+            file = this.getProjectFile(FileSystem.LOGFILE_NAME);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,12 +80,11 @@ public final class FileSystem {
 
     /**
      * Loads the project file specified by {@code filename} and checks if it is a valid file.
-     *
      * @param filename Name of the file to get.
      * @return File object.
      * @throws IOException Thrown file can't be found.
      */
-    private File getProjectFile(final String filename) throws IOException {
+    private File getProjectFile(String filename) throws IOException {
         File file = new File(filename);
         // The only reason we do this is to suppress a FindBugs warning
         final boolean didntExist = file.createNewFile();
@@ -97,4 +93,14 @@ public final class FileSystem {
         }
         return file;
     }
+
+
+    /**
+     * Close all writers.
+     * @throws IOException thrown when writer can not be closed.
+     */
+   public void closeWriter() throws IOException {
+        logWriter.close();
+        System.out.println("Writer has been closed");
+   }
 }

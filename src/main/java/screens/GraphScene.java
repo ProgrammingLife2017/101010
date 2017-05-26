@@ -15,42 +15,77 @@ import javafx.stage.Stage;
 /**
  * Implementation of the window that handles graph visualization.
  */
- /*package*/ class GraphScene extends Pane {
+ public final class GraphScene extends Pane {
 
+    /**
+     * State for handling center queries.
+     */
     private final INodeHandler center;
+
+    /**
+     * State for handling information display queries.
+     */
     private final INodeHandler info;
+
+    /**
+     * The current state for node events.
+     */
     private INodeHandler state;
-     /**
+
+    /**
+     * The factory the GraphScene uses to create JavaFX elements.
+     */
+    private FXElementsFactory fxElementsFactory;
+
+    /**
      * Event handler for when a node or edge is clicked.
      */
      private EventHandler<MouseEvent> click = event -> {
 
         if (event.getSource() instanceof DrawNode) {
+            /**
+             * DrawNode object that is linked to the Node object.
+             */
             DrawNode rect = (DrawNode) (event.getSource());
             state.handle(rect);
         } else if (event.getSource() instanceof Line) {
+            /**
+             * Line object.
+             */
             Line l = (Line) (event.getSource());
+            /**
+             * Id of line object.
+             */
             String edgeNodes = l.getId();
-            System.out.println(edgeNodes);
             Window.getInfoScreen().getTextArea().appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
         }
      };
 
-     /*package*/ GraphScene() {
+    /**
+     * GraphScene pane constructor.
+     * @param fact the Factory used to create JavaFX elements.
+     */
+     /*package*/ GraphScene(FXElementsFactory fact) {
          center = new NodeCenter(this);
-         info = new NodeInfo(this);
+         info = new NodeInfo();
          state = info;
+         this.fxElementsFactory = fact;
      }
 
+    /**
+     * Draws graph on the screen.
+     * @param id Id of the node/segment.
+     * @param radius Radius.
+     */
     public void drawGraph(final int id, final int radius) {
         if (radius < 5 || radius > 500) {
-            Stage newStage = new Stage();
-            Group group = new Group();
-            Label label = new Label("Radius is out of bounds");
+            Stage newStage = this.fxElementsFactory.createStage();
+            Group group = this.fxElementsFactory.createGroup();
+            Label label = this.fxElementsFactory.createLabel("Radius is out of bounds");
             group.getChildren().add(label);
-            Scene scene = new Scene(group, 150, 100);
-            newStage.setScene(scene);
-            newStage.show();
+            Scene scene = this.fxElementsFactory.createScene(group, 150, 100);
+            this.fxElementsFactory.setScene(newStage, scene);
+            this.fxElementsFactory.show(newStage);
             return;
         }
         this.getChildren().clear();
@@ -74,10 +109,42 @@ import javafx.stage.Stage;
         }
     }
 
-    public void switchToCenter() { state = center; }
+    /**
+     * Switches event handler to center queries.
+     */
+    public void switchToCenter() {
+        state = center;
+    }
 
+    /**
+     * Switches event handler to graph information handling.
+     */
     public void switchToInfo() {
         state = info;
+    }
+
+    /**
+     * Getter for the current state.
+     * @return the current state.
+     */
+    public INodeHandler getState() {
+        return this.state;
+    }
+
+    /**
+     * Getter for the center-state.
+     * @return the center state.
+     */
+    public INodeHandler getCenter() {
+        return this.center;
+    }
+
+    /**
+     * Getter for the info-state.
+     * @return the info state.
+     */
+    public INodeHandler getInfo() {
+        return this.info;
     }
 
 }

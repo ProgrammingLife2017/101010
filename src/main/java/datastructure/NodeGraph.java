@@ -61,6 +61,7 @@ public class NodeGraph {
             nodes.add(new Node());
         }
 
+        node.computeLength();
         int[] temp = nodes.get(id).getIncomingEdges();
         nodes.set(id, node);
         nodes.get(id).setIncomingEdges(temp);
@@ -75,6 +76,7 @@ public class NodeGraph {
         while (nodes.size() <= id) {
             nodes.add(new Node());
         }
+
         nodes.set(id, node);
     }
 
@@ -182,11 +184,13 @@ public class NodeGraph {
             current = q.poll();
             addEdges(current, q, visited);
             drawNodes.addLast(new DrawNode(current));
+            drawNodes.peekLast().setWidth(nodes.get(current).getLength());
         }
         topoSort();
         assignLayers();
+        verticalSpacing();
         for (DrawNode node : drawNodes) {
-            System.out.println(node.getIndex() + " : " + node.getX());
+            System.out.println(node.getIndex() + ", x : " + node.getX() + ", y :" + node.getY());
         }
     }
 
@@ -268,5 +272,17 @@ public class NodeGraph {
 
              current.setX(layer - 100);
         }
+    }
+
+    private void verticalSpacing() {
+        for (int i = 1; i < drawNodes.size(); i++) {
+            if (drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
+                drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
+            }
+        }
+    }
+
+    public LinkedList<DrawNode> getDrawNodes() {
+        return drawNodes;
     }
 }

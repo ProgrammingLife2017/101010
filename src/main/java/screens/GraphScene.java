@@ -1,7 +1,6 @@
 package screens;
 
 import datastructure.DrawNode;
-import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -11,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 /**
@@ -56,7 +54,7 @@ import javafx.stage.Stage;
             return;
         }
         this.getChildren().clear();
-        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
+        drawGraphUtil(id, radius);
     }
 
     /**
@@ -64,8 +62,16 @@ import javafx.stage.Stage;
      * @param center The node to take as center.
      * @param radius The maximum depth we want to go.
      */
-    private void drawGraphUtil(Node center, int radius) {
-        NodeGraph.getCurrentInstance().generateDrawNodes(5, radius);
+    private void drawGraphUtil(int center, int radius) {
+        NodeGraph.getCurrentInstance().generateDrawNodes(center, radius);
+        for (DrawNode dNode : NodeGraph.getCurrentInstance().getDrawNodes()) {
+            dNode.setHeight(10);
+            dNode.setFill(Color.DARKGRAY);
+            dNode.setOnMousePressed(click);
+            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+            dNode.setY(dNode.getY() + this.getHeight() / 2 - dNode.getHeight() / 2);
+            this.getChildren().add(dNode);
+        }
     }
 
     public void switchToCenter() { state = center; }

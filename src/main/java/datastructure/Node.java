@@ -145,4 +145,11 @@ public class Node {
     public void setIncomingEdges(int[] incoming) {
         from = incoming;
     }
+
+    /**
+     * Applies scaling to the length of the node.
+     */
+    public void computeLength() {
+        length = Math.max(10, Math.min(255, (int) Math.sqrt((double) length)));
+    }
 }

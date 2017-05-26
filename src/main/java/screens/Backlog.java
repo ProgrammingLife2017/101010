@@ -47,7 +47,7 @@ public class Backlog extends AnchorPane {
         this.setBottomAnchor(textArea, ANCHOR_OFFSET);
         this.getChildren().add(textArea);
         Group group = factory.createGroup();
-        group.getChildren().addAll(this);
+        group.getChildren().add(this);
         Scene scene = factory.createScene(group, PREFFERED_WIDTH, PREFFERED_HEIGHT);
         factory.setScene(stage, scene);
     }
@@ -61,6 +61,6 @@ public class Backlog extends AnchorPane {
     }
 
     public void show() {
-        stage.show();
+        factory.show(stage);
     }
 }

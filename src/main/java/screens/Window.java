@@ -95,12 +95,13 @@ public class Window extends Application {
      * Sets up the necessary services.
      */
     private void setupService() {
-        FileSystem fileSystem = new FileSystem();
-        loggerFactory = new LoggerFactory(fileSystem);
-        logger = loggerFactory.createLogger(this.getClass());
         FXElementsFactory fact = new FXElementsFactory();
         graphScene = new GraphScene(fact);
         this.backLog = new Backlog(fact);
+        FileSystem fileSystem = new FileSystem();
+        loggerFactory = new LoggerFactory(fileSystem);
+        logger = loggerFactory.createLogger(this.getClass());
+
     }
 
     /**

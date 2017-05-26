@@ -1,5 +1,6 @@
 package screens;
 
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
@@ -8,43 +9,47 @@ import javafx.stage.Stage;
 /**
  * Implementation of the backlog screen to keep track of actions that are performed by the application.
  */
-public final class Backlog {
+public class Backlog extends AnchorPane {
     /**
      * Area to write content of the logger.
      */
     private final TextArea textArea;
 
-    private final Stage stage;
+    private Stage stage;
 
     private static double ANCHOR_OFFSET = 10d;
 
-    private static double PREFFERED_HEIGHT = 300d;
+    private static int PREFFERED_HEIGHT = 300;
 
-    private static double PREFFERED_WIDTH = 600d;
+    private static int PREFFERED_WIDTH = 600;
+
+    private FXElementsFactory factory;
     /**
      * Backlog window constructor.
      */
-    /* package */ Backlog() {
+    /* package */ Backlog(FXElementsFactory fact) {
         textArea = new TextArea();
-        stage = new Stage();
+        this.factory = fact;
+        this.setup();
     }
 
-    public void setup() {
+    private void setup() {
         textArea.setEditable(false);
         textArea.setVisible(true);
         textArea.textProperty().addListener(
                 (observable, oldValue, newValue) -> textArea.setScrollTop(Double.MAX_VALUE)
         );
-        stage.setTitle("Backlog");
-        AnchorPane root = new AnchorPane();
-        root.setPrefSize(PREFFERED_WIDTH, PREFFERED_HEIGHT);
-        AnchorPane.setTopAnchor(textArea, ANCHOR_OFFSET);
-        AnchorPane.setLeftAnchor(textArea, ANCHOR_OFFSET);
-        AnchorPane.setRightAnchor(textArea, ANCHOR_OFFSET);
-        AnchorPane.setBottomAnchor(textArea, ANCHOR_OFFSET);
-        root.getChildren().add(textArea);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+
+        stage = factory.createStage();
+        this.setTopAnchor(textArea, ANCHOR_OFFSET);
+        this.setLeftAnchor(textArea, ANCHOR_OFFSET);
+        this.setRightAnchor(textArea, ANCHOR_OFFSET);
+        this.setBottomAnchor(textArea, ANCHOR_OFFSET);
+        this.getChildren().add(textArea);
+        Group group = factory.createGroup();
+        group.getChildren().addAll(this);
+        Scene scene = factory.createScene(group, PREFFERED_WIDTH, PREFFERED_HEIGHT);
+        factory.setScene(stage, scene);
     }
 
     /**
@@ -53,5 +58,9 @@ public final class Backlog {
      */
     public void printContent(final String cont) {
         textArea.appendText(cont + "\n");
+    }
+
+    public void show() {
+        stage.show();
     }
 }

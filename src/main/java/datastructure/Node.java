@@ -207,8 +207,8 @@ public class Node {
     public boolean equals(final Object other) {
         if (other instanceof Node) {
             Node that = (Node) other;
-            if (this.to.equals(that.to)
-                    && this.from.equals(that.from)
+            if (Arrays.equals(this.to, that.to)
+                    && Arrays.equals(this.from, that.from)
                     && this.length == that.length) {
                 return true;
             }

@@ -60,7 +60,6 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.setupService();
-        backLog = new Backlog();
         BorderPane mainPane = new BorderPane();
 
         mainPane.setMinSize(1200, 700);
@@ -99,7 +98,9 @@ public class Window extends Application {
         FileSystem fileSystem = new FileSystem();
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
-        graphScene = new GraphScene();
+        FXElementsFactory fact = new FXElementsFactory();
+        graphScene = new GraphScene(fact);
+        this.backLog = new Backlog(fact);
     }
 
     /**
@@ -107,9 +108,6 @@ public class Window extends Application {
      * @return BackLog object.
      */
     public static Backlog getBackLog() {
-        if (backLog == null) {
-            return new Backlog();
-        }
         return backLog;
     }
 
@@ -176,7 +174,7 @@ public class Window extends Application {
         MenuItem item2 = new MenuItem("Console log");
         item2.setOnAction(
                 event -> {
-                    getBackLog().show();
+                    backLog.show();
                     logger.info("console window has been opened");
                 }
         );

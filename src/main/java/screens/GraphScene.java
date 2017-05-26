@@ -68,10 +68,11 @@ import javafx.stage.Stage;
      * @param fact the Factory used to create JavaFX elements.
      */
      /*package*/ GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this);
-         info = new NodeInfo();
+        this.FXElementsFactory = fact;
+         center = new NodeCenter(this, fact);
+         info = new NodeInfo(Window.getInfoScreen());
          state = info;
-         this.FXElementsFactory = fact;
+
      }
 
     /**

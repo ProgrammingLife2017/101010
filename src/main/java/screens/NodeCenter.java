@@ -1,6 +1,7 @@
 package screens;
 
 import datastructure.DrawNode;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,13 +19,15 @@ public class NodeCenter implements INodeHandler {
      */
     private GraphScene graphScene;
 
+    private FXElementsFactory fxElementsFactory;
+
     /**
      * Constructor.
      * @param sc Scene for displaying graphs.
      */
-    public NodeCenter(GraphScene sc) {
+    public NodeCenter(GraphScene sc, FXElementsFactory fact) {
         this.graphScene = sc;
-
+        this.fxElementsFactory = fact;
     }
 
     /**
@@ -32,9 +35,9 @@ public class NodeCenter implements INodeHandler {
      */
     @Override
     public void handle(DrawNode node) {
-        Stage stage = new Stage();
+        Stage stage = fxElementsFactory.createStage();
         VBox box = new VBox();
-        Label label = new Label("Enter radius:");
+        Label label = fxElementsFactory.createLabel("Enter radius:");
         TextField textField = new TextField();
         Button btn = new Button("Submit");
         btn.setOnAction(
@@ -45,7 +48,9 @@ public class NodeCenter implements INodeHandler {
                 }
         );
         box.getChildren().addAll(label, textField, btn);
-        Scene scene = new Scene(box, 100.0, 100.0);
+        Group group = fxElementsFactory.createGroup();
+        group.getChildren().add(box);
+        Scene scene = fxElementsFactory.createScene(group, 100, 100);
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

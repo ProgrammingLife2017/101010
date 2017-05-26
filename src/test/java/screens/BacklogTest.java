@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -70,7 +71,8 @@ public class BacklogTest {
 
     @Test
     public void testConstructor() {
-
+        TextArea expected = Whitebox.getInternalState(log, "textArea");
+        assertEquals(area, expected);
     }
 
     @Test

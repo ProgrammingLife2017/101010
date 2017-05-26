@@ -98,6 +98,7 @@ public class Window extends Application {
         FXElementsFactory fact = new FXElementsFactory();
         graphScene = new GraphScene(fact);
         this.backLog = new Backlog(fact);
+        this.infoScreen = new InfoScreen(fact);
         FileSystem fileSystem = new FileSystem();
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
@@ -117,9 +118,6 @@ public class Window extends Application {
      * @return InfoScreen object.
      */
     public static InfoScreen getInfoScreen() {
-        if (infoScreen == null) {
-            infoScreen = new InfoScreen();
-        }
         return infoScreen;
     }
 

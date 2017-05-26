@@ -8,11 +8,12 @@ import datastructure.NodeGraph;
  */
 public class NodeInfo implements INodeHandler {
 
+    private InfoScreen infoScreen;
     /**
      * NodeInfo state handler constructor.
      */
-    public NodeInfo() {
-
+    public NodeInfo(InfoScreen iScreen) {
+        this.infoScreen = iScreen;
     }
 
     /**
@@ -20,6 +21,6 @@ public class NodeInfo implements INodeHandler {
      */
     @Override
     public void handle(DrawNode node) {
-        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
+        this.infoScreen.getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
     }
 }

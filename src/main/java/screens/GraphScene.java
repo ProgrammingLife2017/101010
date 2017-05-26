@@ -35,6 +35,11 @@ import javafx.stage.Stage;
     private INodeHandler state;
 
     /**
+     * The factory the GraphScene uses to create JavaFX elements.
+     */
+    private FXElementsFactory FXElementsFactory;
+
+    /**
      * Event handler for when a node or edge is clicked.
      */
      private EventHandler<MouseEvent> click = event -> {
@@ -60,11 +65,13 @@ import javafx.stage.Stage;
 
     /**
      * GraphScene pane constructor.
+     * @param fact the Factory used to create JavaFX elements.
      */
-     /*package*/ GraphScene() {
+     /*package*/ GraphScene(FXElementsFactory fact) {
          center = new NodeCenter(this);
          info = new NodeInfo();
          state = info;
+         this.FXElementsFactory = fact;
      }
 
     /**
@@ -74,13 +81,13 @@ import javafx.stage.Stage;
      */
     public void drawGraph(final int id, final int radius) {
         if (radius < 5 || radius > 500) {
-            Stage newStage = new Stage();
-            Group group = new Group();
-            Label label = new Label("Radius is out of bounds");
+            Stage newStage = this.FXElementsFactory.createStage();
+            Group group = this.FXElementsFactory.createGroup();
+            Label label = this.FXElementsFactory.createLabel("Radius is out of bounds");
             group.getChildren().add(label);
-            Scene scene = new Scene(group, 150, 100);
-            newStage.setScene(scene);
-            newStage.show();
+            Scene scene = this.FXElementsFactory.createScene(group, 150, 100);
+            this.FXElementsFactory.setScene(newStage, scene);
+            this.FXElementsFactory.show(newStage);
             return;
         }
          this.getChildren().clear();
@@ -148,6 +155,30 @@ import javafx.stage.Stage;
      */
     public void switchToInfo() {
         state = info;
+    }
+
+    /**
+     * Getter for the current state.
+     * @return the current state.
+     */
+    public INodeHandler getState() {
+        return this.state;
+    }
+
+    /**
+     * Getter for the center-state.
+     * @return the center state.
+     */
+    public INodeHandler getCenter() {
+        return this.center;
+    }
+
+    /**
+     * Getter for the info-state.
+     * @return the info state.
+     */
+    public INodeHandler getInfo() {
+        return this.info;
     }
 
 }

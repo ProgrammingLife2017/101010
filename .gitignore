@@ -7,3 +7,5 @@
 *.log
 directory.txt
 src/main/resources/Tomato_150_VCFs_2.50_chr06.gfa
+src/main/resources/Tomato_150_VCFs_2.50_chr06.txt
+src/main/resources/Tomato_150_VCFs_2.50_chr06Segments.txt

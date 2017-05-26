@@ -50,16 +50,19 @@ public final class Parser {
         graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
         if (cache.exists()) {
-             try {
-                BufferedReader br = new BufferedReader(new FileReader(cache));
-                if (br.readLine() != null) {
+            file = null;
+//             try {
+//                BufferedReader br = new BufferedReader(new FileReader(cache));
+//                if (br.readLine() != null) {
+//                    br.close();
+//                    br = null;
                     System.out.println("not an empty cache");
                     return parseCache(graph, cache);
-                }
-            } catch(IOException e){
-                System.out.println("Error parsing file");
-                e.printStackTrace();
-            }
+//                }
+//            } catch(IOException e){
+//                System.out.println("Error parsing file");
+//                e.printStackTrace();
+//            }
         }
         return parse(file, graph);
     }

@@ -34,6 +34,9 @@ import javafx.stage.Stage;
      */
     private INodeHandler state;
 
+    /**
+     * The factory the GraphScene uses to create JavaFX elements.
+     */
     private Factory factory;
 
     /**
@@ -62,6 +65,7 @@ import javafx.stage.Stage;
 
     /**
      * GraphScene pane constructor.
+     * @param fact the Factory used to create JavaFX elements.
      */
      /*package*/ GraphScene(Factory fact) {
          center = new NodeCenter(this);

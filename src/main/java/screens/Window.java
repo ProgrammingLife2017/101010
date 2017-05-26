@@ -101,7 +101,8 @@ public class Window extends Application {
         FileSystem fileSystem = new FileSystem();
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
-        graphScene = new GraphScene();
+        FXElementsFactory fact = new FXElementsFactory();
+        graphScene = new GraphScene(fact);
         setScrolling(graphScene);
     }
 
@@ -142,8 +143,8 @@ public class Window extends Application {
     }
 
     /**
-     * 
-     * @param scene
+     * Sets a scroll event to the pane that handles the zooming of the graph.
+     * @param scene the GraphScene to which the scroll event is added.
      */
     private void setScrolling(GraphScene scene) {
         scene.setOnScroll((ScrollEvent event) -> {
@@ -154,18 +155,14 @@ public class Window extends Application {
                 if (deltaY < 0) {
                     if (oldRadius - 2 < 5) {
                         scene.drawGraph(centerId, 5);
-                        NavigationInfo.getInstance().setCurrentRadius(5);
                     } else {
                         scene.drawGraph(centerId, oldRadius - 2);
-                        NavigationInfo.getInstance().setCurrentRadius(oldRadius - 2);
                     }
                 } else {
                     if (oldRadius + 2 > 500) {
                         scene.drawGraph(centerId, 500);
-                        NavigationInfo.getInstance().setCurrentRadius(500);
                     } else {
                         scene.drawGraph(centerId, oldRadius + 2);
-                        NavigationInfo.getInstance().setCurrentRadius(oldRadius + 2);
                     }
                 }
             }

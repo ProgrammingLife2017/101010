@@ -49,9 +49,6 @@ public class GraphSceneTest {
     @Mock
     ObservableList list = mock(ObservableList.class);
 
-    @Mock
-    NodeGraph ngMock;
-
     ArrayList<Node> nodes = new ArrayList<Node>();
 
     NodeGraph ngTest = new NodeGraph();

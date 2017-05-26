@@ -44,7 +44,7 @@ public class GraphSceneTest {
     @Mock
     Scene scene;
 
-    Factory fact = mock(Factory.class);
+    FXElementsFactory fact = mock(FXElementsFactory.class);
 
     @Mock
     ObservableList list = mock(ObservableList.class);

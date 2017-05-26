@@ -99,7 +99,7 @@ public class Window extends Application {
         FileSystem fileSystem = new FileSystem();
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
-        Factory fact = new Factory();
+        FXElementsFactory fact = new FXElementsFactory();
         graphScene = new GraphScene(fact);
     }
 

@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 /**
  * Factory for JavaFX constructors.
  */
-public class Factory {
+public class FXElementsFactory {
 
     /**
      * Creates a JavaFX stage.

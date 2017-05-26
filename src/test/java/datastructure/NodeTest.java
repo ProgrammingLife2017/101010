@@ -1,9 +1,8 @@
 package datastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by 101010.
@@ -92,62 +91,6 @@ class NodeTest {
     @Test
     void equalsNull() {
         assertFalse(node == null);
-    }
-
-    /**
-     * Test the getX and getY method of Node.
-     */
-    @Test
-    void testGetXY() {
-        assertEquals(0, node.getX());
-        assertEquals(0, node.getY());
-    }
-
-    /**
-     * Test the setX and setY method of Node.
-     */
-    @Test
-    void testSetXY() {
-        node.setX(100);
-        node.setY(300);
-        assertEquals(100, node.getX());
-        assertEquals(300, node.getY());
-    }
-
-    /**
-     * Test the getChild method of Node.
-     */
-    @Test
-    void testGetChild() {
-        assertEquals(0, node.getChild());
-    }
-
-    /**
-     * Test the getChild method of Node.
-     */
-    @Test
-    void testSetChild() {
-        node.setChild(2);
-        assertEquals(2, node.getChild());
-    }
-
-    /**
-     * Test the getChild method of Node.
-     */
-    @Test
-    void testGetSetInDegree() {
-        assertEquals(0, node.getInDegree());
-        node.setInDegree(4);
-        assertEquals(4, node.getInDegree());
-    }
-
-    /**
-     * Test the getChild method of Node.
-     */
-    @Test
-    void testSetInDegree() {
-        node.setChild(2);
-        assertEquals(node.getChild(), 2);
     }
 }
 

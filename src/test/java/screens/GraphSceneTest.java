@@ -13,9 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.mockito.Matchers.anyString;
-
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -25,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -77,13 +75,12 @@ public class GraphSceneTest {
     @Before
     public void setUp() {
         Node n1 = new Node();
-        n1.setX(544);
         n1.addOutgoingEdge(1);
         Node n2 = new Node();
         n2.addIncomingEdge(0);
         nodes.add(n1);
         nodes.add(n2);
-        ngTest = new NodeGraph(nodes, null);
+        ngTest = new NodeGraph(nodes, null, null);
         when(fact.createStage()).thenReturn(stage);
         when(fact.createLabel(anyString())).thenReturn(label);
         when(fact.createGroup()).thenReturn(group);

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
- * Created by Martijn on 24-5-2017.
+ * Tests the GraphScene class.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GraphSceneTest {
@@ -48,9 +48,6 @@ public class GraphSceneTest {
 
     @Mock
     ObservableList list = mock(ObservableList.class);
-
-    @Mock
-    NodeGraph ngMock;
 
     ArrayList<Node> nodes = new ArrayList<Node>();
 

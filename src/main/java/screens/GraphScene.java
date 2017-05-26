@@ -37,7 +37,7 @@ import javafx.stage.Stage;
     /**
      * The factory the GraphScene uses to create JavaFX elements.
      */
-    private FXElementsFactory FXElementsFactory;
+    private FXElementsFactory factory;
 
     /**
      * Event handler for when a node or edge is clicked.
@@ -71,7 +71,7 @@ import javafx.stage.Stage;
          center = new NodeCenter(this);
          info = new NodeInfo();
          state = info;
-         this.FXElementsFactory = fact;
+         this.factory = fact;
      }
 
     /**
@@ -81,17 +81,19 @@ import javafx.stage.Stage;
      */
     public void drawGraph(final int id, final int radius) {
         if (radius < 5 || radius > 500) {
-            Stage newStage = this.FXElementsFactory.createStage();
-            Group group = this.FXElementsFactory.createGroup();
-            Label label = this.FXElementsFactory.createLabel("Radius is out of bounds");
+            Stage newStage = this.factory.createStage();
+            Group group = this.factory.createGroup();
+            Label label = this.factory.createLabel("Radius is out of bounds");
             group.getChildren().add(label);
-            Scene scene = this.FXElementsFactory.createScene(group, 150, 100);
-            this.FXElementsFactory.setScene(newStage, scene);
-            this.FXElementsFactory.show(newStage);
-            return;
+            Scene scene = this.factory.createScene(group, 150, 100);
+            this.factory.setScene(newStage, scene);
+            this.factory.show(newStage);
+        } else {
+            NavigationInfo.getInstance().setCurrentRadius(radius);
+            NavigationInfo.getInstance().setCurrentCenterNode(id);
+            this.getChildren().clear();
+            drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
         }
-         this.getChildren().clear();
-        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
     }
 
     /**

@@ -150,6 +150,9 @@ public class Node {
      * Applies scaling to the length of the node.
      */
     public void computeLength() {
+        if (length < 0) {
+            length = 0;
+        }
         length = Math.max(10, Math.min(255, (int) Math.sqrt((double) length)));
     }
 }

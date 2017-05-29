@@ -129,20 +129,6 @@ public class NodeGraph {
         currentNodeGraph = g;
     }
 
-    /**
-     * Returns the index of a node.
-     * @param n the node we want the index of.
-     * @return the index of this node.
-     */
-    public int indexOf(Node n) {
-        for (int i = 0; i < this.nodes.size(); i++) {
-            if (this.nodes.get(i) == n) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
      /**
      * Returns the amount of nodes.
      * @return the size of the graph.
@@ -274,6 +260,11 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * Computes the Y coordinate of the drawNodes
+     * by looping over all nodes and adding to their Y coordinate
+     * when the X coordinate is the same.
+     */
     private void verticalSpacing() {
         for (int i = 1; i < drawNodes.size(); i++) {
             if (drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
@@ -282,6 +273,10 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * Get the LinkedList of DrawNodes that need to be drawn.
+     * @return LinkedList of DrawNodes.
+     */
     public LinkedList<DrawNode> getDrawNodes() {
         return drawNodes;
     }

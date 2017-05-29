@@ -66,8 +66,6 @@ public class Window extends Application {
 
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
-
-
         //Creating a scene object
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("layoutstyles.css");

@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import javax.swing.*;
@@ -29,7 +27,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 /**
  * Test class for the backlog window.
  */
-@RunWith(PowerMockRunner.class)
 public class BacklogTest {
     private Backlog log;
     private TextArea area;

@@ -159,6 +159,7 @@ public class NodeGraph {
      * @param radius Radius (amount of nodes required).
      */
     public void generateDrawNodes(int center, int radius) {
+        drawNodes = new LinkedList<>();
         TreeSet<Integer> visited = new TreeSet<>();
         Queue<Integer> q = new LinkedList<>();
         int r = Math.min(radius, nodes.size());
@@ -242,7 +243,7 @@ public class NodeGraph {
      */
     private void assignLayers() {
         Iterator<DrawNode> it = drawNodes.iterator();
-        double layer = 1600;
+        double layer = 1200;
         DrawNode current;
 
         while (it.hasNext()) {
@@ -279,5 +280,19 @@ public class NodeGraph {
      */
     public LinkedList<DrawNode> getDrawNodes() {
         return drawNodes;
+    }
+
+    /**
+     * Returns the DrawNode that represents the given node.
+     * @param index the index of the node we want the representing DrawNode for.
+     * @return a DrawNode.
+     */
+    public DrawNode getDrawNode(int index) {
+        for (DrawNode dNode : drawNodes) {
+            if (dNode.getIndex() == index) {
+                return dNode;
+            }
+        }
+        return null;
     }
 }

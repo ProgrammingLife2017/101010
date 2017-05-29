@@ -107,21 +107,21 @@ import javafx.stage.Stage;
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setY(dNode.getY() + this.getHeight() / 2 - dNode.getHeight() / 2);
             this.getChildren().add(dNode);
-            Node out;
             DrawNode nOut;
             for (int i : NodeGraph.getCurrentInstance().getNodes().get(dNode.getIndex()).getOutgoingEdges()) {
-                if (i < radius + center) {
-                    out = NodeGraph.getCurrentInstance().getNode(i);
+                if (i < center + radius && i > center - radius) {
                     nOut = NodeGraph.getCurrentInstance().getDrawNode(i);
-                    Line l = new Line();
-                    l.setId(dNode.getIndex() + "-" + i);
-                    l.setStrokeWidth(2);
-                    l.setStartX(dNode.getBoundsInLocal().getMaxX());
-                    l.setStartY(dNode.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(nOut.getBoundsInLocal().getMinX());
-                    l.setEndY(nOut.getBoundsInLocal().getMinY() + 5);
-                    l.setOnMousePressed(click);
-                    this.getChildren().add(l);
+                    if (nOut != null) {
+                        Line l = new Line();
+                        l.setId(dNode.getIndex() + "-" + i);
+                        l.setStrokeWidth(2);
+                        l.setStartX(dNode.getBoundsInLocal().getMaxX());
+                        l.setStartY(dNode.getBoundsInLocal().getMinY() + 5);
+                        l.setEndX(nOut.getBoundsInLocal().getMinX());
+                        l.setEndY(nOut.getBoundsInLocal().getMinY() + 5);
+                        l.setOnMousePressed(click);
+                        this.getChildren().add(l);
+                    }
                 }
             }
         }

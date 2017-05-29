@@ -36,7 +36,7 @@ public class NodeGraph {
     public NodeGraph() {
         this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
-        drawNodes = new LinkedList<DrawNode>();
+        drawNodes = new LinkedList<>();
     }
 
     /**
@@ -175,9 +175,6 @@ public class NodeGraph {
         topoSort();
         assignLayers();
         verticalSpacing();
-        for (DrawNode node : drawNodes) {
-            System.out.println(node.getIndex() + ", x : " + node.getX() + ", y :" + node.getY());
-        }
     }
 
     /**

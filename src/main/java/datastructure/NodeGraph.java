@@ -1,10 +1,11 @@
 package datastructure;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.TreeSet;
-import java.util.Queue;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Queue;
+import java.util.TreeSet;
 
 /**
  * Created by 101010.
@@ -26,6 +27,11 @@ public class NodeGraph {
     private LinkedList<DrawNode> drawNodes;
 
     /**
+     * LinkedList of the dummynodes.
+     */
+    private LinkedList<DummyNode> dummyNodes;
+
+    /**
      * Instance of the current graph.
      */
     private static NodeGraph currentNodeGraph;
@@ -37,6 +43,7 @@ public class NodeGraph {
         this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
         drawNodes = new LinkedList<>();
+        dummyNodes = new LinkedList<>();
     }
 
     /**
@@ -45,10 +52,11 @@ public class NodeGraph {
      * @param segments The database containing the segments of the nodes.
      * @param drawNodes The LinkedList of nodes to be drawn.
      */
-    public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments, final LinkedList<DrawNode> drawNodes) {
+    public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments, final LinkedList<DrawNode> drawNodes, final LinkedList<DummyNode> dummyNodes) {
         this.nodes = nodes;
         this.segments = segments;
         this.drawNodes = drawNodes;
+        this.dummyNodes = dummyNodes;
     }
 
     /**
@@ -160,6 +168,7 @@ public class NodeGraph {
      */
     public void generateDrawNodes(int center, int radius) {
         drawNodes = new LinkedList<>();
+        dummyNodes = new LinkedList<>();
         TreeSet<Integer> visited = new TreeSet<>();
         Queue<Integer> q = new LinkedList<>();
         int r = Math.min(radius, nodes.size());
@@ -175,6 +184,7 @@ public class NodeGraph {
         }
         topoSort();
         assignLayers();
+        computeDummyNodes();
         verticalSpacing();
     }
 
@@ -259,14 +269,79 @@ public class NodeGraph {
     }
 
     /**
+     * Adds dummy nodes to make the graph more readable.
+     */
+    private void computeDummyNodes() {
+        ListIterator<DrawNode> it = drawNodes.listIterator();
+        Queue<DummyNode> dummyNodeQueue = new LinkedList<>();
+        DrawNode current;
+        DrawNode cDrawNode;
+        DummyNode cDummyNode;
+        double currentLayer = drawNodes.get(0).getX();
+        int[] edges;
+
+        while (it.hasNext()) {
+            current = it.next();
+
+            if (current.getX() != currentLayer) {
+                currentLayer -= 100;
+                while (!dummyNodeQueue.isEmpty()) {
+                    cDummyNode = dummyNodeQueue.poll();
+                    cDrawNode = getDrawNode(cDummyNode.getTo());
+                    Queue<DummyNode> temp = new LinkedList<>();
+                    if (cDrawNode != null && cDummyNode.getX() - cDrawNode.getX() > 100) {
+                        temp.offer(new DummyNode(cDummyNode.getId() - 1, cDummyNode.getFrom(), cDummyNode.getTo(), cDummyNode.getX() - 100, 50));
+                    }
+                    dummyNodes.addLast(cDummyNode);
+                    dummyNodeQueue = temp;
+                }
+            }
+
+            edges = nodes.get(current.getIndex()).getIncomingEdges();
+
+            for (int i = 0; i < edges.length; i++) {
+                cDrawNode = getDrawNode(edges[i]);
+                if (cDrawNode != null && current.getX() - cDrawNode.getX() > 100) {
+                    dummyNodeQueue.add(new DummyNode(-1, cDrawNode.getIndex(), current.getIndex(), (int) currentLayer - 100, 50));
+                }
+            }
+        }
+    }
+
+    /**
      * Computes the Y coordinate of the drawNodes
      * by looping over all nodes and adding to their Y coordinate
      * when the X coordinate is the same.
      */
     private void verticalSpacing() {
-        for (int i = 1; i < drawNodes.size(); i++) {
-            if (drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
+        ListIterator<DummyNode> it = dummyNodes.listIterator();
+        DummyNode cDN;
+        DummyNode cDN2 = null;
+
+        while (it.hasNext()) {
+            if (cDN2 != null) {
+                cDN = it.next();
+                if (cDN2.getX() == cDN.getX()) {
+                    cDN.setY(cDN2.getY() + 50);
+                }
+                cDN2 = cDN;
+            } else {
+                cDN2 = it.next();
+            }
+        }
+
+        int maxY;
+        for (int i = 0; i < drawNodes.size(); i++) {
+            if (i > 0 && drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
                 drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
+            } else {
+                maxY = 0;
+                for (DummyNode dN : dummyNodes) {
+                    if (dN.getX() == (int) drawNodes.get(i).getX() && dN.getY() > maxY) {
+                        maxY = dN.getY();
+                    }
+                }
+                drawNodes.get(i).setY(maxY + 50);
             }
         }
     }
@@ -291,5 +366,13 @@ public class NodeGraph {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the LinkedList of DummyNodes.
+     * @return The LinkedList of DummyNodes.
+     */
+    public LinkedList<DummyNode> getDummyNodes() {
+        return dummyNodes;
     }
 }

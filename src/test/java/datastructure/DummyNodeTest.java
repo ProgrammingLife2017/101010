@@ -15,6 +15,8 @@ public class DummyNodeTest {
     private int id;
     private int from;
     private int to;
+    private int x;
+    private int y;
 
     @BeforeAll
     static void beforeAll() {
@@ -31,12 +33,19 @@ public class DummyNodeTest {
         id = random.nextInt();
         from = random.nextInt();
         to = random.nextInt();
-        dummyNode = new DummyNode(id, from, to);
+        x = random.nextInt();
+        y = random.nextInt();
+        dummyNode = new DummyNode(id, from, to, x, y);
     }
 
     @AfterEach
     void tearDown() {
         dummyNode = null;
+    }
+
+    @Test
+    void getId() {
+        assertEquals(id, dummyNode.getId());
     }
 
     @Test
@@ -61,5 +70,29 @@ public class DummyNodeTest {
         int newTo = random.nextInt();
         dummyNode.setTo(newTo);
         assertEquals(newTo, dummyNode.getTo());
+    }
+
+    @Test
+    void testGetX() {
+        assertEquals(x, dummyNode.getX());
+    }
+
+    @Test
+    void testSetX() {
+        int newX = random.nextInt();
+        dummyNode.setX(newX);
+        assertEquals(newX, dummyNode.getX());
+    }
+
+    @Test
+    void testGetY() {
+        assertEquals(y, dummyNode.getY());
+    }
+
+    @Test
+    void testSetY() {
+        int newY = random.nextInt();
+        dummyNode.setY(newY);
+        assertEquals(newY, dummyNode.getY());
     }
 }

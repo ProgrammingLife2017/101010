@@ -45,7 +45,7 @@ class NodeGraphTest {
         when(node.getOutgoingEdges()).thenReturn(new int[0]);
         when(segmentDB.getSegment(anyInt())).thenReturn("Segment");
         when(nodes.get(anyInt())).thenReturn(node);
-        nodeGraph = new NodeGraph(nodes, segmentDB, drawNodes);
+        nodeGraph = new NodeGraph(nodes, segmentDB, drawNodes, new LinkedList<>());
     }
 
     /**
@@ -88,7 +88,7 @@ class NodeGraphTest {
 
     @Test
     void testAddNode() {
-        nodeGraph = new NodeGraph(new ArrayList<Node>(0), segmentDB, drawNodes);
+        nodeGraph = new NodeGraph(new ArrayList<Node>(0), segmentDB, drawNodes, new LinkedList<>());
         nodeGraph.addNode(100, node);
         assertEquals(101, nodeGraph.getSize());
         assertEquals(node, nodeGraph.getNode(100));
@@ -98,7 +98,7 @@ class NodeGraphTest {
 
     @Test
     void testAddNodeCache() {
-        nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes);
+        nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes, new LinkedList<>());
         nodeGraph.addNodeCache(100, node);
         assertEquals(101, nodeGraph.getSize());
         assertEquals(node, nodeGraph.getNode(100));
@@ -108,7 +108,7 @@ class NodeGraphTest {
 
     @Test
     void testAddEdge() {
-        nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes);
+        nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes, new LinkedList<>());
         Node node2 = mock(Node.class);
 
         nodeGraph.addNode(0, node);
@@ -160,7 +160,7 @@ class NodeGraphTest {
         ArrayList<Node> nodes2 = mock(new ArrayList<Node>().getClass());
         when(nodes2.size()).thenReturn(1);
         when(nodes2.get(anyInt())).thenReturn(node);
-        nodeGraph = new NodeGraph(nodes2, segmentDB, new LinkedList<>());
+        nodeGraph = new NodeGraph(nodes2, segmentDB, new LinkedList<>(), new LinkedList<>());
         nodeGraph.generateDrawNodes(0, 500);
         assertEquals(1, nodeGraph.getDrawNodes().size());
         verify(node, atLeastOnce()).getIncomingEdges();

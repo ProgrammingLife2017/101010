@@ -80,7 +80,7 @@ public class GraphSceneTest {
         n2.addIncomingEdge(0);
         nodes.add(n1);
         nodes.add(n2);
-        ngTest = new NodeGraph(nodes, null, null);
+        ngTest = new NodeGraph(nodes, null, null, null);
         when(fact.createStage()).thenReturn(stage);
         when(fact.createLabel(anyString())).thenReturn(label);
         when(fact.createGroup()).thenReturn(group);

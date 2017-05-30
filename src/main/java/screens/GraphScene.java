@@ -1,7 +1,7 @@
 package screens;
 
 import datastructure.DrawNode;
-import datastructure.Node;
+import datastructure.DummyNode;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -12,6 +12,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Implementation of the window that handles graph visualization.
@@ -105,22 +108,73 @@ import javafx.stage.Stage;
             dNode.setFill(Color.CRIMSON);
             dNode.setOnMousePressed(click);
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setY(dNode.getY() + this.getHeight() / 2 - dNode.getHeight() / 2);
+            dNode.setY(dNode.getY());
             this.getChildren().add(dNode);
             DrawNode nOut;
             for (int i : NodeGraph.getCurrentInstance().getNodes().get(dNode.getIndex()).getOutgoingEdges()) {
-                if (i < center + radius && i > center - radius) {
-                    nOut = NodeGraph.getCurrentInstance().getDrawNode(i);
-                    if (nOut != null) {
-                        Line l = new Line();
-                        l.setId(dNode.getIndex() + "-" + i);
-                        l.setStrokeWidth(2);
-                        l.setStartX(dNode.getBoundsInLocal().getMaxX());
-                        l.setStartY(dNode.getBoundsInLocal().getMinY() + 5);
-                        l.setEndX(nOut.getBoundsInLocal().getMinX());
-                        l.setEndY(nOut.getBoundsInLocal().getMinY() + 5);
-                        l.setOnMousePressed(click);
-                        this.getChildren().add(l);
+                nOut = NodeGraph.getCurrentInstance().getDrawNode(i);
+                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+                    Line l = new Line();
+                    l.setId(dNode.getIndex() + "-" + i);
+                    l.setStrokeWidth(2);
+                    l.setStartX(dNode.getBoundsInLocal().getMaxX());
+                    l.setStartY(dNode.getBoundsInLocal().getMinY() + 5);
+                    l.setEndX(nOut.getBoundsInLocal().getMinX());
+                    l.setEndY(nOut.getBoundsInLocal().getMinY() + 5);
+                    l.setOnMousePressed(click);
+                    this.getChildren().add(l);
+                }
+            }
+        }
+
+        DummyNode current;
+        DummyNode current2;
+        DrawNode dN;
+        Set<DummyNode> visited = new TreeSet<>();
+        for (int i = NodeGraph.getCurrentInstance().getDummyNodes().size() - 1; i >= 0; i--) {
+            current = NodeGraph.getCurrentInstance().getDummyNodes().get(i);
+            if (!visited.contains(current)) {
+                visited.add(current);
+                if (!visited.contains(current.prevInEdge())) {
+                    dN = NodeGraph.getCurrentInstance().getDrawNode(current.getFrom());
+                    if (dN != null) {
+                        Line l1 = new Line();
+                        l1.setId(current.getFrom() + "-" + current.getTo());
+                        l1.setStrokeWidth(5);
+                        l1.setStartX(dN.getBoundsInLocal().getMaxX());
+                        l1.setStartY(dN.getBoundsInLocal().getMinY() + 5);
+                        l1.setEndX(current.getX());
+                        l1.setEndY(current.getY() + 5);
+                        l1.setOnMousePressed(click);
+                        this.getChildren().add(l1);
+                    }
+                }
+                for (int j = NodeGraph.getCurrentInstance().getDummyNodes().size() - 1; j >= 0; j--) {
+                    current2 = NodeGraph.getCurrentInstance().getDummyNodes().get(j);
+                    if (current.nextInEdge(current2)) {
+                        Line l2 = new Line();
+                        l2.setId(current.getFrom() + "-" + current.getTo());
+                        l2.setStrokeWidth(5);
+                        l2.setStartX(current.getX());
+                        l2.setStartY(current.getY() + 5);
+                        l2.setEndX(current2.getX());
+                        l2.setEndY(current2.getY() + 5);
+                        l2.setOnMousePressed(click);
+                        this.getChildren().add(l2);
+                    }
+                }
+                if (current.getId() == -1) {
+                    dN = NodeGraph.getCurrentInstance().getDrawNode(current.getTo());
+                    if (dN != null) {
+                        Line l3 = new Line();
+                        l3.setId(current.getFrom() + "-" + current.getTo());
+                        l3.setStrokeWidth(5);
+                        l3.setStartX(current.getX());
+                        l3.setStartY(current.getY() + 5);
+                        l3.setEndX(dN.getBoundsInLocal().getMinX());
+                        l3.setEndY(dN.getBoundsInLocal().getMinY() + 5);
+                        l3.setOnMousePressed(click);
+                        this.getChildren().add(l3);
                     }
                 }
             }

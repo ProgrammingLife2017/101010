@@ -15,6 +15,10 @@ public class NavigationInfo {
      */
     private int currentCenterNode;
 
+    private double xOffset;
+
+    private double yOffset;
+
     /**
      * A singleton instance of NavigationInfo.
      */
@@ -26,6 +30,8 @@ public class NavigationInfo {
     private NavigationInfo() {
         this.currentCenterNode = 0;
         this.currentRadius = 200;
+        this.xOffset = 0;
+        this.yOffset = 0;
     }
 
     /**
@@ -69,5 +75,21 @@ public class NavigationInfo {
      */
     public void setCurrentCenterNode(int id) {
         this.currentCenterNode = id;
+    }
+
+    public double getXOffset() {
+        return this.xOffset;
+    }
+
+    public void setXOffSet(double x) {
+        this.xOffset = x;
+    }
+
+    public double getYOffset() {
+        return this.yOffset;
+    }
+
+    public void setYOffSet(double y) {
+        this.yOffset = y;
     }
 }

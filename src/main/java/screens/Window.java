@@ -69,7 +69,7 @@ public class Window extends Application {
 
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
-
+        setScrolling(mainPane);
 
         //Creating a scene object
         Scene scene = new Scene(mainPane);
@@ -103,7 +103,6 @@ public class Window extends Application {
         logger = loggerFactory.createLogger(this.getClass());
         FXElementsFactory fact = new FXElementsFactory();
         graphScene = new GraphScene(fact);
-        setScrolling(graphScene);
     }
 
     /**
@@ -146,27 +145,42 @@ public class Window extends Application {
      * Sets a scroll event to the pane that handles the zooming of the graph.
      * @param scene the GraphScene to which the scroll event is added.
      */
-    private void setScrolling(GraphScene scene) {
-        scene.setOnScroll((ScrollEvent event) -> {
+    private void setScrolling(BorderPane mainPane) {
+        mainPane.setOnScroll((ScrollEvent event) -> {
             if (NodeGraph.getCurrentInstance() != null) {
                 int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
                 int oldRadius = NavigationInfo.getInstance().getCurrentRadius();
+                double transX = getTranslate(event.getX(), graphScene.getWidth());
+                double transY = getTranslate(event.getY(), graphScene.getHeight());
                 double deltaY = event.getDeltaY();
                 if (deltaY < 0) {
-                    if (oldRadius - 2 < 5) {
-                        scene.drawGraph(centerId, 5);
+                    if (oldRadius + 2 > 500) {
+                        graphScene.drawGraph(centerId, 500);
                     } else {
-                        scene.drawGraph(centerId, oldRadius - 2);
+                        graphScene.drawGraph(centerId, oldRadius + 2);
+                        graphScene.setTranslateX((graphScene.getTranslateX() + transX) / 1.02);
+                        graphScene.setTranslateY((graphScene.getTranslateY() + transY) / 1.02);
+                        graphScene.setScaleX(graphScene.getScaleX() / 1.02);
+                        graphScene.setScaleY(graphScene.getScaleY() / 1.02);
                     }
                 } else {
-                    if (oldRadius + 2 > 500) {
-                        scene.drawGraph(centerId, 500);
+                    if (oldRadius - 2 < 5) {
+                        graphScene.drawGraph(centerId, 5);
                     } else {
-                        scene.drawGraph(centerId, oldRadius + 2);
+                        graphScene.drawGraph(centerId, oldRadius - 2);
+                        graphScene.setTranslateX(1.02 * (graphScene.getTranslateX() - transX));
+                        graphScene.setTranslateY(1.02 * (graphScene.getTranslateY() - transY));
+                        graphScene.setScaleX(graphScene.getScaleX() * 1.02);
+                        graphScene.setScaleY(graphScene.getScaleY() * 1.02);
                     }
                 }
             }
         });
+    }
+
+    private double getTranslate(double cursorPos, double screenDimension) {
+        double change = screenDimension * 0.02;
+        return change * cursorPos / screenDimension - change / 2;
     }
 
     /**

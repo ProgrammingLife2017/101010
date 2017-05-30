@@ -139,7 +139,6 @@ import javafx.stage.Stage;
         Rectangle position = new Rectangle(5, 10);
         position.setFill(Color.RED);
         double relPos = x / max * scroll.getWidth() + 5;
-        System.out.println(x / max);
         position.setX(relPos);
         position.setY(this.getHeight() - 15);
         this.getChildren().add(position);

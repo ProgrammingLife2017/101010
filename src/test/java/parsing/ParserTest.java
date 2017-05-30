@@ -2,10 +2,7 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
+import java.io.*;
 import org.junit.After;
 import org.junit.Test;
 
@@ -98,30 +95,54 @@ public class ParserTest {
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
         File file = new File(absoluteFilePath + "/src/test/resources/testCache.txt");
-        NodeGraph graph = new NodeGraph();
-        Node node1 = new Node();
-        Node node2 = new Node();
-        Node node3 = new Node();
-        Node node4 = new Node();
-        node1.setLength(5);
-        node2.setLength(6);
-        node3.setLength(7);
-        node4.setLength(8);
-        node1.addOutgoingEdge(1);
-        node1.addOutgoingEdge(2);
-        node1.addOutgoingEdge(3);
-        node2.addOutgoingEdge(3);
-        node2.addIncomingEdge(0);
-        node3.addIncomingEdge(0);
-        node4.addIncomingEdge(0);
-        node4.addIncomingEdge(1);
-        graph.addNode(0, node1);
-        graph.addNode(1, node2);
-        graph.addNode(2, node3);
-        graph.addNode(3, node4);
         try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            bw.write("4\n" +
+                    "5\n" +
+                    "0\n" +
+                    "0\n" +
+                    "3\n" +
+                    "1\n" +
+                    "2\n" +
+                    "3\n" +
+                    "6\n" +
+                    "0\n" +
+                    "0\n" +
+                    "1\n" +
+                    "3\n" +
+                    "7\n" +
+                    "0\n" +
+                    "0\n" +
+                    "0\n" +
+                    "8\n" +
+                    "0\n" +
+                    "0\n" +
+                    "0");
+            bw.close();
+            NodeGraph graph = new NodeGraph();
+            Node node1 = new Node();
+            Node node2 = new Node();
+            Node node3 = new Node();
+            Node node4 = new Node();
+            node1.setLength(5);
+            node2.setLength(6);
+            node3.setLength(7);
+            node4.setLength(8);
+            node1.addOutgoingEdge(1);
+            node1.addOutgoingEdge(2);
+            node1.addOutgoingEdge(3);
+            node2.addOutgoingEdge(3);
+            node2.addIncomingEdge(0);
+            node3.addIncomingEdge(0);
+            node4.addIncomingEdge(0);
+            node4.addIncomingEdge(1);
+            graph.addNode(0, node1);
+            graph.addNode(1, node2);
+            graph.addNode(2, node3);
+            graph.addNode(3, node4);
             NodeGraph testGraph = new NodeGraph();
             parser.parseCache(testGraph, file);
+            file.delete();
             assertEquals(graph.getSize(), testGraph.getSize());
             Node testNode1;
             Node testNode2;

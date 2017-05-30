@@ -76,20 +76,4 @@ public class NavigationInfo {
     public void setCurrentCenterNode(int id) {
         this.currentCenterNode = id;
     }
-
-    public double getXOffset() {
-        return this.xOffset;
-    }
-
-    public void setXOffSet(double x) {
-        this.xOffset = x;
-    }
-
-    public double getYOffset() {
-        return this.yOffset;
-    }
-
-    public void setYOffSet(double y) {
-        this.yOffset = y;
-    }
 }

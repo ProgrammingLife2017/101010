@@ -45,7 +45,7 @@ public class NodeGraph {
     public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments) {
         this.nodes = nodes;
         this.segments = segments;
-        this.maxX = 0;
+        this.maxX = -1;
     }
 
     /**

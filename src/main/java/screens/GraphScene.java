@@ -131,17 +131,7 @@ import javafx.stage.Stage;
                 }
             }
         }
-        int max = NodeGraph.getCurrentInstance().getMaxX();
-        x = x - 543;
-        Rectangle scroll = new Rectangle(5, this.getHeight() - 15, this.getWidth() - 10, 10);
-        scroll.setFill(Color.GRAY);
-        this.getChildren().add(scroll);
-        Rectangle position = new Rectangle(5, 10);
-        position.setFill(Color.RED);
-        double relPos = x / max * scroll.getWidth() + 5;
-        position.setX(relPos);
-        position.setY(this.getHeight() - 15);
-        this.getChildren().add(position);
+        Window.updateIndicator(center);
     }
 
     /**

@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.Node;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
@@ -14,6 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import logging.Logger;
 import logging.LoggerFactory;
@@ -54,6 +57,10 @@ public class Window extends Application {
      */
     private static InfoScreen infoScreen = null;
 
+    private static Rectangle indicator;
+
+    private static BorderPane mainPane;
+
     /**
      * Starts the frame.
      * @param stage Main stage where the content is placed.
@@ -63,13 +70,19 @@ public class Window extends Application {
     public void start(Stage stage) throws Exception {
         this.setupService();
         backLog = new Backlog();
-        BorderPane mainPane = new BorderPane();
+        mainPane = new BorderPane();
 
         mainPane.setMinSize(1200, 700);
 
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
-        setScrolling(mainPane);
+
+        Rectangle indicatorBar = new Rectangle();
+        indicator = new Rectangle();
+        mainPane.getChildren().add(indicatorBar);
+        mainPane.getChildren().add(indicator);
+
+        setScrolling();
 
         //Creating a scene object
         Scene scene = new Scene(mainPane);
@@ -91,6 +104,13 @@ public class Window extends Application {
 
         //Displaying the contents of the stage
         stage.show();
+
+        indicatorBar.setWidth(mainPane.getWidth() - 20);
+        indicatorBar.setX(10);
+        indicatorBar.setY(mainPane.getHeight() - 15);
+        indicatorBar.setHeight(10);
+        indicatorBar.setFill(Color.GRAY);
+
         logger.info("the main application has started");
     }
 
@@ -145,7 +165,7 @@ public class Window extends Application {
      * Sets a scroll event to the pane that handles the zooming of the graph.
      * @param scene the GraphScene to which the scroll event is added.
      */
-    private void setScrolling(BorderPane mainPane) {
+    private void setScrolling() {
         mainPane.setOnScroll((ScrollEvent event) -> {
             if (NodeGraph.getCurrentInstance() != null) {
                 int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
@@ -175,6 +195,7 @@ public class Window extends Application {
                     }
                 }
             }
+            graphScene.toBack();
         });
     }
 
@@ -203,6 +224,17 @@ public class Window extends Application {
         );
         menu.getItems().add(item);
         return menu;
+    }
+
+    public static void updateIndicator(Node center) {
+        double centerX = center.getX();
+        int max = NodeGraph.getCurrentInstance().getMaxX();
+        double relPos = (centerX - 543) / max * mainPane.getWidth() + 5;
+        indicator.setHeight(10);
+        indicator.setWidth(5);
+        indicator.setX(relPos);
+        System.out.println(relPos);
+        indicator.setY(mainPane.getHeight() - 15);
     }
 
     /**

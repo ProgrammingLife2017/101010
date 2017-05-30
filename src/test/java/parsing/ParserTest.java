@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
+import org.junit.After;
 import org.junit.Test;
 
 
@@ -17,6 +18,22 @@ import static org.junit.Assert.fail;
  * Created by 101010.
  */
 public class ParserTest {
+
+    @After
+    public void tearDown() {
+        String workingDirectory = System.getProperty("user.dir");
+        String absoluteFilePath = workingDirectory + File.separator;
+        File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
+        File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
+        if (cache.exists()) {
+            cache.delete();
+        }
+        if (segments.exists()) {
+            segments.delete();
+        }
+    }
+
+
     @Test
     public void getInstance() {
         Object parser = Parser.getInstance();
@@ -39,11 +56,6 @@ public class ParserTest {
         Node node3 = data2.getNode(7);
         assertEquals(data2.getSegment(7).length(), node3.getLength());
         assertTrue(node3.getLength() != 0);
-
-        File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
-        File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
-        cache.delete();
-        segments.delete();
     }
 
     @Test
@@ -68,13 +80,16 @@ public class ParserTest {
                     assertEquals(out[j], Integer.parseInt(br.readLine()));
                 }
             }
+            File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
+            File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
+            segments.delete();
+            br.close();
+            if (cache.exists()) {
+                cache.delete();
+            }
         } catch(Exception e) {
             fail();
         }
-        File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
-        File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
-        cache.delete();
-        segments.delete();
     }
 
     @Test

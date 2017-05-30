@@ -3,6 +3,7 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,9 +12,11 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import logging.Logger;
 import logging.LoggerFactory;
@@ -47,12 +50,14 @@ public class Window extends Application {
     /**
      * Pane used for displaying graphs.
      */
-    private static GraphScene graphScene;
+    private GraphScene graphScene;
 
     /**
      * Window to print information of nodes or edges.
      */
     private static InfoScreen infoScreen = null;
+
+    private double mouseX, mouseY;
 
     /**
      * Starts the frame.
@@ -89,9 +94,37 @@ public class Window extends Application {
             }
         });
 
+        init(mainPane);
         //Displaying the contents of the stage
         stage.show();
         logger.info("the main application has started");
+    }
+
+    public void init(Pane pane) {
+        pane.onMousePressedProperty().set(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mouseX = event.getSceneX();
+                mouseY = event.getSceneY();
+            }
+        });
+
+        pane.onMouseDraggedProperty().set(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                double offsetX = event.getSceneX() - mouseX;
+                double offsetY = event.getSceneY() - mouseY;
+
+                graphScene.setTranslateX(graphScene.getTranslateX() + offsetX);
+                //graphScene.setTranslateY(graphScene.getTranslateY() + offsetY);
+
+
+                mouseX = event.getSceneX();
+                mouseY = event.getSceneY();
+
+                event.consume();
+            }
+        });
     }
 
     /**

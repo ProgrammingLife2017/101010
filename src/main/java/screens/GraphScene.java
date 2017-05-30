@@ -63,6 +63,9 @@ import javafx.stage.Stage;
         }
      };
 
+     private double mouseX, mouseY;
+     private int x, y;
+
     /**
      * GraphScene pane constructor.
      * @param fact the Factory used to create JavaFX elements.
@@ -73,6 +76,7 @@ import javafx.stage.Stage;
          state = info;
          this.factory = fact;
      }
+
 
     /**
      * Draws graph on the screen.

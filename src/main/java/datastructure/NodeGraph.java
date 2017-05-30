@@ -26,6 +26,16 @@ public class NodeGraph {
     private LinkedList<DrawNode> drawNodes;
 
     /**
+     * LinkedList of the nodes that are in the first layer.
+     */
+    private LinkedList<DrawNode> rootNodes;
+
+    /**
+     * LinkedList of the nodes that are in the last layer.
+     */
+    private LinkedList<DrawNode> leafNodes;
+
+    /**
      * Instance of the current graph.
      */
     private static NodeGraph currentNodeGraph;
@@ -256,6 +266,7 @@ public class NodeGraph {
 
              current.setX(layer - 100);
         }
+        retrieveEdgeNodes();
     }
 
     /**
@@ -267,6 +278,38 @@ public class NodeGraph {
         for (int i = 1; i < drawNodes.size(); i++) {
             if (drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
                 drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
+            }
+        }
+    }
+
+    /**
+     * Saves the root and leave nodes to specific lists.
+     */
+    private void retrieveEdgeNodes() {
+        rootNodes = new LinkedList<>();
+        leafNodes = new LinkedList<>();
+        double endX = drawNodes.getFirst().getX();
+        Iterator<DrawNode> it = drawNodes.iterator();
+
+        DrawNode temp;
+        while (it.hasNext()) {
+            temp = it.next();
+            if (temp.getX() == endX) {
+                leafNodes.add(temp);
+            } else {
+                break;
+            }
+        }
+
+        double firstX = drawNodes.getLast().getX();
+        Iterator<DrawNode> rit = drawNodes.descendingIterator();
+
+        while (rit.hasNext()) {
+            temp = rit.next();
+            if (temp.getX() == firstX) {
+                rootNodes.add(temp);
+            } else {
+                break;
             }
         }
     }

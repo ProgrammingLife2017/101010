@@ -240,5 +240,7 @@ public class Node {
      * Sets the length of the node.
      * @param length the length to be set.
      */
-    public void setLength(int length) { this.length = length; }
+    public void setLength(int length) {
+        this.length = length;
+    }
 }

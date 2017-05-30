@@ -3,7 +3,7 @@ package datastructure;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Created by Martijn on 18-5-2017.
+ * Created by 101010.
  */
 public class DrawNode extends Rectangle {
 

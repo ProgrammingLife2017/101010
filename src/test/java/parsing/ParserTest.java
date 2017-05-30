@@ -76,8 +76,8 @@ public class ParserTest {
                 Integer.parseInt(br.readLine());
                 assertEquals(data.getNode(i).getOutgoingEdges().length, Integer.parseInt(br.readLine()));
                 out = data.getNode(i).getOutgoingEdges();
-                for (int j = 0; j < out.length; j++) {
-                    assertEquals(out[j], Integer.parseInt(br.readLine()));
+                for (int j : out) {
+                    assertEquals(j, Integer.parseInt(br.readLine()));
                 }
             }
             File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");

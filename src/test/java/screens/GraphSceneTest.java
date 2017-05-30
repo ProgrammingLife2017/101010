@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertEquals;
 
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -49,7 +48,7 @@ public class GraphSceneTest {
     @Mock
     ObservableList list = mock(ObservableList.class);
 
-    ArrayList<Node> nodes = new ArrayList<Node>();
+    ArrayList<Node> nodes = new ArrayList<>();
 
     NodeGraph ngTest = new NodeGraph();
 
@@ -57,7 +56,7 @@ public class GraphSceneTest {
 
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
-     * @throws InterruptedException
+     * @throws InterruptedException that triggers when the drawing is interrupted.
      */
     @BeforeClass
     public static void initToolkit() throws InterruptedException

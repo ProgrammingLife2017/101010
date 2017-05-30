@@ -158,7 +158,9 @@ public class NodeGraph {
      * Getter for the list of nodes.
      * @return the list of all nodes in the graph.
      */
-    public ArrayList<Node> getNodes() { return this.nodes; }
+    public ArrayList<Node> getNodes() {
+        return this.nodes;
+    }
 
     /**
      * Getter for the maximum x-coordinate.

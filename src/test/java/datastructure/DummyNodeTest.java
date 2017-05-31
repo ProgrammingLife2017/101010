@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -54,50 +56,87 @@ public class DummyNodeTest {
     }
 
     @Test
-    public void testGetFrom() {
+    public void getFrom() {
         assertEquals(from, dummyNode.getFrom());
     }
 
     @Test
-    public void testSetFrom() {
+    public void setFrom() {
         int newFrom = random.nextInt();
         dummyNode.setFrom(newFrom);
         assertEquals(newFrom, dummyNode.getFrom());
     }
 
     @Test
-    public void testGetTo() {
+    public void getTo() {
         assertEquals(to, dummyNode.getTo());
     }
 
     @Test
-    public void testSetTo() {
+    public void setTo() {
         int newTo = random.nextInt();
         dummyNode.setTo(newTo);
         assertEquals(newTo, dummyNode.getTo());
     }
 
     @Test
-    public void testGetX() {
+    public void getX() {
         assertEquals(x, dummyNode.getX());
     }
 
     @Test
-    public void testSetX() {
+    public void setX() {
         int newX = random.nextInt();
         dummyNode.setX(newX);
         assertEquals(newX, dummyNode.getX());
     }
 
     @Test
-    public void testGetY() {
+    public void getY() {
         assertEquals(y, dummyNode.getY());
     }
 
     @Test
-    public void testSetY() {
+    public void setY() {
         int newY = random.nextInt();
         dummyNode.setY(newY);
         assertEquals(newY, dummyNode.getY());
+    }
+
+    @Test
+    public void nextInEdge() {
+        DummyNode temp = new DummyNode(1,2,3,4,5);
+        dummyNode = new DummyNode(0,2,3, random.nextInt(), random.nextInt());
+        assertTrue(dummyNode.nextInEdge(temp));
+        temp  = new DummyNode(2,2,3,4,5);
+        assertFalse(dummyNode.nextInEdge(temp));
+        temp  = new DummyNode(1,3,3,4,5);
+        assertFalse(dummyNode.nextInEdge(temp));
+        temp  = new DummyNode(1,2,2,4,5);
+        assertFalse(dummyNode.nextInEdge(temp));
+    }
+
+    @Test
+    public void prevInEdge() {
+        DummyNode temp = new DummyNode(0, 1, 2,3 , 4);
+        DummyNode temp2 = new DummyNode(-1, 1, 2,3  - 100, 4);
+        assertEquals(temp2, temp.prevInEdge());
+    }
+
+    @Test
+    public void hashcode() {
+        assertEquals(((dummyNode.getId() * 31) + dummyNode.getFrom()) * 31 + dummyNode.getTo(), dummyNode.hashCode());
+    }
+
+    @Test
+    public void equals() {
+        DummyNode temp = new DummyNode(dummyNode.getId(), dummyNode.getFrom(), dummyNode.getTo(), dummyNode.getX(), dummyNode.getY());
+        assertTrue(dummyNode.equals(temp));
+        temp = new DummyNode(dummyNode.getId(), dummyNode.getFrom(), dummyNode.getTo() + 1, dummyNode.getX(), dummyNode.getY());
+        assertFalse(dummyNode.equals(temp));
+        temp = new DummyNode(dummyNode.getId(), dummyNode.getFrom() + 1, dummyNode.getTo(), dummyNode.getX(), dummyNode.getY());
+        assertFalse(dummyNode.equals(temp));
+        temp = new DummyNode(dummyNode.getId() + 1, dummyNode.getFrom(), dummyNode.getTo(), dummyNode.getX(), dummyNode.getY());
+        assertFalse(dummyNode.equals(temp));
     }
 }

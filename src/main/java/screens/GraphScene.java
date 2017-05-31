@@ -114,15 +114,7 @@ import java.util.TreeSet;
             for (int i : NodeGraph.getCurrentInstance().getNodes().get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = NodeGraph.getCurrentInstance().getDrawNode(i);
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    Line l = new Line();
-                    l.setId(dNode.getIndex() + "-" + i);
-                    l.setStrokeWidth(2);
-                    l.setStartX(dNode.getBoundsInLocal().getMaxX());
-                    l.setStartY(dNode.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(nOut.getBoundsInLocal().getMinX());
-                    l.setEndY(nOut.getBoundsInLocal().getMinY() + 5);
-                    l.setOnMousePressed(click);
-                    this.getChildren().add(l);
+                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
             }
         }
@@ -138,49 +130,45 @@ import java.util.TreeSet;
                 if (!visited.contains(current.prevInEdge())) {
                     dN = NodeGraph.getCurrentInstance().getDrawNode(current.getFrom());
                     if (dN != null) {
-                        Line l1 = new Line();
-                        l1.setId(current.getFrom() + "-" + current.getTo());
-                        l1.setStrokeWidth(5);
-                        l1.setStartX(dN.getBoundsInLocal().getMaxX());
-                        l1.setStartY(dN.getBoundsInLocal().getMinY() + 5);
-                        l1.setEndX(current.getX());
-                        l1.setEndY(current.getY() + 5);
-                        l1.setOnMousePressed(click);
-                        this.getChildren().add(l1);
+                        drawLine(current.getFrom() + "-" + current.getTo(), 2, dN.getBoundsInLocal().getMaxX(), dN.getBoundsInLocal().getMinY() + 5, current.getX(), current.getY() + 5);
                     }
                 }
                 for (int j = NodeGraph.getCurrentInstance().getDummyNodes().size() - 1; j >= 0; j--) {
                     current2 = NodeGraph.getCurrentInstance().getDummyNodes().get(j);
                     if (current.nextInEdge(current2)) {
-                        Line l2 = new Line();
-                        l2.setId(current.getFrom() + "-" + current.getTo());
-                        l2.setStrokeWidth(5);
-                        l2.setStartX(current.getX());
-                        l2.setStartY(current.getY() + 5);
-                        l2.setEndX(current2.getX());
-                        l2.setEndY(current2.getY() + 5);
-                        l2.setOnMousePressed(click);
-                        this.getChildren().add(l2);
+                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, current2.getX(), current2.getY() + 5);
                     }
                 }
                 if (current.getId() == -1) {
                     dN = NodeGraph.getCurrentInstance().getDrawNode(current.getTo());
                     if (dN != null) {
-                        Line l3 = new Line();
-                        l3.setId(current.getFrom() + "-" + current.getTo());
-                        l3.setStrokeWidth(5);
-                        l3.setStartX(current.getX());
-                        l3.setStartY(current.getY() + 5);
-                        l3.setEndX(dN.getBoundsInLocal().getMinX());
-                        l3.setEndY(dN.getBoundsInLocal().getMinY() + 5);
-                        l3.setOnMousePressed(click);
-                        this.getChildren().add(l3);
+                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, dN.getBoundsInLocal().getMinX(), dN.getBoundsInLocal().getMinY() + 5);
                     }
                 }
             }
         }
     }
 
+    /**
+     * Draws a line in the graphscene.
+     * @param id The id of the line.
+     * @param width The width of the line.
+     * @param startX The starting X coordinate of the line.
+     * @param startY The starting Y coordinate of the line.
+     * @param endX The ending X coordinate of the line.
+     * @param endY The ending Y coordinate of the line.
+     */
+    private void drawLine(String id, double width, double startX, double startY, double endX, double endY) {
+        Line l = new Line();
+        l.setId(id);
+        l.setStrokeWidth(width);
+        l.setStartX(startX);
+        l.setStartY(startY);
+        l.setEndX(endX);
+        l.setEndY(endY);
+        l.setOnMousePressed(click);
+        this.getChildren().add(l);
+    }
     /**
      * Switches event handler to center queries.
      */

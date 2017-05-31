@@ -101,6 +101,5 @@ public final class FileSystem {
      */
    public void closeWriter() throws IOException {
         logWriter.close();
-        System.out.println("Writer has been closed");
    }
 }

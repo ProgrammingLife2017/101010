@@ -1,20 +1,25 @@
 package datastructure;
 
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+
 import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 /**
  * Created by 101010.
  */
-class NodeGraphTest {
+public class NodeGraphTest {
     /**
      * The NodeGraph used to test.
      */
@@ -35,8 +40,8 @@ class NodeGraphTest {
     /**
      * Before each test we set the nodeGraph to a new NodeGraph.
      */
-    @org.junit.jupiter.api.BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         nodes = mock(new ArrayList<Node>().getClass());
         drawNodes = mock(new LinkedList<DrawNode>().getClass());
         segmentDB = mock(SegmentDB.class);
@@ -51,8 +56,8 @@ class NodeGraphTest {
     /**
      * After each test we set the nodeGraph back to null.
      */
-    @org.junit.jupiter.api.AfterEach
-    void tearDown() {
+    @After
+    public void tearDown() {
         nodeGraph.setCurrentInstance(null);
         nodeGraph = null;
         nodes = null;
@@ -62,17 +67,17 @@ class NodeGraphTest {
     }
 
     @Test
-    void testGetNodes() {
+    public void testGetNodes() {
         assertEquals(nodes, nodeGraph.getNodes());
     }
 
     @Test
-    void testGetDrawNodes() {
+    public void testGetDrawNodes() {
         assertEquals(drawNodes, nodeGraph.getDrawNodes());
     }
 
     @Test
-    void testSetSegment() {
+    public void testSetSegment() {
         nodeGraph = new NodeGraph();
         nodeGraph.setSegmentDB(segmentDB);
         nodeGraph.getSegment(0);
@@ -80,14 +85,14 @@ class NodeGraphTest {
     }
 
     @Test
-    void testGetSegment() {
+    public void testGetSegment() {
         int r = new Random().nextInt();
         assertEquals("Segment", nodeGraph.getSegment(r));
         verify(segmentDB, times(1)).getSegment(r);
     }
 
     @Test
-    void testAddNode() {
+    public void testAddNode() {
         nodeGraph = new NodeGraph(new ArrayList<Node>(0), segmentDB, drawNodes, new LinkedList<>());
         nodeGraph.addNode(100, node);
         assertEquals(101, nodeGraph.getSize());
@@ -97,7 +102,7 @@ class NodeGraphTest {
     }
 
     @Test
-    void testAddNodeCache() {
+    public void testAddNodeCache() {
         nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes, new LinkedList<>());
         nodeGraph.addNodeCache(100, node);
         assertEquals(101, nodeGraph.getSize());
@@ -107,7 +112,7 @@ class NodeGraphTest {
     }
 
     @Test
-    void testAddEdge() {
+    public void testAddEdge() {
         nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes, new LinkedList<>());
         Node node2 = mock(Node.class);
 
@@ -122,24 +127,24 @@ class NodeGraphTest {
     }
 
     @Test
-    void testGetSize() {
+    public void testGetSize() {
         assertEquals(nodes.size(), nodeGraph.getSize());
         verify(nodes, atLeastOnce()).size();
     }
 
     @Test
-    void testGetNode() {
+    public void testGetNode() {
         assertEquals(node, nodeGraph.getNode(0));
         verify(nodes, times(1)).get(0);
     }
 
     @Test
-    void testGetCurrentInstance() {
+    public void testGetCurrentInstance() {
         assertNull(nodeGraph.getCurrentInstance());
     }
 
     @Test
-    void testSetCurrentInstance() {
+    public void testSetCurrentInstance() {
         nodeGraph.setCurrentInstance(nodeGraph);
         assertEquals(nodeGraph.getDrawNodes(), nodeGraph.getCurrentInstance().getDrawNodes());
         assertEquals(nodeGraph.getNodes(), nodeGraph.getCurrentInstance().getNodes());
@@ -147,7 +152,7 @@ class NodeGraphTest {
     }
 
     @Test
-    void testSetSegmentDB() {
+    public void testSetSegmentDB() {
         SegmentDB s = mock(SegmentDB.class);
         when(s.getSegment(anyInt())).thenReturn("otherSegment");
         assertEquals("Segment", nodeGraph.getSegment(0));
@@ -156,7 +161,7 @@ class NodeGraphTest {
     }
 
     @Test
-    void testGenerateDrawNodes() {
+    public void testGenerateDrawNodes() {
         ArrayList<Node> nodes2 = mock(new ArrayList<Node>().getClass());
         when(nodes2.size()).thenReturn(1);
         when(nodes2.get(anyInt())).thenReturn(node);

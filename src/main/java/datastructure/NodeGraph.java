@@ -1,13 +1,12 @@
 package datastructure;
 
-import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Queue;
 import java.util.TreeSet;
+import java.util.Queue;
+import java.util.Iterator;
+import java.util.ListIterator;
+import javafx.scene.paint.Color;
 
 /**
  * Created by 101010.
@@ -32,7 +31,7 @@ public class NodeGraph {
      * LinkedList of the dummynodes.
      */
     private LinkedList<DummyNode> dummyNodes;
-    
+
     /**
      * LinkedList of the nodes that are in the first layer.
      */
@@ -63,6 +62,7 @@ public class NodeGraph {
      * @param nodes The list of nodes for the graph.
      * @param segments The database containing the segments of the nodes.
      * @param drawNodes The LinkedList of nodes to be drawn.
+     * @param dummyNodes The LinkedList of DummyNodes.
      */
     public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments, final LinkedList<DrawNode> drawNodes, final LinkedList<DummyNode> dummyNodes) {
         this.nodes = nodes;

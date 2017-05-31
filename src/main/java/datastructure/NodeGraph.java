@@ -1,11 +1,13 @@
 package datastructure;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Queue;
 import java.util.TreeSet;
+import java.util.Queue;
+import java.util.Iterator;
+import java.util.ListIterator;
+import javafx.scene.paint.Color;
+
 
 /**
  * Created by 101010.
@@ -185,12 +187,16 @@ public class NodeGraph {
         visited.add(center);
         q.offer(center);
         int current;
+        DrawNode drawNode;
 
         while (drawNodes.size() < r) {
             current = q.poll();
             addEdges(current, q, visited);
-            drawNodes.addLast(new DrawNode(current));
-            drawNodes.peekLast().setWidth(nodes.get(current).getLength());
+            drawNode = new DrawNode(current);
+            drawNode.setWidth(nodes.get(current).getLength());
+            drawNode.setFill(Color.CRIMSON);
+            drawNode.setHeight(10);
+            drawNodes.addLast(drawNode);
         }
         topoSort();
         assignLayers();

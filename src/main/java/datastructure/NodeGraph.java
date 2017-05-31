@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.Iterator;
 import java.util.ListIterator;
 import javafx.scene.paint.Color;
+import javafx.util.Pair;
 
 /**
  * Created by 101010.
@@ -35,12 +36,12 @@ public class NodeGraph {
     /**
      * LinkedList of the nodes that are in the first layer.
      */
-    private LinkedList<DrawNode> rootNodes;
+    private LinkedList<Pair<Integer, Boolean>> rootNodes;
 
     /**
      * LinkedList of the nodes that are in the last layer.
      */
-    private LinkedList<DrawNode> leafNodes;
+    private LinkedList<Pair<Integer, Boolean>> leafNodes;
 
     /**
      * Instance of the current graph.
@@ -202,6 +203,7 @@ public class NodeGraph {
         assignLayers();
         computeDummyNodes();
         verticalSpacing();
+        retrieveEdgeNodes();
         for (DummyNode d : dummyNodes) {
             System.out.println(d.getId() + ", " + d.getFrom() + ", " + d.getTo() + ", " + d.getX() + ", " + d.getY());
         }
@@ -285,7 +287,6 @@ public class NodeGraph {
 
              current.setX(layer - 100);
         }
-        retrieveEdgeNodes();
     }
 
     /**
@@ -349,7 +350,6 @@ public class NodeGraph {
             dummyNodes.get(i).setY(maxY + 50);
         }
 
-
         for (int i = 0; i < drawNodes.size(); i++) {
             if (i > 0 && drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
                 drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
@@ -371,26 +371,67 @@ public class NodeGraph {
     private void retrieveEdgeNodes() {
         rootNodes = new LinkedList<>();
         leafNodes = new LinkedList<>();
+        double startX = drawNodes.getLast().getX();
         double endX = drawNodes.getFirst().getX();
+
+        retrieveDrawNodes(startX, endX);
+        retrieveDummies(startX, endX);
+    }
+
+    /**
+     * Adds the DrawNodes that are roots or leaves.
+     * @param startX the leftmost layer.
+     * @param endX the rightmost layer.
+     */
+    private void retrieveDrawNodes(double startX, double endX) {
         Iterator<DrawNode> it = drawNodes.iterator();
 
         DrawNode temp;
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getX() == endX) {
-                leafNodes.add(temp);
+                leafNodes.add(new Pair<>(temp.getIndex(), false));
             } else {
                 break;
             }
         }
 
-        double firstX = drawNodes.getLast().getX();
         Iterator<DrawNode> rit = drawNodes.descendingIterator();
 
         while (rit.hasNext()) {
             temp = rit.next();
-            if (temp.getX() == firstX) {
-                rootNodes.add(temp);
+            if (temp.getX() == startX) {
+                rootNodes.add(new Pair<>(temp.getIndex(), false));
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Adds the DummyNodes that are roots or leaves.
+     * @param startX the leftmost layer.
+     * @param endX the rightmost layer.
+     */
+    private void retrieveDummies(double startX, double endX) {
+        Iterator<DummyNode> it = dummyNodes.iterator();
+
+        DummyNode temp;
+        while (it.hasNext()) {
+            temp = it.next();
+            if (temp.getX() == endX) {
+                leafNodes.add(new Pair<>(temp.getId(), true));
+            } else {
+                break;
+            }
+        }
+
+        Iterator<DummyNode> rit = dummyNodes.descendingIterator();
+
+        while (rit.hasNext()) {
+            temp = rit.next();
+            if (temp.getX() == startX) {
+                rootNodes.add(new Pair<>(temp.getId(), true));
             } else {
                 break;
             }

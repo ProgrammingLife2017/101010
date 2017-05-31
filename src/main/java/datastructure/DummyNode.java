@@ -10,6 +10,11 @@ public class DummyNode {
     private int id;
 
     /**
+     * The absolute id of this DummyNode.
+     */
+    private double absId;
+
+    /**
      * Id of the incoming edge's origin node.
      */
     private int from;
@@ -34,9 +39,12 @@ public class DummyNode {
      * @param id The id of the DummyNode.
      * @param from The id of the incoming edge's origin.
      * @param to The id of the outgoing edge's destination.
+     * @param x The x coordinate of this DummyNode.
+     * @param y the y coordinate of this DummyNode.
      */
     public DummyNode(int id, int from, int to, int x, int y) {
         this.id = id;
+        this.absId = Double.parseDouble(Integer.toString(id) + Integer.toString(from) + Integer.toString(to));
         this.from = from;
         this.to = to;
         this.x = x;
@@ -50,6 +58,12 @@ public class DummyNode {
     public int getId() {
         return id;
     }
+
+    /**
+     * Gets the absolute id of this DummyNode.
+     * @return the absolute id of this DummyNode.
+     */
+    public double getAbsId() { return absId; }
 
     /**
      * Gets the id of the incoming edge's origin node.

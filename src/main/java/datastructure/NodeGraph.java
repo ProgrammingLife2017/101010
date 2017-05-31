@@ -36,12 +36,12 @@ public class NodeGraph {
     /**
      * LinkedList of the nodes that are in the first layer.
      */
-    private LinkedList<Pair<Integer, Boolean>> rootNodes;
+    private LinkedList<Pair<Double, Boolean>> rootNodes;
 
     /**
      * LinkedList of the nodes that are in the last layer.
      */
-    private LinkedList<Pair<Integer, Boolean>> leafNodes;
+    private LinkedList<Pair<Double, Boolean>> leafNodes;
 
     /**
      * Instance of the current graph.
@@ -390,7 +390,7 @@ public class NodeGraph {
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getX() == endX) {
-                leafNodes.add(new Pair<>(temp.getIndex(), false));
+                leafNodes.add(new Pair<>((double) temp.getIndex(), false));
             } else {
                 break;
             }
@@ -401,7 +401,7 @@ public class NodeGraph {
         while (rit.hasNext()) {
             temp = rit.next();
             if (temp.getX() == startX) {
-                rootNodes.add(new Pair<>(temp.getIndex(), false));
+                rootNodes.add(new Pair<>((double) temp.getIndex(), false));
             } else {
                 break;
             }
@@ -420,7 +420,7 @@ public class NodeGraph {
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getX() == endX) {
-                leafNodes.add(new Pair<>(temp.getId(), true));
+                leafNodes.add(new Pair<>(temp.getAbsId(), true));
             } else {
                 break;
             }
@@ -431,7 +431,7 @@ public class NodeGraph {
         while (rit.hasNext()) {
             temp = rit.next();
             if (temp.getX() == startX) {
-                rootNodes.add(new Pair<>(temp.getId(), true));
+                rootNodes.add(new Pair<>(temp.getAbsId(), true));
             } else {
                 break;
             }

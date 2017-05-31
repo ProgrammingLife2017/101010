@@ -2,7 +2,12 @@ package datastructure;
 
 import javafx.scene.paint.Color;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Queue;
+import java.util.TreeSet;
 
 /**
  * Created by 101010.
@@ -197,6 +202,9 @@ public class NodeGraph {
         assignLayers();
         computeDummyNodes();
         verticalSpacing();
+        for (DummyNode d : dummyNodes) {
+            System.out.println(d.getId() + ", " + d.getFrom() + ", " + d.getTo() + ", " + d.getX() + ", " + d.getY());
+        }
     }
 
     /**
@@ -289,7 +297,7 @@ public class NodeGraph {
         DrawNode current;
         DrawNode cDrawNode;
         DummyNode cDummyNode;
-        double currentLayer = drawNodes.get(0).getX();
+        double currentLayer = 1200;
         int[] edges;
 
         while (it.hasNext()) {
@@ -299,9 +307,11 @@ public class NodeGraph {
                 currentLayer -= 100;
                 while (!dummyNodeQueue.isEmpty()) {
                     cDummyNode = dummyNodeQueue.poll();
-                    cDrawNode = getDrawNode(cDummyNode.getTo());
+                    cDrawNode = getDrawNode(cDummyNode.getFrom());
                     Queue<DummyNode> temp = new LinkedList<>();
-                    if (cDrawNode != null && cDummyNode.getX() - cDrawNode.getX() > 100) {
+                    if (cDrawNode != null && Math.abs(cDummyNode.getX() - cDrawNode.getX()) > 100) {
+                        temp.offer(new DummyNode(cDummyNode.getId() - 1, cDummyNode.getFrom(), cDummyNode.getTo(), cDummyNode.getX() - 100, 50));
+                    } else if (cDrawNode == null && drawNodes.peekLast().getX() < cDummyNode.getX()) {
                         temp.offer(new DummyNode(cDummyNode.getId() - 1, cDummyNode.getFrom(), cDummyNode.getTo(), cDummyNode.getX() - 100, 50));
                     }
                     dummyNodes.addLast(cDummyNode);
@@ -313,8 +323,10 @@ public class NodeGraph {
 
             for (int i = 0; i < edges.length; i++) {
                 cDrawNode = getDrawNode(edges[i]);
-                if (cDrawNode != null && current.getX() - cDrawNode.getX() > 100) {
+                if (cDrawNode != null && Math.abs(current.getX() - cDrawNode.getX()) > 100) {
                     dummyNodeQueue.add(new DummyNode(-1, cDrawNode.getIndex(), current.getIndex(), (int) currentLayer - 100, 50));
+                } else if (cDrawNode == null && drawNodes.peekLast().getX() < currentLayer) {
+                    dummyNodeQueue.add(new DummyNode(-1, edges[i], current.getIndex(), (int) currentLayer - 100, 50));
                 }
             }
         }
@@ -326,23 +338,18 @@ public class NodeGraph {
      * when the X coordinate is the same.
      */
     private void verticalSpacing() {
-        ListIterator<DummyNode> it = dummyNodes.listIterator();
-        DummyNode cDN;
-        DummyNode cDN2 = null;
-
-        while (it.hasNext()) {
-            if (cDN2 != null) {
-                cDN = it.next();
-                if (cDN2.getX() == cDN.getX()) {
-                    cDN.setY(cDN2.getY() + 50);
+        int maxY;
+        for (int i = 0; i < dummyNodes.size(); i++) {
+            maxY = 0;
+            for (int j = i - 1; j >= 0; j--) {
+                if (dummyNodes.get(i).getX() == dummyNodes.get(j).getX() && maxY < dummyNodes.get(j).getY()) {
+                   maxY = dummyNodes.get(j).getY();
                 }
-                cDN2 = cDN;
-            } else {
-                cDN2 = it.next();
             }
+            dummyNodes.get(i).setY(maxY + 50);
         }
 
-        int maxY;
+
         for (int i = 0; i < drawNodes.size(); i++) {
             if (i > 0 && drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
                 drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);

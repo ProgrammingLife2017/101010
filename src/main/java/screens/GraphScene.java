@@ -14,9 +14,9 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Implementation of the window that handles graph visualization.
@@ -111,6 +111,7 @@ import java.util.TreeSet;
         LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
         for (DrawNode dNode : drawNodes) {
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+            dNode.setOnMousePressed(click);
             this.getChildren().add(dNode);
             DrawNode nOut;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
@@ -124,7 +125,7 @@ import java.util.TreeSet;
         DummyNode current;
         DummyNode current2;
         DrawNode dN;
-        Set<DummyNode> visited = new TreeSet<>();
+        Set<DummyNode> visited = new HashSet<>();
         for (int i = dummyNodes.size() - 1; i >= 0; i--) {
             current = dummyNodes.get(i);
             if (!visited.contains(current)) {
@@ -135,7 +136,7 @@ import java.util.TreeSet;
                         drawLine(current.getFrom() + "-" + current.getTo(), 2, dN.getBoundsInLocal().getMaxX(), dN.getBoundsInLocal().getMinY() + 5, current.getX(), current.getY() + 5);
                     }
                 }
-                for (int j = dummyNodes.size() - 1; j >= 0; j--) {
+                for (int j = i; j >= 0; j--) {
                     current2 = dummyNodes.get(j);
                     if (current.nextInEdge(current2)) {
                         drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, current2.getX(), current2.getY() + 5);

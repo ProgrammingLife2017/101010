@@ -2,6 +2,7 @@ package screens;
 
 import datastructure.DrawNode;
 import datastructure.DummyNode;
+import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -9,10 +10,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -102,17 +104,17 @@ import java.util.TreeSet;
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(int center, int radius) {
-        NodeGraph.getCurrentInstance().generateDrawNodes(center, radius);
-        for (DrawNode dNode : NodeGraph.getCurrentInstance().getDrawNodes()) {
-            dNode.setHeight(10);
-            dNode.setFill(Color.CRIMSON);
-            dNode.setOnMousePressed(click);
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        nodeGraph.generateDrawNodes(center, radius);
+        ArrayList<Node> nodes = nodeGraph.getNodes();
+        LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
+        LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
+        for (DrawNode dNode : drawNodes) {
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setY(dNode.getY());
             this.getChildren().add(dNode);
             DrawNode nOut;
-            for (int i : NodeGraph.getCurrentInstance().getNodes().get(dNode.getIndex()).getOutgoingEdges()) {
-                nOut = NodeGraph.getCurrentInstance().getDrawNode(i);
+            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
+                nOut = nodeGraph.getDrawNode(i);
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
                     drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
@@ -123,24 +125,24 @@ import java.util.TreeSet;
         DummyNode current2;
         DrawNode dN;
         Set<DummyNode> visited = new TreeSet<>();
-        for (int i = NodeGraph.getCurrentInstance().getDummyNodes().size() - 1; i >= 0; i--) {
-            current = NodeGraph.getCurrentInstance().getDummyNodes().get(i);
+        for (int i = dummyNodes.size() - 1; i >= 0; i--) {
+            current = dummyNodes.get(i);
             if (!visited.contains(current)) {
                 visited.add(current);
                 if (!visited.contains(current.prevInEdge())) {
-                    dN = NodeGraph.getCurrentInstance().getDrawNode(current.getFrom());
+                    dN = nodeGraph.getDrawNode(current.getFrom());
                     if (dN != null) {
                         drawLine(current.getFrom() + "-" + current.getTo(), 2, dN.getBoundsInLocal().getMaxX(), dN.getBoundsInLocal().getMinY() + 5, current.getX(), current.getY() + 5);
                     }
                 }
-                for (int j = NodeGraph.getCurrentInstance().getDummyNodes().size() - 1; j >= 0; j--) {
-                    current2 = NodeGraph.getCurrentInstance().getDummyNodes().get(j);
+                for (int j = dummyNodes.size() - 1; j >= 0; j--) {
+                    current2 = dummyNodes.get(j);
                     if (current.nextInEdge(current2)) {
                         drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, current2.getX(), current2.getY() + 5);
                     }
                 }
                 if (current.getId() == -1) {
-                    dN = NodeGraph.getCurrentInstance().getDrawNode(current.getTo());
+                    dN = nodeGraph.getDrawNode(current.getTo());
                     if (dN != null) {
                         drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, dN.getBoundsInLocal().getMinX(), dN.getBoundsInLocal().getMinY() + 5);
                     }

@@ -47,19 +47,10 @@ import java.util.TreeSet;
      private EventHandler<MouseEvent> click = event -> {
 
         if (event.getSource() instanceof DrawNode) {
-            /**
-             * DrawNode object that is linked to the Node object.
-             */
             DrawNode rect = (DrawNode) (event.getSource());
             state.handle(rect);
         } else if (event.getSource() instanceof Line) {
-            /**
-             * Line object.
-             */
             Line l = (Line) (event.getSource());
-            /**
-             * Id of line object.
-             */
             String edgeNodes = l.getId();
             Window.getInfoScreen().getTextArea().appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
         }

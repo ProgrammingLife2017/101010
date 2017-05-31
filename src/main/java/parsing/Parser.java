@@ -195,6 +195,8 @@ public final class Parser {
                 writer.newLine();
             }
             writer.close();
+            ow.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

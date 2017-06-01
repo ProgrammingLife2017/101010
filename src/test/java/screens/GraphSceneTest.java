@@ -13,9 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
-
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -24,6 +21,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -108,18 +106,6 @@ public class GraphSceneTest {
         assertEquals(gs.getCenter(), gs.getState());
         gs.switchToInfo();
         assertEquals(gs.getInfo(), gs.getState());
-    }
-
-    @Test
-    public void drawGraphTestNotInRadius() {
-        gs.drawGraph(0,0);
-        verify(fact).createGroup();
-        verify(fact).createLabel(anyString());
-        verify(fact).createStage();
-        verify(fact).createScene(group, 150, 100);
-        verify(fact).setScene(stage, scene);
-        verify(group).getChildren();
-        verify(fact).show(stage);
     }
 
     @Test

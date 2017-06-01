@@ -4,15 +4,11 @@ import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
 /**
  * Implementation of the window that handles graph visualization.
@@ -71,20 +67,10 @@ import javafx.stage.Stage;
      * @param radius Radius.
      */
     public void drawGraph(final int id, final int radius) {
-        if (radius < 5 || radius > 500) {
-            Stage newStage = this.factory.createStage();
-            Group group = this.factory.createGroup();
-            Label label = this.factory.createLabel("Radius is out of bounds");
-            group.getChildren().add(label);
-            Scene scene = this.factory.createScene(group, 150, 100);
-            this.factory.setScene(newStage, scene);
-            this.factory.show(newStage);
-        } else {
-            NavigationInfo.getInstance().setCurrentRadius(radius);
-            NavigationInfo.getInstance().setCurrentCenterNode(id);
-            this.getChildren().clear();
-            drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
-        }
+        NavigationInfo.getInstance().setCurrentRadius(radius);
+        NavigationInfo.getInstance().setCurrentCenterNode(id);
+        this.getChildren().clear();
+        drawGraphUtil(NodeGraph.getCurrentInstance().getNode(id), radius);
     }
 
     /**

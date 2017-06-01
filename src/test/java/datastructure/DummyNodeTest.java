@@ -38,8 +38,8 @@ public class DummyNodeTest {
     @Before
     public void setUp() {
         id = random.nextInt();
-        from = random.nextInt();
-        to = random.nextInt();
+        from = Math.abs(random.nextInt());
+        to = Math.abs(random.nextInt());
         x = random.nextInt();
         y = random.nextInt();
         dummyNode = new DummyNode(id, from, to, x, y);
@@ -55,6 +55,12 @@ public class DummyNodeTest {
         assertEquals(id, dummyNode.getId());
     }
 
+    @Test
+    public void getAbsId() {
+        assertEquals(Double.parseDouble(Integer.toString(id) + Integer.toString(from) +Integer.toString(to)), dummyNode.getAbsId(), 0);
+        DummyNode node = new DummyNode(1,2,3,4,5);
+        assertEquals(123, node.getAbsId(), 0);
+    }
     @Test
     public void getFrom() {
         assertEquals(from, dummyNode.getFrom());

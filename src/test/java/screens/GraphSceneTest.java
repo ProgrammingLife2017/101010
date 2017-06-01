@@ -109,18 +109,6 @@ public class GraphSceneTest {
     }
 
     @Test
-    public void drawGraphTestNotInRadius() {
-        gs.drawGraph(0,0);
-        verify(fact, never()).createGroup();
-        verify(fact, never()).createLabel(anyString());
-        verify(fact, never()).createStage();
-        verify(fact, never()).createScene(group, 150, 100);
-        verify(fact, never()).setScene(stage, scene);
-        verify(group, never()).getChildren();
-        verify(fact, never()).show(stage);
-    }
-
-    @Test
     public void drawGraphTestInRadius() {
         gs.drawGraph(0, 20);
         verify(fact, never()).createGroup();

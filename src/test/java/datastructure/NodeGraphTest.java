@@ -1,17 +1,11 @@
 package datastructure;
 
-import java.util.Iterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-
 import org.mockito.Mock;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
-
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -216,7 +210,53 @@ public class NodeGraphTest {
 
     @Test
     public void computeDummyNodes() {
-
+        DrawNode dN1 = mock(DrawNode.class);
+        when(dN1.getIndex()).thenReturn(0);
+        dN1.setX(900.0);
+        DrawNode dN2 = mock(DrawNode.class);
+        when(dN2.getIndex()).thenReturn(1);
+        dN2.setX(1000.0);
+        DrawNode dN3 = mock(DrawNode.class);
+        when(dN3.getIndex()).thenReturn(2);
+        dN3.setX(1100.0);
+        DrawNode dN4 = mock(DrawNode.class);
+        when(dN4.getIndex()).thenReturn(3);
+        dN4.setX(1200.0);
+        Node n1 = mock(Node.class);
+        when(n1.getIncomingEdges()).thenReturn(new int[0]);
+        when(n1.getOutgoingEdges()).thenReturn(new int[] {1, 3});
+        Node n2 = mock(Node.class);
+        when(n2.getIncomingEdges()).thenReturn(new int[] {0});
+        when(n2.getOutgoingEdges()).thenReturn(new int[] {2});
+        Node n3 = mock(Node.class);
+        when(n3.getIncomingEdges()).thenReturn(new int[] {1});
+        when(n3.getOutgoingEdges()).thenReturn(new int[] {3});
+        Node n4 = mock(Node.class);
+        when(n4.getIncomingEdges()).thenReturn(new int[] {0, 2});
+        when(n4.getOutgoingEdges()).thenReturn(new int[0]);
+        ListIterator<DrawNode> lit = mock(ListIterator.class);
+        when(lit.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(lit.next()).thenReturn(dN4).thenReturn(dN3).thenReturn(dN2).thenReturn(dN1);
+        ArrayList<Node> n = mock(new ArrayList<>().getClass());
+        when(n.get(0)).thenReturn(n1);
+        when(n.get(1)).thenReturn(n2);
+        when(n.get(2)).thenReturn(n3);
+        when(n.get(3)).thenReturn(n4);
+        when(n.size()).thenReturn(4);
+        LinkedList<DrawNode> drawN = mock(new LinkedList<>().getClass());
+        when(drawN.get(0)).thenReturn(dN4);
+        when(drawN.get(1)).thenReturn(dN3);
+        when(drawN.get(2)).thenReturn(dN2);
+        when(drawN.get(3)).thenReturn(dN1);
+        when(drawN.size()).thenReturn(4);
+        when(drawN.listIterator()).thenReturn(lit);
+        LinkedList<DummyNode> dummyN = mock(new LinkedList<>().getClass());
+        NodeGraph nG = new NodeGraph(n, segmentDB, drawN, dummyN);
+        nG.generateDrawNodes(0, 4);
+        dummyN = new LinkedList<>();
+        dummyN.addLast(new DummyNode(-1, 0, 3, 1100, 50));
+        dummyN.addLast(new DummyNode(-2, 0, 3, 1000, 50));
+        assertEquals(dummyN, nG.getDummyNodes());
     }
 
     @Test

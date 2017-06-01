@@ -47,6 +47,7 @@ public class SegmentDB {
                 res = br.readLine();
                 id--;
             }
+            br.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();

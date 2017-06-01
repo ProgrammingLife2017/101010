@@ -59,6 +59,32 @@
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>1.7.0RC4</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4 -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.7.0RC4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-core -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-core</artifactId>
+			<version>1.7.0RC4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-reflect -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-reflect</artifactId>
+			<version>1.7.0RC4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-support -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-support</artifactId>
+			<version>1.7.0RC4</version>
+		</dependency>
+
+
 
 
 		<!-- CODE QUALITY -->

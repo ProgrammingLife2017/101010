@@ -12,6 +12,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -79,7 +80,31 @@ public class Window extends Application {
         //Creating a scene object
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("layoutstyles.css");
-
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case LEFT:
+                        graphScene.setTranslateX(graphScene.getTranslateX() + 5.0);
+                        event.consume();
+                        break;
+                    case RIGHT:
+                        graphScene.setTranslateX(graphScene.getTranslateX() - 5.0);
+                        event.consume();
+                        break;
+                    case UP:
+                        graphScene.setTranslateY(graphScene.getTranslateY() - 5.0);
+                        event.consume();
+                        break;
+                    case DOWN:
+                        graphScene.setTranslateY(graphScene.getTranslateY() + 5.0);
+                        event.consume();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         //Setting title to the Stage
         stage.setTitle("Main window");
 
@@ -118,13 +143,14 @@ public class Window extends Application {
                 graphScene.setTranslateX(graphScene.getTranslateX() + offsetX);
                 //graphScene.setTranslateY(graphScene.getTranslateY() + offsetY);
 
-
                 mouseX = event.getSceneX();
                 mouseY = event.getSceneY();
 
                 event.consume();
             }
         });
+
+
     }
 
     /**

@@ -9,12 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import java.util.ArrayList;
 
 /**
  * Implementation of the window that handles graph visualization.
@@ -40,8 +36,6 @@ import java.util.ArrayList;
      * The factory the GraphScene uses to create JavaFX elements.
      */
     private FXElementsFactory factory;
-
-    private static ArrayList<DrawNode> drawnNodes = new ArrayList<>();
 
     /**
      * Event handler for when a node or edge is clicked.
@@ -106,7 +100,6 @@ import java.util.ArrayList;
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(Node center, int radius) {
-        drawnNodes.clear();
         double x = center.getX();
         for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
             Node current = NodeGraph.getCurrentInstance().getNode(i);
@@ -121,7 +114,6 @@ import java.util.ArrayList;
                 newRect.setY(current.getY());
                 newRect.setWidth(20);
                 newRect.setHeight(10);
-                drawnNodes.add(newRect);
                 this.getChildren().add(newRect);
                 for (Integer j: current.getOutgoingEdges()) {
                     Node out = NodeGraph.getCurrentInstance().getNode(j);
@@ -140,9 +132,45 @@ import java.util.ArrayList;
         Window.updateIndicator(center);
     }
 
-    public static ArrayList<DrawNode> getDrawnNodes() {
-        return drawnNodes;
+    /**
+     * Updates the visualized graph when zooming out.
+     */
+    public void zoomOut() {
+        NodeGraph.getCurrentInstance().addAtRoot();
+        NodeGraph.getCurrentInstance().addAtLeaf();
     }
+    /**
+     * Updates the visualized graph when zooming in.
+     */
+    public void zoomIn() {
+        NodeGraph.getCurrentInstance().removeAtRoot();
+        NodeGraph.getCurrentInstance().removeAtLeaf();
+    }
+
+    /*
+    addAtRoot() {
+    for (Node n : rootnodes)
+        for (int m : n.getIncomingEdges)
+            if(!list.contains(m))
+                list.add(NodeGraph.getNode(m));
+    list = assignRootLayer(list);
+    list = verticalSpacingRoot(list);
+    for (Node n : list)
+        drawnNodes.append(n);
+        GraphScene.draw(n);
+    }
+
+    removeAtRoot() {
+    for (Node n : rootnodes)
+        for (int m: n.getOutgoingEdges)
+            if(!list.contains(m))
+                list.add(NodeGraph.getNode(m));
+        GraphScene.getChildren().remove(GraphScene.lookup(Integer.toString(m)));
+     while(rootnodes.contains(drawnNodes.getFirst())
+        drawnNodes.removeFirst();
+     rootnodes = list;
+    }
+     */
 
     /**
      * Switches event handler to center queries.

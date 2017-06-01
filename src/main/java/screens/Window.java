@@ -59,8 +59,14 @@ public class Window extends Application {
      */
     private static InfoScreen infoScreen = null;
 
+    /**
+     * A rectangle that shows where the user is in the the graph.
+     */
     private static Rectangle indicator;
 
+    /**
+     * The main pane of the application window.
+     */
     private static BorderPane mainPane;
 
     /**
@@ -169,73 +175,69 @@ public class Window extends Application {
     private void setScrolling() {
         mainPane.setOnScroll((ScrollEvent event) -> {
             if (NodeGraph.getCurrentInstance() != null) {
-                int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
-                int oldRadius = NavigationInfo.getInstance().getCurrentRadius();
-                double transX = getTranslate(event.getX(), graphScene.getWidth());
-                double transY = getTranslate(event.getY(), graphScene.getHeight());
+//                int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
+//                int oldRadius = NavigationInfo.getInstance().getCurrentRadius();
+//                double transX = getTranslate(event.getX(), graphScene.getWidth());
+//                double transY = getTranslate(event.getY(), graphScene.getHeight());
                 double deltaY = event.getDeltaY();
                 if (deltaY < 0) {
-                    if (oldRadius + 2 > 500) {
-                        graphScene.drawGraph(centerId, 500);
-                    } else {
-                        graphScene.setTranslateX((graphScene.getTranslateX() + transX) / 1.02);
-                        graphScene.setTranslateY((graphScene.getTranslateY() + transY) / 1.02);
-                        centerId = findNewCenterNode(centerId);
-                        graphScene.setScaleX(graphScene.getScaleX() / 1.02);
-                        graphScene.setScaleY(graphScene.getScaleY() / 1.02);
-                        //TODO update graph edge
-                        graphScene.drawGraph(centerId, oldRadius + 2);
+//                    if (oldRadius + 2 > 500) {
+//                        graphScene.drawGraph(centerId, 500);
+//                    } else {
+//                        graphScene.setTranslateX((graphScene.getTranslateX() + transX) / 1.02);
+//                        graphScene.setTranslateY((graphScene.getTranslateY() + transY) / 1.02);
+//                        centerId = findNewCenterNode(centerId);
+//                        graphScene.setScaleX(graphScene.getScaleX() / 1.02);
+//                        graphScene.setScaleY(graphScene.getScaleY() / 1.02);
+//                        //TODO update graph edge
+//                        graphScene.drawGraph(centerId, oldRadius + 2);
+                    graphScene.zoomOut();
                     }
                 } else {
-                    if (oldRadius - 2 < 5) {
-                        graphScene.drawGraph(centerId, 5);
-                    } else {
-                        graphScene.setTranslateX((graphScene.getTranslateX() - transX) * 1.02);
-                        graphScene.setTranslateY((graphScene.getTranslateY() - transY) * 1.02);
-                        centerId = findNewCenterNode(centerId);
-                        graphScene.setScaleX(graphScene.getScaleX() * 1.02);
-                        graphScene.setScaleY(graphScene.getScaleY() * 1.02);
-                        //TODO update graph edge
-                        graphScene.drawGraph(centerId, oldRadius - 2);
-                    }
+//                    if (oldRadius - 2 < 5) {
+//                        graphScene.drawGraph(centerId, 5);
+//                    } else {
+//                        graphScene.setTranslateX((graphScene.getTranslateX() - transX) * 1.02);
+//                        graphScene.setTranslateY((graphScene.getTranslateY() - transY) * 1.02);
+//                        centerId = findNewCenterNode(centerId);
+//                        graphScene.setScaleX(graphScene.getScaleX() * 1.02);
+//                        graphScene.setScaleY(graphScene.getScaleY() * 1.02);
+//                        //TODO update graph edge
+//                        graphScene.drawGraph(centerId, oldRadius - 2);
+//                    }
+                graphScene.zoomIn();
                 }
-                System.out.println(graphScene.getTranslateX());
-            }
             graphScene.toBack();
         });
     }
 
-    private void zoomOut() {
-
-    }
-
-    private int findNewCenterNode(int currentCenter) {
-        DrawNode currentNode;
-        NodeGraph ng = NodeGraph.getCurrentInstance();
-        double distance = Double.MAX_VALUE;
-        int centerId = -1;
-        for (int i = 0; i < GraphScene.getDrawnNodes().size(); i++) {
-            currentNode = GraphScene.getDrawnNodes().get(i);
-            Bounds bounds = currentNode.getBoundsInParent();
-            double xDiff = bounds.getMinX() + bounds.getWidth() / 2 - graphScene.getWidth() / 2 + graphScene.getTranslateX();
-            double yDiff = bounds.getMinY() + bounds.getHeight() / 2 - graphScene.getHeight() / 2 + graphScene.getTranslateY();
-            double currentDistance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-//            if (GraphScene.getDrawnNodes().get(i).getIndex() == 16 || GraphScene.getDrawnNodes().get(i).getIndex() == 14 || GraphScene.getDrawnNodes().get(i).getIndex() == 18) {
-//                System.out.println(GraphScene.getDrawnNodes().get(i).getIndex());
-//                System.out.println(bounds);
-//                System.out.println(xDiff + "   " + yDiff);
-//                System.out.println(currentDistance);
+//    private int findNewCenterNode(int currentCenter) {
+//        DrawNode currentNode;
+//        NodeGraph ng = NodeGraph.getCurrentInstance();
+//        double distance = Double.MAX_VALUE;
+//        int centerId = -1;
+//        for (int i = 0; i < GraphScene.getDrawnNodes().size(); i++) {
+//            currentNode = GraphScene.getDrawnNodes().get(i);
+//            Bounds bounds = currentNode.getBoundsInParent();
+//            double xDiff = bounds.getMinX() + bounds.getWidth() / 2 - graphScene.getWidth() / 2 + graphScene.getTranslateX();
+//            double yDiff = bounds.getMinY() + bounds.getHeight() / 2 - graphScene.getHeight() / 2 + graphScene.getTranslateY();
+//            double currentDistance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+////            if (GraphScene.getDrawnNodes().get(i).getIndex() == 16 || GraphScene.getDrawnNodes().get(i).getIndex() == 14 || GraphScene.getDrawnNodes().get(i).getIndex() == 18) {
+////                System.out.println(GraphScene.getDrawnNodes().get(i).getIndex());
+////                System.out.println(bounds);
+////                System.out.println(xDiff + "   " + yDiff);
+////                System.out.println(currentDistance);
+////            }
+//            if (distance > currentDistance) {
+//                distance = currentDistance;
+//                centerId = GraphScene.getDrawnNodes().get(i).getIndex();
 //            }
-            if (distance > currentDistance) {
-                distance = currentDistance;
-                centerId = GraphScene.getDrawnNodes().get(i).getIndex();
-            }
-        }
-        NavigationInfo.getInstance().setCurrentCenterNode(centerId);
-        //System.out.println(graphScene.getTranslateX() + "    " + centerId);
-        //graphScene.setTranslateY(graphScene.getTranslateY() - (ng.getNode(centerId).getY() - ng.getNode(currentCenter).getY()) * graphScene.getScaleY());
-        return centerId;
-    }
+//        }
+//        NavigationInfo.getInstance().setCurrentCenterNode(centerId);
+//        //System.out.println(graphScene.getTranslateX() + "    " + centerId);
+//        //graphScene.setTranslateY(graphScene.getTranslateY() - (ng.getNode(centerId).getY() - ng.getNode(currentCenter).getY()) * graphScene.getScaleY());
+//        return centerId;
+//    }
 
     private double getTranslate(double cursorPos, double screenDimension) {
         double change = screenDimension * 0.02;

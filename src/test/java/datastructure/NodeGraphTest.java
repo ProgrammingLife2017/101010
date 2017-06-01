@@ -1,20 +1,19 @@
 package datastructure;
 
-import java.util.Iterator;
+import java.lang.reflect.Method;
+import java.util.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 
 import org.mockito.Mock;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
+import sun.awt.image.ImageWatched;
 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 /**
@@ -47,6 +46,12 @@ public class NodeGraphTest {
     @Mock
     Iterator<DrawNode> iterator;
 
+    @Mock
+    Queue<Integer> queue;
+
+    @Mock
+    LinkedList<DrawNode> sorted;
+
     /**
      * Before each test we set the nodeGraph to a new NodeGraph.
      */
@@ -56,18 +61,15 @@ public class NodeGraphTest {
         drawNodes = mock(new LinkedList<DrawNode>().getClass());
         segmentDB = mock(SegmentDB.class);
         node = mock(Node.class);
+        queue = mock(Queue.class);
         drawNode = mock(DrawNode.class);
         iterator = mock(Iterator.class);
+        sorted = mock(LinkedList.class);
         dummyNodes = mock(new LinkedList<DummyNode>().getClass());
-        when(node.getIncomingEdges()).thenReturn(new int[0]);
-        when(node.getOutgoingEdges()).thenReturn(new int[0]);
         when(segmentDB.getSegment(anyInt())).thenReturn("Segment");
         when(nodes.get(anyInt())).thenReturn(node);
-        when(drawNodes.get(anyInt())).thenReturn(drawNode);
         when(drawNode.getIndex()).thenReturn(0);
         when(drawNodes.iterator()).thenReturn(iterator);
-        when(iterator.next()).thenReturn(drawNode);
-        when(iterator.hasNext()).thenReturn(true);
         nodeGraph = new NodeGraph(nodes, segmentDB, drawNodes, dummyNodes);
     }
 
@@ -76,12 +78,14 @@ public class NodeGraphTest {
      */
     @After
     public void tearDown() {
+        validateMockitoUsage();
         nodeGraph.setCurrentInstance(null);
         nodeGraph = null;
         nodes = null;
         drawNodes = null;
         segmentDB = null;
         node = null;
+        queue = null;
     }
 
     @Test
@@ -168,6 +172,9 @@ public class NodeGraphTest {
     @Test
     public void generateDrawNodes() {
         ArrayList<Node> nodes2 = mock(new ArrayList<Node>().getClass());
+
+        when(node.getIncomingEdges()).thenReturn(new int[]{1});
+        when(node.getOutgoingEdges()).thenReturn(new int[]{-1});
         when(nodes2.size()).thenReturn(1);
         when(nodes2.get(anyInt())).thenReturn(node);
         nodeGraph = new NodeGraph(nodes2, segmentDB, new LinkedList<>(), new LinkedList<>());
@@ -186,6 +193,8 @@ public class NodeGraphTest {
 
     @Test
     public void getDrawNode() {
+        when(iterator.hasNext()).thenReturn(true).thenReturn(false);
+        when(iterator.next()).thenReturn(drawNode);
         assertEquals(drawNode, nodeGraph.getDrawNode(0));
     }
 
@@ -196,22 +205,141 @@ public class NodeGraphTest {
 
     @Test
     public void addEdges() {
+        TreeSet<Integer> set = new TreeSet<>();
 
+        when(node.getIncomingEdges()).thenReturn(new int[]{1});
+        when(node.getOutgoingEdges()).thenReturn(new int[]{-1});
+        Class[] classes = new Class[]{int.class, Queue.class, TreeSet.class};
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("addEdges", classes);
+            method.setAccessible(true);
+            method.invoke(nodeGraph, 0, queue, set);
+            verify(queue, times(1)).add(-1);
+            verify(queue, times(1)).add(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     @Test
     public void topoSort() {
-
+        when(drawNodes.get(anyInt())).thenReturn(drawNode);
+        when(drawNodes.getLast()).thenReturn(drawNode);
+        when(drawNodes.getFirst()).thenReturn(drawNode);
+        when(iterator.next()).thenReturn(drawNode);
+        when(drawNode.getIndex()).thenReturn(1);
+        when(drawNodes.isEmpty()).thenReturn(false).thenReturn(true);
+        when(node.getIncomingEdges()).thenReturn(new int[]{1});
+        when(node.getOutgoingEdges()).thenReturn(new int[]{-1});
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("topoSort", new Class[0]);
+            method.setAccessible(true);
+            method.invoke(nodeGraph);
+            verify(drawNodes, times(1)).remove(drawNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     @Test
     public void topoSortUtil() {
+        DrawNode drawNode1 = mock(DrawNode.class);
+        DrawNode drawNode2 = mock(DrawNode.class);
+        DrawNode drawNode3 = mock(DrawNode.class);
+        when(iterator.next()).thenReturn(drawNode3).thenReturn(drawNode2).thenReturn(drawNode1).thenReturn(drawNode);
+        when(iterator.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(drawNode.getIndex()).thenReturn(0);
+        when(drawNode1.getIndex()).thenReturn(1);
+        when(drawNode2.getIndex()).thenReturn(2);
+        when(drawNode3.getIndex()).thenReturn(3);
+        when(drawNodes.get(0)).thenReturn(drawNode);
+        when(drawNodes.get(1)).thenReturn(drawNode1);
+        when(drawNodes.get(2)).thenReturn(drawNode2);
+        when(drawNodes.get(3)).thenReturn(drawNode3);
 
+        Node node1 = mock(Node.class);
+        Node node2 = mock(Node.class);
+        Node node3 = mock(Node.class);
+        when(nodes.get(0)).thenReturn(node);
+        when(nodes.get(1)).thenReturn(node1);
+        when(nodes.get(2)).thenReturn(node2);
+        when(nodes.get(3)).thenReturn(node3);
+        when(drawNodes.iterator()).thenReturn(iterator);
+
+        when(node.getOutgoingEdges()).thenReturn(new int[]{1});
+        when(node1.getOutgoingEdges()).thenReturn(new int[]{2, 3});
+        when(node2.getOutgoingEdges()).thenReturn(new int[0]);
+        when(node3.getOutgoingEdges()).thenReturn(new int[0]);
+
+        when(iterator.next()).thenReturn(drawNode);
+        Class[] classes = new Class[]{DrawNode.class, LinkedList.class};
+
+        when(node.getIncomingEdges()).thenReturn(new int[]{1});
+        when(node.getOutgoingEdges()).thenReturn(new int[]{-1});
+        when(drawNode.getIndex()).thenReturn(1);
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("topoSortUtil", classes);
+            method.setAccessible(true);
+            method.invoke(nodeGraph, drawNode, sorted);
+            verify(drawNodes, times(1)).remove(drawNode);
+            verify(sorted, times(1)).addLast(drawNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     @Test
     public void assignLayers() {
+        DrawNode drawNode1 = mock(DrawNode.class);
+        DrawNode drawNode2 = mock(DrawNode.class);
+        DrawNode drawNode3 = mock(DrawNode.class);
+        when(iterator.next()).thenReturn(drawNode3).thenReturn(drawNode2).thenReturn(drawNode1).thenReturn(drawNode);
+        when(iterator.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(drawNode.getIndex()).thenReturn(0);
+        when(drawNode1.getIndex()).thenReturn(1);
+        when(drawNode2.getIndex()).thenReturn(2);
+        when(drawNode3.getIndex()).thenReturn(3);
+        when(drawNodes.get(0)).thenReturn(drawNode);
+        when(drawNodes.get(1)).thenReturn(drawNode1);
+        when(drawNodes.get(2)).thenReturn(drawNode2);
+        when(drawNodes.get(3)).thenReturn(drawNode3);
 
+        Node node1 = mock(Node.class);
+        Node node2 = mock(Node.class);
+        Node node3 = mock(Node.class);
+        when(nodes.get(0)).thenReturn(node);
+        when(nodes.get(1)).thenReturn(node1);
+        when(nodes.get(2)).thenReturn(node2);
+        when(nodes.get(3)).thenReturn(node3);
+        when(drawNodes.iterator()).thenReturn(iterator);
+
+        when(node.getOutgoingEdges()).thenReturn(new int[]{1});
+        when(node1.getOutgoingEdges()).thenReturn(new int[]{2, 3});
+        when(node2.getOutgoingEdges()).thenReturn(new int[0]);
+        when(node3.getOutgoingEdges()).thenReturn(new int[0]);
+        drawNode.setX(9999999.0);
+        drawNode1.setX(99999.0);
+        drawNode2.setX(199999.0);
+        drawNode3.setX(1009999.0);
+        when(nodes.size()).thenReturn(4);
+        when(drawNodes.size()).thenReturn(4);
+
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("assignLayers", new Class[0]);
+            method.setAccessible(true);
+            method.invoke(nodeGraph);
+            assertEquals(900.0, drawNode.getX(), 0);
+            assertEquals(1000.0, drawNode1.getX(), 0);
+            assertEquals(1100.0, drawNode2.getX(), 0);
+            assertEquals(1100.0, drawNode3.getX(), 0);
+//            verify(iterator).next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     @Test

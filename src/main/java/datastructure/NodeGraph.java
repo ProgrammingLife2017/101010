@@ -277,8 +277,11 @@ public class NodeGraph {
         while (it.hasNext()) {
              current = it.next();
 
+             int size = drawNodes.size();
              for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
-                 for (DrawNode temp : drawNodes) {
+                 for (int j = 0; j < size; j++) {
+                     DrawNode temp = drawNodes.get(j);
+                     int ind2 = temp.getIndex();
                      if (temp.getIndex() == i && temp.getX() < layer) {
                          layer = temp.getX();
                      }

@@ -7,7 +7,6 @@ import java.util.Queue;
 import java.util.Iterator;
 import java.util.ListIterator;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 
 /**
  * Created by 101010.
@@ -356,14 +355,13 @@ public class NodeGraph {
             } else {
                 maxY = 0;
                 for (DummyNode dN : dummyNodes) {
-                    if (dN.getX() == (int) drawNodes.get(i).getX() && dN.getY() > maxY) {
+                    if (dN.getX() == (int) drawNodes.get(i).getX()) {
                         maxY = dN.getY();
                     }
                 }
                 drawNodes.get(i).setY(maxY + 50);
             }
         }
-
     }
 
     /**

@@ -233,7 +233,39 @@ public class NodeGraphTest {
 
     @Test
     public void verticalSpacing() {
-
+        LinkedList<DummyNode> dummies = new LinkedList<>();
+        LinkedList<DrawNode> drawies = new LinkedList<>();
+        DrawNode drawNode1 = mock(DrawNode.class);
+        DrawNode drawNode2 = mock(DrawNode.class);
+        DummyNode dummyNode = mock(DummyNode.class);
+        DummyNode dummyNode1 = mock(DummyNode.class);
+        drawNode.setX(100);
+        drawNode1.setX(200);
+        drawNode2.setX(200);
+        when(dummyNode.getX()).thenReturn(200);
+        when(dummyNode1.getX()).thenReturn(200);
+        when(dummyNode.getY()).thenReturn(50);
+        when(dummyNode1.getY()).thenReturn(100);
+        dummies.add(dummyNode);
+        dummies.add(dummyNode1);
+        drawies.add(drawNode);
+        drawies.add(drawNode1);
+        drawies.add(drawNode2);
+        nodeGraph = new NodeGraph(nodes, segmentDB, drawies, dummies);
+        Class[] classes = new Class[0];
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("verticalSpacing", classes);
+            method.setAccessible(true);
+            method.invoke(nodeGraph);
+            assertEquals(50.0, drawNode.getY(), 0);
+            assertEquals(50.0, dummyNode.getY(), 0);
+            assertEquals(100.0, dummyNode1.getY(), 0);
+            assertEquals(150.0, drawNode1.getY(), 0);
+            assertEquals(200.0, drawNode2.getY(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     @Test

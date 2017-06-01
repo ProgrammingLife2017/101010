@@ -3,7 +3,6 @@ package screens;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,7 +12,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -69,47 +67,100 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.setupService();
+        Pane mainPane = createMainPane(stage);
+        Scene scene = createMainScene(mainPane);
+        setStageSettings(stage, scene);
+        stage.show();
+        logger.info("the main application has started");
+    }
+
+    public void setPaneEventHandlers(Pane pane) {
+        pane.onMousePressedProperty().set(event -> {
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+        });
+        pane.onMouseDraggedProperty().set(event -> {
+            double offsetX = event.getSceneX() - mouseX;
+            graphScene.setTranslateX(graphScene.getTranslateX() + offsetX);
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+            event.consume();
+        });
+    }
+
+    /**
+     * Sets up the necessary services.
+     */
+    private void setupService() {
         backLog = new Backlog();
+        FileSystem fileSystem = new FileSystem();
+        loggerFactory = new LoggerFactory(fileSystem);
+        logger = loggerFactory.createLogger(this.getClass());
+        FXElementsFactory fact = new FXElementsFactory();
+        graphScene = new GraphScene(fact);
+        setScrolling(graphScene);
+    }
+
+    /**
+     * Creates main pane for placing content.
+     * @param stage Main stage.
+     * @return Pane object.
+     */
+    private Pane createMainPane(Stage stage) {
         BorderPane mainPane = new BorderPane();
-
-        mainPane.setMinSize(1200, 700);
-
+        mainPane.setMinSize(1500, 900);
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
+        setPaneEventHandlers(mainPane);
+        return mainPane;
+    }
 
-
-        //Creating a scene object
-        Scene scene = new Scene(mainPane);
+    /**
+     * Creates the scene where all the main content is placed.
+     * @param pane Pane to place in the new scene.
+     * @return Scene object.
+     */
+    private Scene createMainScene(Pane pane) {
+        Scene scene = new Scene(pane);
         scene.getStylesheets().add("layoutstyles.css");
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case LEFT:
-                        graphScene.setTranslateX(graphScene.getTranslateX() + 5.0);
-                        event.consume();
-                        break;
-                    case RIGHT:
-                        graphScene.setTranslateX(graphScene.getTranslateX() - 5.0);
-                        event.consume();
-                        break;
-                    case UP:
-                        graphScene.setTranslateY(graphScene.getTranslateY() - 5.0);
-                        event.consume();
-                        break;
-                    case DOWN:
-                        graphScene.setTranslateY(graphScene.getTranslateY() + 5.0);
-                        event.consume();
-                        break;
-                    default:
-                        break;
-                }
+        scene.setOnKeyPressed(event -> {
+            if (graphScene != null) {
+                keyPressed(event);
             }
         });
-        //Setting title to the Stage
-        stage.setTitle("Main window");
+        return scene;
+    }
 
-        //Adding scene to the stage
+    /**
+     * Handles event when a key has been pressed.
+     * @param event Key event.
+     */
+    private void keyPressed(KeyEvent event) {
+        switch (event.getCode()) {
+            case LEFT:
+                graphScene.setTranslateX(graphScene.getTranslateX() + 5.0);
+                break;
+            case RIGHT:
+                graphScene.setTranslateX(graphScene.getTranslateX() - 5.0);
+                break;
+            case UP:
+                graphScene.setTranslateY(graphScene.getTranslateY() - 5.0);
+                break;
+            case DOWN:
+                graphScene.setTranslateY(graphScene.getTranslateY() + 5.0);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Sets the scene and other settings.
+     * @param stage Stage to show.
+     * @param scene Scene where the main content is placed.
+     */
+    private void setStageSettings(Stage stage, Scene scene) {
+        stage.setTitle("Main window");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setOnCloseRequest(event -> {
@@ -119,51 +170,6 @@ public class Window extends Application {
                 e.printStackTrace();
             }
         });
-
-        init(mainPane);
-        //Displaying the contents of the stage
-        stage.show();
-        logger.info("the main application has started");
-    }
-
-    public void init(Pane pane) {
-        pane.onMousePressedProperty().set(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mouseX = event.getSceneX();
-                mouseY = event.getSceneY();
-            }
-        });
-
-        pane.onMouseDraggedProperty().set(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                double offsetX = event.getSceneX() - mouseX;
-                double offsetY = event.getSceneY() - mouseY;
-
-                graphScene.setTranslateX(graphScene.getTranslateX() + offsetX);
-                //graphScene.setTranslateY(graphScene.getTranslateY() + offsetY);
-
-                mouseX = event.getSceneX();
-                mouseY = event.getSceneY();
-
-                event.consume();
-            }
-        });
-
-
-    }
-
-    /**
-     * Sets up the necessary services.
-     */
-    private void setupService() {
-        FileSystem fileSystem = new FileSystem();
-        loggerFactory = new LoggerFactory(fileSystem);
-        logger = loggerFactory.createLogger(this.getClass());
-        FXElementsFactory fact = new FXElementsFactory();
-        graphScene = new GraphScene(fact);
-        setScrolling(graphScene);
     }
 
     /**
@@ -257,81 +263,7 @@ public class Window extends Application {
      */
     private Menu addController() {
         Menu menu = new Menu("Tools");
-        MenuItem item1 = new MenuItem("Info");
-        item1.setOnAction(
-                event -> {
-                    getInfoScreen().show();
-                    logger.info("information screen has been opened");
-                }
-        );
-        MenuItem item2 = new MenuItem("Console log");
-        item2.setOnAction(
-                event -> {
-                    getBackLog().show();
-                    logger.info("console window has been opened");
-                }
-        );
-        MenuItem item3 = new MenuItem("Center from click");
-        item3.setOnAction(
-                event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
-                        graphScene.switchToCenter();
-                        logger.info("state has been switched to center");
-                    } else {
-                        errorPopup("Please load a graph.");
-                    }
-                }
-        );
-        MenuItem item4 = new MenuItem("Center from text");
-        item4.setOnAction(
-                event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
-                        Stage newstage = new Stage();
-                        newstage.setTitle("Select the radius");
-                        GridPane box = new GridPane();
-                        TextField textField = new TextField();
-                        TextField textField2 = new TextField();
-                        Button btn = new Button("Submit");
-                        btn.setOnAction(
-                                event2 -> {
-                                    if (textField.getText().length() == 0 || textField.getText().contains("\\D")) {
-                                        errorPopup("Please enter a number as id.");
-                                    } else if (textField2.getText().length() == 0 || textField2.getText().contains("\\D")) {
-                                        errorPopup("Please enter a number as radius.");
-                                    } else {
-                                        int center = Integer.parseInt(textField.getText());
-                                        int radius = Integer.parseInt(textField2.getText());
-
-                                        if (center < 0 || center >= NodeGraph.getCurrentInstance().getSize()) {
-                                            errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
-                                        } else if (radius < 5 || radius > 500) {
-                                            errorPopup("Input radius is out of bounds, \nplease provide a different radius.");
-                                        } else {
-                                            graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
-                                            graphScene.switchToInfo();
-                                            newstage.close();
-                                        }
-                                    }
-                                }
-                        );
-                        box.add(new Label("Node Id:"), 1, 1);
-                        box.add(textField, 1, 2, 3, 1);
-                        box.add(new Label("Radius:"), 1, 3);
-                        box.add(textField2, 1, 4, 3, 1);
-                        box.add(btn, 1, 5);
-                        Scene scene = new Scene(box);
-                        newstage.setScene(scene);
-                        newstage.show();
-                        logger.info("state has been switched to centerId");
-                    } else {
-                      errorPopup("Please load a graph.");
-                    }
-                }
-        );
-        menu.getItems().add(item1);
-        menu.getItems().add(item2);
-        menu.getItems().add(item3);
-        menu.getItems().add(item4);
+        menu.getItems().addAll(showInfoScreenItem(), showBacklogItem(), centerClickItem(), centerFromTextItem());
         return menu;
     }
 
@@ -361,6 +293,108 @@ public class Window extends Application {
         );
         menu.getItems().addAll(item1, item2);
         return menu;
+    }
+
+    /**
+     * Creates menu item to show the information display.
+     * @return MenuItem object.
+     */
+    private MenuItem showInfoScreenItem() {
+        MenuItem item = new MenuItem("Info");
+        item.setOnAction(
+                event -> {
+                    getInfoScreen().show();
+                    logger.info("information screen has been opened");
+                }
+        );
+        return item;
+    }
+
+    /**
+     * Creates menu item to open the backlog window.
+     * @return MenuItem object.
+     */
+    private MenuItem showBacklogItem() {
+        MenuItem item = new MenuItem("Console log");
+        item.setOnAction(
+                event -> {
+                    getBackLog().show();
+                    logger.info("console window has been opened");
+                }
+        );
+        return item;
+    }
+
+    /**
+     * Creates menu item switch state of the GraphScene object in order to execute a center query.
+     * @return MenuItem object.
+     */
+    private MenuItem centerClickItem() {
+        MenuItem item = new MenuItem("Center from click");
+        item.setOnAction(
+                event -> {
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        graphScene.switchToCenter();
+                        logger.info("state has been switched to center");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
+                }
+        );
+        return item;
+    }
+
+    /**
+     * Creates menu item open a window to perform a center query.
+     * @return MenuItem object.
+     */
+    private MenuItem centerFromTextItem() {
+        MenuItem item = new MenuItem("Center from text");
+        item.setOnAction(
+                event -> {
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        Stage newstage = new Stage();
+                        newstage.setTitle("Select the radius");
+                        GridPane box = new GridPane();
+                        TextField textField = new TextField();
+                        TextField textField2 = new TextField();
+                        Button btn = new Button("Submit");
+                        btn.setOnAction(
+                                event2 -> {
+                                    if (textField.getText().length() == 0 || textField.getText().contains("\\D")) {
+                                        errorPopup("Please enter a number as id.");
+                                    } else if (textField2.getText().length() == 0 || textField2.getText().contains("\\D")) {
+                                        errorPopup("Please enter a number as radius.");
+                                    } else {
+                                        int center = Integer.parseInt(textField.getText());
+                                        int radius = Integer.parseInt(textField2.getText());
+                                        if (center < 0 || center >= NodeGraph.getCurrentInstance().getSize()) {
+                                            errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
+                                        } else if (radius < 5 || radius > 500) {
+                                            errorPopup("Input radius is out of bounds, \nplease provide a different radius.");
+                                        } else {
+                                            graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
+                                            graphScene.switchToInfo();
+                                            newstage.close();
+                                        }
+                                    }
+                                }
+                        );
+                        box.add(new Label("Node Id:"), 1, 1);
+                        box.add(textField, 1, 2, 3, 1);
+                        box.add(new Label("Radius:"), 1, 3);
+                        box.add(textField2, 1, 4, 3, 1);
+                        box.add(btn, 1, 5);
+                        Scene scene = new Scene(box);
+                        newstage.setScene(scene);
+                        newstage.show();
+                        logger.info("state has been switched to centerId");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
+                }
+        );
+        return item;
     }
 
     /**

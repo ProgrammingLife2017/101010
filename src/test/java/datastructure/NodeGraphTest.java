@@ -1,6 +1,9 @@
 package datastructure;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
+
+import javafx.util.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +16,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -45,7 +47,13 @@ public class NodeGraphTest {
     DrawNode drawNode;
 
     @Mock
+    DummyNode dummyNode;
+
+    @Mock
     Iterator<DrawNode> iterator;
+
+    @Mock
+    Iterator<DrawNode> riterator;
 
     /**
      * Before each test we set the nodeGraph to a new NodeGraph.
@@ -58,6 +66,7 @@ public class NodeGraphTest {
         node = mock(Node.class);
         drawNode = mock(DrawNode.class);
         iterator = mock(Iterator.class);
+        riterator = mock(Iterator.class);
         dummyNodes = mock(new LinkedList<DummyNode>().getClass());
         when(node.getIncomingEdges()).thenReturn(new int[0]);
         when(node.getOutgoingEdges()).thenReturn(new int[0]);
@@ -66,8 +75,11 @@ public class NodeGraphTest {
         when(drawNodes.get(anyInt())).thenReturn(drawNode);
         when(drawNode.getIndex()).thenReturn(0);
         when(drawNodes.iterator()).thenReturn(iterator);
+        when(drawNodes.descendingIterator()).thenReturn(riterator);
         when(iterator.next()).thenReturn(drawNode);
-        when(iterator.hasNext()).thenReturn(true);
+        when(iterator.hasNext()).thenReturn(true).thenReturn(false);
+        when(riterator.next()).thenReturn(drawNode);
+        when(riterator.hasNext()).thenReturn(true).thenReturn(false);
         nodeGraph = new NodeGraph(nodes, segmentDB, drawNodes, dummyNodes);
     }
 
@@ -236,7 +248,38 @@ public class NodeGraphTest {
 
     @Test
     public void retrieveDummies() {
-
+        dummyNode = mock(DummyNode.class);
+        DrawNode drawNode1 = mock(DrawNode.class);
+        DummyNode dummyNode1 = mock(DummyNode.class);
+        drawNode.setX(100.0);
+        drawNode1.setX(0);
+        Iterator<DummyNode> it = mock(Iterator.class);
+        Iterator<DummyNode> rit = mock(Iterator.class);
+        when(dummyNodes.iterator()).thenReturn(it);
+        when(dummyNodes.descendingIterator()).thenReturn(rit);
+        when(dummyNode.getX()).thenReturn(100);
+        when(dummyNode.getAbsId()).thenReturn(-1.0);
+        when(dummyNode1.getX()).thenReturn(0);
+        when(dummyNode1.getAbsId()).thenReturn(-2.0);
+        when(it.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(it.next()).thenReturn(dummyNode).thenReturn(dummyNode1);
+        when(rit.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(rit.next()).thenReturn(dummyNode1).thenReturn(dummyNode);
+        when(drawNodes.getFirst()).thenReturn(drawNode);
+        when(drawNodes.getLast()).thenReturn(drawNode1);
+        nodeGraph = new NodeGraph(nodes, segmentDB, drawNodes, dummyNodes);
+        Class[] classes = new Class[0];
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("retrieveEdgeNodes", classes);
+            method.setAccessible(true);
+            method.invoke(nodeGraph);
+            assertTrue(nodeGraph.getLeafNodes().contains(-1.0));
+            assertFalse(nodeGraph.getRootNodes().contains(-1.0));
+            assertFalse(nodeGraph.getLeafNodes().contains(-2.0));
+            assertTrue(nodeGraph.getRootNodes().contains(-2.0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
-
 }

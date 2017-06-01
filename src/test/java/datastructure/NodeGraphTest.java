@@ -54,6 +54,7 @@ public class NodeGraphTest {
 
     @Mock
     LinkedList<DrawNode> sorted;
+
     Iterator<DrawNode> riterator;
 
     /**
@@ -99,6 +100,15 @@ public class NodeGraphTest {
     }
 
     @Test
+    public void defaultConstructor() {
+        tearDown();
+        nodeGraph = new NodeGraph();
+        assertTrue(nodeGraph.getNodes() != null);
+        assertTrue(nodeGraph.getDrawNodes() != null);
+        assertTrue(nodeGraph.getDummyNodes() != null);
+    }
+
+    @Test
     public void addNode() {
         nodeGraph = new NodeGraph(new ArrayList<Node>(0), segmentDB, drawNodes, new LinkedList<>());
         nodeGraph.addNode(100, node);
@@ -126,7 +136,11 @@ public class NodeGraphTest {
         nodeGraph.addNode(0, node);
         nodeGraph.addNode(1, node2);
         nodeGraph.addEdge(0, 1);
+        nodeGraph.addEdge(0, 2);
+        nodeGraph.addEdge(3, 2);
+        nodeGraph.addEdge(4, 5);
 
+        assertEquals(6, nodeGraph.getNodes().size());
         verify(node, times(1)).addOutgoingEdge(1);
         verify(node, never()).addIncomingEdge(anyInt());
         verify(node2, never()).addOutgoingEdge(anyInt());
@@ -295,6 +309,10 @@ public class NodeGraphTest {
             method.invoke(nodeGraph, drawNode, sorted);
             verify(drawNodes, times(1)).remove(drawNode);
             verify(sorted, times(1)).addLast(drawNode);
+            when(sorted.contains(any())).thenReturn(true);
+            method.invoke(nodeGraph, drawNode, sorted);
+            verify(drawNodes, times(1)).remove(drawNode);
+            verify(sorted, times(1)).addLast(drawNode);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -411,15 +429,23 @@ public class NodeGraphTest {
         DrawNode drawNode2 = mock(DrawNode.class);
         DummyNode dummyNode = mock(DummyNode.class);
         DummyNode dummyNode1 = mock(DummyNode.class);
+        DummyNode dummyNode2 = mock(DummyNode.class);
+        DummyNode dummyNode3 = mock(DummyNode.class);
         drawNode.setX(100);
         drawNode1.setX(200);
         drawNode2.setX(200);
         when(dummyNode.getX()).thenReturn(200);
         when(dummyNode1.getX()).thenReturn(200);
+        when(dummyNode2.getX()).thenReturn(300);
+        when(dummyNode3.getX()).thenReturn(300);
         when(dummyNode.getY()).thenReturn(50);
         when(dummyNode1.getY()).thenReturn(100);
+        when(dummyNode2.getY()).thenReturn(-100);
+        when(dummyNode3.getY()).thenReturn(50);
         dummies.add(dummyNode);
         dummies.add(dummyNode1);
+        dummies.add(dummyNode2);
+        dummies.add(dummyNode3);
         drawies.add(drawNode);
         drawies.add(drawNode1);
         drawies.add(drawNode2);

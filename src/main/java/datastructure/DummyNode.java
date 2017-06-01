@@ -63,7 +63,9 @@ public class DummyNode {
      * Gets the absolute id of this DummyNode.
      * @return the absolute id of this DummyNode.
      */
-    public double getAbsId() { return absId; }
+    public double getAbsId() {
+        return absId;
+    }
 
     /**
      * Gets the id of the incoming edge's origin node.
@@ -130,16 +132,16 @@ public class DummyNode {
     }
 
     /**
-     *
-     * @param other
-     * @return
+     * Checks whether the provided DummyNode is the next DummyNode in its DummyEdge.
+     * @param other The other DummyNode.
+     * @return True if the provided DummyNode is the next DummyNode in this edge, false otherwise.
      */
     public boolean nextInEdge(DummyNode other) {
         return this.from == other.from && this.to == other.to && this.id + 1 == other.id;
     }
 
     /**
-     *
+     * Generates a DummyNode that is equal to the previous DummyNode in this DummyEdge.
      * @return
      */
     public DummyNode prevInEdge() {
@@ -147,8 +149,8 @@ public class DummyNode {
     }
 
     /**
-     *
-     * @return
+     * Generates HashCode for this DummyNode.
+     * @return HashCode of this DummyNode.
      */
     @Override
     public int hashCode() {

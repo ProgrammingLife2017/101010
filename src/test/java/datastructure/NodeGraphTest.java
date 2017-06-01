@@ -237,13 +237,43 @@ public class NodeGraphTest {
     }
 
     @Test
-    public void retrieveEdgeNodes() {
-
-    }
-
-    @Test
     public void retrieveDrawNodes() {
-
+        DrawNode drawNode1 = mock(DrawNode.class);
+        DrawNode drawNode2 = mock(DrawNode.class);
+        drawNode.setX(100.0);
+        drawNode1.setX(100.0);
+        drawNode2.setX(0.0);
+        Iterator<DummyNode> it = mock(Iterator.class);
+        Iterator<DummyNode> rit = mock(Iterator.class);
+        when(dummyNodes.iterator()).thenReturn(it);
+        when(dummyNodes.descendingIterator()).thenReturn(rit);
+        when(it.hasNext()).thenReturn(false);
+        when(rit.hasNext()).thenReturn(false);
+        when(drawNodes.getFirst()).thenReturn(drawNode);
+        when(drawNodes.getLast()).thenReturn(drawNode2);
+        when(drawNode.getIndex()).thenReturn(0);
+        when(drawNode1.getIndex()).thenReturn(1);
+        when(drawNode2.getIndex()).thenReturn(2);
+        when(iterator.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(riterator.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(iterator.next()).thenReturn(drawNode).thenReturn(drawNode1).thenReturn(drawNode2);
+        when(riterator.next()).thenReturn(drawNode2).thenReturn(drawNode1).thenReturn(drawNode);
+        nodeGraph = new NodeGraph(nodes, segmentDB, drawNodes, dummyNodes);
+        Class[] classes = new Class[0];
+        try {
+            Method method = NodeGraph.class.getDeclaredMethod("retrieveEdgeNodes", classes);
+            method.setAccessible(true);
+            method.invoke(nodeGraph);
+            assertTrue(nodeGraph.getLeafNodes().contains(0.0));
+            assertTrue(nodeGraph.getLeafNodes().contains(1.0));
+            assertFalse(nodeGraph.getLeafNodes().contains(2.0));
+            assertTrue(nodeGraph.getRootNodes().contains(2.0));
+            assertFalse(nodeGraph.getRootNodes().contains(1.0));
+            assertFalse(nodeGraph.getRootNodes().contains(0.0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     @Test
@@ -252,7 +282,7 @@ public class NodeGraphTest {
         DrawNode drawNode1 = mock(DrawNode.class);
         DummyNode dummyNode1 = mock(DummyNode.class);
         drawNode.setX(100.0);
-        drawNode1.setX(0);
+        drawNode1.setX(0.0);
         Iterator<DummyNode> it = mock(Iterator.class);
         Iterator<DummyNode> rit = mock(Iterator.class);
         when(dummyNodes.iterator()).thenReturn(it);

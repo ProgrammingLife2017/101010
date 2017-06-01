@@ -275,17 +275,17 @@ public class NodeGraph {
         DrawNode current;
 
         while (it.hasNext()) {
-             current = it.next();
+            current = it.next();
 
-             for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
-                 for (DrawNode temp : drawNodes) {
-                     if (temp.getIndex() == i && temp.getX() < layer) {
-                         layer = temp.getX();
-                     }
-                 }
-             }
+            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
+                for (DrawNode temp : drawNodes) {
+                    if (temp.getIndex() == i && temp.getX() < layer) {
+                        layer = temp.getX();
+                    }
+                }
+            }
 
-             current.setX(layer - 100);
+            current.setX(layer - 100);
         }
     }
 
@@ -363,6 +363,7 @@ public class NodeGraph {
                 drawNodes.get(i).setY(maxY + 50);
             }
         }
+
     }
 
     /**

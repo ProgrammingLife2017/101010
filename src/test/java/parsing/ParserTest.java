@@ -34,7 +34,7 @@ public class ParserTest {
     @Test
     public void getInstance() {
         Object parser = Parser.getInstance();
-        assertTrue(parser instanceof Parser);
+        assertTrue(parser != null);
     }
 
     @Test

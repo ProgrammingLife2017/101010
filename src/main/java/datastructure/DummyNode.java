@@ -142,7 +142,7 @@ public class DummyNode {
 
     /**
      * Generates a DummyNode that is equal to the previous DummyNode in this DummyEdge.
-     * @return
+     * @return A DummyNode equal to the previous DummyNode in this edge.
      */
     public DummyNode prevInEdge() {
         return new DummyNode(this.id - 1, this.from, this.to, this.x - 100, this.y);

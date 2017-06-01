@@ -218,19 +218,19 @@ public class NodeGraph {
     private void addEdges(int id, Queue<Integer> q, TreeSet<Integer> visited) {
         int[] tempEdges = nodes.get(id).getIncomingEdges();
 
-        for (int i = 0; i < tempEdges.length; i++) {
-            if (!visited.contains(tempEdges[i])) {
-                visited.add(tempEdges[i]);
-                q.add(tempEdges[i]);
+        for (int i : tempEdges) {
+            if (!visited.contains(i)) {
+                visited.add(i);
+                q.add(i);
             }
         }
 
         tempEdges = nodes.get(id).getOutgoingEdges();
 
-        for (int i = 0; i < tempEdges.length; i++) {
-            if (!visited.contains(tempEdges[i])) {
-                visited.add(tempEdges[i]);
-                q.add(tempEdges[i]);
+        for (int i : tempEdges) {
+            if (!visited.contains(i)) {
+                visited.add(i);
+                q.add(i);
             }
         }
     }
@@ -322,8 +322,8 @@ public class NodeGraph {
 
             edges = nodes.get(current.getIndex()).getIncomingEdges();
 
-            for (int i = 0; i < edges.length; i++) {
-                cDrawNode = getDrawNode(edges[i]);
+            for (int i : edges) {
+                cDrawNode = getDrawNode(i);
                 if (cDrawNode != null && Math.abs(current.getX() - cDrawNode.getX()) > 100) {
                     dummyNodeQueue.add(new DummyNode(-1, cDrawNode.getIndex(), current.getIndex(), (int) currentLayer - 100, 50));
                 } else if (cDrawNode == null && drawNodes.peekLast().getX() < currentLayer) {

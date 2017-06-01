@@ -67,6 +67,8 @@ public class DummyNode {
         return absId;
     }
 
+    protected void setAbsId(double absId) { this.absId = absId; }
+
     /**
      * Gets the id of the incoming edge's origin node.
      * @return The id of the incoming edge's origin node.

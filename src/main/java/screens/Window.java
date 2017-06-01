@@ -1,9 +1,11 @@
 package screens;
 
+import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -113,7 +115,6 @@ public class Window extends Application {
 
         logger.info("the main application has started");
     }
-
     /**
      * Sets up the necessary services.
      */
@@ -177,26 +178,63 @@ public class Window extends Application {
                     if (oldRadius + 2 > 500) {
                         graphScene.drawGraph(centerId, 500);
                     } else {
-                        graphScene.drawGraph(centerId, oldRadius + 2);
                         graphScene.setTranslateX((graphScene.getTranslateX() + transX) / 1.02);
                         graphScene.setTranslateY((graphScene.getTranslateY() + transY) / 1.02);
+                        centerId = findNewCenterNode(centerId);
                         graphScene.setScaleX(graphScene.getScaleX() / 1.02);
                         graphScene.setScaleY(graphScene.getScaleY() / 1.02);
+                        //TODO update graph edge
+                        graphScene.drawGraph(centerId, oldRadius + 2);
                     }
                 } else {
                     if (oldRadius - 2 < 5) {
                         graphScene.drawGraph(centerId, 5);
                     } else {
-                        graphScene.drawGraph(centerId, oldRadius - 2);
-                        graphScene.setTranslateX(1.02 * (graphScene.getTranslateX() - transX));
-                        graphScene.setTranslateY(1.02 * (graphScene.getTranslateY() - transY));
+                        graphScene.setTranslateX((graphScene.getTranslateX() - transX) * 1.02);
+                        graphScene.setTranslateY((graphScene.getTranslateY() - transY) * 1.02);
+                        centerId = findNewCenterNode(centerId);
                         graphScene.setScaleX(graphScene.getScaleX() * 1.02);
                         graphScene.setScaleY(graphScene.getScaleY() * 1.02);
+                        //TODO update graph edge
+                        graphScene.drawGraph(centerId, oldRadius - 2);
                     }
                 }
+                System.out.println(graphScene.getTranslateX());
             }
             graphScene.toBack();
         });
+    }
+
+    private void zoomOut() {
+
+    }
+
+    private int findNewCenterNode(int currentCenter) {
+        DrawNode currentNode;
+        NodeGraph ng = NodeGraph.getCurrentInstance();
+        double distance = Double.MAX_VALUE;
+        int centerId = -1;
+        for (int i = 0; i < GraphScene.getDrawnNodes().size(); i++) {
+            currentNode = GraphScene.getDrawnNodes().get(i);
+            Bounds bounds = currentNode.getBoundsInParent();
+            double xDiff = bounds.getMinX() + bounds.getWidth() / 2 - graphScene.getWidth() / 2 + graphScene.getTranslateX();
+            double yDiff = bounds.getMinY() + bounds.getHeight() / 2 - graphScene.getHeight() / 2 + graphScene.getTranslateY();
+            double currentDistance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+//            if (GraphScene.getDrawnNodes().get(i).getIndex() == 16 || GraphScene.getDrawnNodes().get(i).getIndex() == 14 || GraphScene.getDrawnNodes().get(i).getIndex() == 18) {
+//                System.out.println(GraphScene.getDrawnNodes().get(i).getIndex());
+//                System.out.println(bounds);
+//                System.out.println(xDiff + "   " + yDiff);
+//                System.out.println(currentDistance);
+//            }
+            if (distance > currentDistance) {
+                distance = currentDistance;
+                centerId = GraphScene.getDrawnNodes().get(i).getIndex();
+            }
+        }
+        NavigationInfo.getInstance().setCurrentCenterNode(centerId);
+        //System.out.println(graphScene.getTranslateX() + "    " + centerId);
+        //graphScene.setTranslateY(graphScene.getTranslateY() - (ng.getNode(centerId).getY() - ng.getNode(currentCenter).getY()) * graphScene.getScaleY());
+        return centerId;
     }
 
     private double getTranslate(double cursorPos, double screenDimension) {
@@ -233,7 +271,6 @@ public class Window extends Application {
         indicator.setHeight(10);
         indicator.setWidth(5);
         indicator.setX(relPos);
-        System.out.println(relPos);
         indicator.setY(mainPane.getHeight() - 15);
     }
 

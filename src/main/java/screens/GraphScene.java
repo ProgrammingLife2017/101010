@@ -14,6 +14,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 /**
  * Implementation of the window that handles graph visualization.
  */
@@ -38,6 +40,8 @@ import javafx.stage.Stage;
      * The factory the GraphScene uses to create JavaFX elements.
      */
     private FXElementsFactory factory;
+
+    private static ArrayList<DrawNode> drawnNodes = new ArrayList<>();
 
     /**
      * Event handler for when a node or edge is clicked.
@@ -80,7 +84,7 @@ import javafx.stage.Stage;
      * @param radius Radius.
      */
     public void drawGraph(final int id, final int radius) {
-        if (radius < 5 || radius > 500) {
+        if (radius < 5 || radius > 10000) {
             Stage newStage = this.factory.createStage();
             Group group = this.factory.createGroup();
             Label label = this.factory.createLabel("Radius is out of bounds");
@@ -102,6 +106,7 @@ import javafx.stage.Stage;
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(Node center, int radius) {
+        drawnNodes.clear();
         double x = center.getX();
         for (int i = 0; i < NodeGraph.getCurrentInstance().getSize(); i++) {
             Node current = NodeGraph.getCurrentInstance().getNode(i);
@@ -112,19 +117,20 @@ import javafx.stage.Stage;
                 DrawNode newRect = new DrawNode(i);
                 newRect.setId(Integer.toString(i));
                 newRect.setOnMousePressed(click);
-                newRect.setX(current.getX() - x + 503);
+                newRect.setX(current.getX() - 40);
                 newRect.setY(current.getY());
                 newRect.setWidth(20);
                 newRect.setHeight(10);
+                drawnNodes.add(newRect);
                 this.getChildren().add(newRect);
                 for (Integer j: current.getOutgoingEdges()) {
                     Node out = NodeGraph.getCurrentInstance().getNode(j);
                     Line l = new Line();
                     l.setId(i + "-" + j);
                     l.setStrokeWidth(2);
-                    l.setStartX(newRect.getBoundsInLocal().getMaxX());
+                    l.setStartX(newRect.getBoundsInLocal().getMaxX() + newRect.getTranslateX());
                     l.setStartY(newRect.getBoundsInLocal().getMinY() + 5);
-                    l.setEndX(out.getX() - x + 503);
+                    l.setEndX(out.getX() - 40);
                     l.setEndY(out.getY() + 5);
                     l.setOnMousePressed(click);
                     this.getChildren().add(l);
@@ -132,6 +138,10 @@ import javafx.stage.Stage;
             }
         }
         Window.updateIndicator(center);
+    }
+
+    public static ArrayList<DrawNode> getDrawnNodes() {
+        return drawnNodes;
     }
 
     /**

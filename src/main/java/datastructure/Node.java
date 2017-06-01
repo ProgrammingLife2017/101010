@@ -156,9 +156,9 @@ public class Node {
         length = Math.max(10, Math.min(255, (int) Math.sqrt((double) length)));
     }
 
-    /*
-     * Sets the length of the node.
-     * @param length the length to be set.
+    /**
+     * Set the length of this node.
+     * @param length the new length of this node.
      */
     public void setLength(int length) {
         this.length = length;

@@ -93,7 +93,7 @@ public class NodeGraphTest {
 
     @Test
     public void testAddNode() {
-        nodeGraph = new NodeGraph(new ArrayList<Node>(0), segmentDB, drawNodes, new LinkedList<>());
+        nodeGraph = new NodeGraph(new ArrayList<>(0), segmentDB, drawNodes, new LinkedList<>());
         nodeGraph.addNode(100, node);
         assertEquals(101, nodeGraph.getSize());
         assertEquals(node, nodeGraph.getNode(100));

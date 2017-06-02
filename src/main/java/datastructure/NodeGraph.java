@@ -657,14 +657,14 @@ public class NodeGraph {
         ArrayList<Integer> visited = new ArrayList<>();
         LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
         for (Double id : leafNodes) {
-            if (id.>= 0) {
+            if (id >= 0) {
                 for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getOutgoingEdges()) {
                     if (!visited.contains(m)) {
                         visited.add(m);
                     }
                 }
             } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id.);
+                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
                 if (!visited.contains(dummy.getTo())) {
                     visited.add(dummy.getTo());
                 }

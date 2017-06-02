@@ -181,12 +181,15 @@ import java.util.Set;
      */
     public void zoomOut(double transX, double transY) {
         LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
-        Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
-        drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
-        drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
-        setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-        setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+        if (drawNodes.size() < NodeGraph.getCurrentInstance().getNodes().size()) {
+            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
+            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
+            drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
+            drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
+            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+            setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+        }
     }
 
     /**

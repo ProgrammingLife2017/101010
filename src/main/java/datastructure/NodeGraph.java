@@ -250,6 +250,11 @@ public class NodeGraph {
         drawNodes = sorted;
     }
 
+    /**
+     * Sort the nodes to be drawn.
+     * @param dNodes the nodes to be drawn.
+     * @return the updated list of nodes.
+     */
     private LinkedList<DrawNode> newTopoSort(LinkedList<DrawNode> dNodes) {
         LinkedList<DrawNode> sorted = new LinkedList<>();
         while (!dNodes.isEmpty()) {
@@ -259,6 +264,12 @@ public class NodeGraph {
         return dNodes;
     }
 
+    /**
+     * Recursive method for topological sorting
+     * @param current current node.
+     * @param sorted current list of sorted nodes.
+     * @param dNodes current list of nodes to be sorted.
+     */
     private void newTopoSortUtil(DrawNode current, LinkedList<DrawNode> sorted, LinkedList<DrawNode> dNodes) {
         if (!sorted.contains(current)) {
             for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
@@ -317,15 +328,19 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * Assign layers to the new leaf nodes.
+     * @param newNodes the new leaf nodes.
+     */
     private void assignLayersLeaf(LinkedList<DrawNode> newNodes) {
-        ListIterator<DrawNode> it = newNodes.listIterator(newNodes.size());
+        ListIterator<DrawNode> it = newNodes.listIterator();
         double layer = drawNodes.getFirst().getX();
         DrawNode current;
 
-        while (it.hasPrevious()) {
-            current = it.previous();
+        while (it.hasNext()) {
+            current = it.next();
 
-            for (int i : nodes.get(current.getIndex()).getIncomingEdges()) {
+            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
                 for (DrawNode temp : newNodes) {
                     if (temp.getIndex() == i && temp.getX() > layer) {
                         layer = temp.getX();
@@ -336,9 +351,13 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * Assigns layers to the new root nodes.
+     * @param newNodes the new root nodes.
+     */
     private void assignLayersRoot(LinkedList<DrawNode> newNodes) {
         ListIterator<DrawNode> it = newNodes.listIterator(newNodes.size());
-        double layer = drawNodes.getLast().getX() - 100;
+        double layer = drawNodes.getLast().getX();
         DrawNode current;
 
         while (it.hasPrevious()) {
@@ -351,7 +370,7 @@ public class NodeGraph {
                     }
                 }
             }
-            current.setX(layer);
+            current.setX(layer - 100);
         }
     }
 
@@ -431,6 +450,11 @@ public class NodeGraph {
         }
     }
 
+    /**
+     * Determine y-coordinates of new leaf and root nodes.
+     * @param newNodes new leaf and root draw nodes.
+     * @param newDummyNodes new leaf and root dummy nodes.
+     */
     private void verticalSpacingNew(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummyNodes) {
         int maxY;
         for (int i = 0; i < newDummyNodes.size(); i++) {
@@ -561,6 +585,10 @@ public class NodeGraph {
         return dummyNodes;
     }
 
+    /**
+     * Determines nodes to add before the root.
+     * @return the new root nodes.
+     */
     public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtRoot() {
         ArrayList<Integer> visited = new ArrayList<>();
         LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
@@ -624,6 +652,10 @@ public class NodeGraph {
         return new Pair(newDrawNodes, newDummyNodes);
     }
 
+    /**
+     * Determines the new nodes to be drawn after the current leaf nodes.
+     * @return the new leaf nodes.
+     */
     public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtLeaf() {
         ArrayList<Integer> visited = new ArrayList<>();
         LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
@@ -683,6 +715,10 @@ public class NodeGraph {
         return new Pair(newDrawNodes, newDummyNodes);
     }
 
+    /**
+     * Determines what nodes have to be deleted at root node.
+     * @return the xCoordinate of nodes that will get deleted.
+     */
     public double removeAtRoot() {
         ArrayList<Integer> visited = new ArrayList<Integer>();
         for (Pair<Double, Boolean> id : rootNodes) {
@@ -718,6 +754,10 @@ public class NodeGraph {
         return minX;
     }
 
+    /**
+     * Determines what nodes have to be deleted at the leaf nodes.
+     * @return the x-coordinate of the leaf nodes to be deleted.
+     */
     public double removeAtLeaf() {
         ArrayList<Integer> visited = new ArrayList<Integer>();;
         for (Pair<Double, Boolean> id : leafNodes) {
@@ -758,6 +798,12 @@ public class NodeGraph {
 //        rootnodes = list;
 //    }
 //
+
+    /**
+     * Getter for a Dummy Node.
+     * @param id id of the Dummy Node.
+     * @return the Dummy Node.
+     */
     private DummyNode getDummyNode(double id) {
         for (int i = 0; i < dummyNodes.size(); i++) {
             if (dummyNodes.get(i).getAbsId() == id) {

@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.DrawNode;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
@@ -24,6 +25,7 @@ import window.FileSelector;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * Main application.
@@ -197,6 +199,10 @@ public class Window extends Application {
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
                         graphScene.drawGraph(0, 200);
                         graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
+                        graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+                        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+                        graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
+
                         logger.info("file has been selected");
                     }
                 }
@@ -254,6 +260,9 @@ public class Window extends Application {
                                     newStage.show();
                                 } else {
                                     graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
+                                    graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+                                    LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+                                    graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
                                     graphScene.switchToInfo();
                                     newstage.close();
                                 }

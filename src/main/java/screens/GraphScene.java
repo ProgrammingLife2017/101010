@@ -8,6 +8,12 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import screens.scenehandler.INodeHandler;
+import screens.scenehandler.NodeCenter;
+import screens.scenehandler.NodeInfo;
+
+import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,7 +22,7 @@ import java.util.Set;
 /**
  * Implementation of the window that handles graph visualization.
  */
- public final class GraphScene extends Pane {
+ public class GraphScene extends Pane {
 
     /**
      * State for handling center queries.
@@ -53,16 +59,20 @@ import java.util.Set;
         }
      };
 
+     private double mouseX, mouseY;
+     private int x, y;
+
     /**
      * GraphScene pane constructor.
      * @param fact the Factory used to create JavaFX elements.
      */
      /*package*/ GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this);
-         info = new NodeInfo();
+         center = new NodeCenter(this, fact);
+         info = new NodeInfo(Window.getInfoScreen());
          state = info;
          this.fxElementsFactory = fact;
      }
+
 
     /**
      * Draws graph on the screen.
@@ -126,6 +136,123 @@ import java.util.Set;
                 }
             }
         }
+    }
+    /**
+     * Draws new root nodes.
+     * @param newNodes the new root nodes.
+     * @param newDummies the dummy nodes needed to draw the nodes.
+     */
+    private void drawUpdateRoot(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummies) {
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        ArrayList<Node> nodes = nodeGraph.getNodes();
+        for (DrawNode dNode : newNodes) {
+            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+            dNode.setOnMousePressed(click);
+            this.getChildren().add(dNode);
+            DrawNode nOut;
+            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
+                nOut = nodeGraph.getDrawNode(i);
+                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+                }
+            }
+        }
+    }
+
+    /**
+     * Draws new leaf nodes.
+     * @param newNodes the new leaf nodes.
+     * @param newDummies the dummy nodes needed to draw the nodes.
+     */
+    private void drawUpdateLeaf(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummies) {
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        ArrayList<Node> nodes = nodeGraph.getNodes();
+        for (DrawNode dNode : newNodes) {
+            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+            dNode.setOnMousePressed(click);
+            this.getChildren().add(dNode);
+            DrawNode nOut;
+            for (int i : nodes.get(dNode.getIndex()).getIncomingEdges()) {
+                nOut = nodeGraph.getDrawNode(i);
+                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+                    drawLine(i + "-" + dNode.getIndex(), 2, dNode.getBoundsInLocal().getMinX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMaxX(), nOut.getBoundsInLocal().getMinY() + 5);
+                }
+            }
+        }
+    }
+
+    /**
+     * Zooms out on the scene.
+     * @param transX x-coordinate of cursor
+     * @param transY y-coordinate of cursor
+     */
+    public void zoomOut(double transX, double transY) {
+        Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
+        Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
+        drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
+        drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
+        setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+    }
+
+    /**
+     * Zooms in on the scene.
+     * @param transX x-coordinate of cursor
+     * @param transY y-coordinate of cursor
+     */
+    public void zoomIn(double transX, double transY) {
+        double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
+        removeNodesLeaf(maxX);
+        double minX = NodeGraph.getCurrentInstance().removeAtRoot();
+        removeNodesRoot(minX);
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
+        setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+    }
+
+    /**
+     * Deletes root nodes to remove from the scene.
+     * @param minX x-coordinate of nodes to remove.
+     */
+    private void removeNodesRoot(double minX) {
+        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
+        for (javafx.scene.Node drawElement: this.getChildren()) {
+            if (drawElement instanceof Rectangle) {
+                Rectangle rect = (Rectangle) drawElement;
+                if (rect.getX() < minX) {
+                    remove.add(rect);
+                }
+            } else if (drawElement instanceof Line) {
+                Line line = (Line) drawElement;
+                if (line.getStartX() < minX) {
+                    remove.add(line);
+                }
+            }
+        }
+        this.getChildren().removeAll(remove);
+    }
+
+    /**
+     * Deletes leaf nodes to remove from the scene.
+     * @param maxX x-coordinate of nodes to remove.
+     */
+    private void removeNodesLeaf(double maxX) {
+        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
+        for (javafx.scene.Node drawElement: this.getChildren()) {
+            if (drawElement instanceof Rectangle) {
+                Rectangle rect = (Rectangle) drawElement;
+                if (rect.getX() > maxX) {
+                    remove.add(rect);
+                }
+            } else if (drawElement instanceof Line) {
+                Line line = (Line) drawElement;
+                if (line.getStartX() > maxX) {
+                    remove.add(line);
+                }
+            }
+        }
+        this.getChildren().removeAll(remove);
     }
 
     /**

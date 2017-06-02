@@ -5,14 +5,9 @@ import datastructure.DummyNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -75,16 +70,6 @@ import java.util.Set;
      * @param radius Radius.
      */
     public void drawGraph(final int id, final int radius) {
-        if (radius < 5 || radius > 500) {
-            Stage newStage = this.fxElementsFactory.createStage();
-            Group group = this.fxElementsFactory.createGroup();
-            Label label = this.fxElementsFactory.createLabel("Radius is out of bounds");
-            group.getChildren().add(label);
-            Scene scene = this.fxElementsFactory.createScene(group, 150, 100);
-            this.fxElementsFactory.setScene(newStage, scene);
-            this.fxElementsFactory.show(newStage);
-            return;
-        }
         this.getChildren().clear();
         drawGraphUtil(id, radius);
     }

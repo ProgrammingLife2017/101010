@@ -15,6 +15,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import logging.Logger;
 import logging.LoggerFactory;
 import parsing.Parser;
@@ -180,7 +181,7 @@ public class Window extends Application {
         item.setOnAction(
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
-                    if (file != null) {
+                    if (file != null && file.exists()) {
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
                         graphScene.drawGraph(0, 200);
                         logger.info("file has been selected");
@@ -214,46 +215,58 @@ public class Window extends Application {
         MenuItem item3 = new MenuItem("Center from click");
         item3.setOnAction(
                 event -> {
-                    graphScene.switchToCenter();
-                    logger.info("state has been switched to center");
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        graphScene.switchToCenter();
+                        logger.info("state has been switched to center");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
                 }
         );
         MenuItem item4 = new MenuItem("Center from text");
         item4.setOnAction(
                 event -> {
-                    Stage newstage = new Stage();
-                    newstage.setTitle("Select the radius");
-                    GridPane box = new GridPane();
-                    TextField textField = new TextField();
-                    TextField textField2 = new TextField();
-                    Button btn = new Button("Submit");
-                    btn.setOnAction(
-                            event2 -> {
-                                int radius = Integer.parseInt(textField2.getText());
-                                if (radius < 5 || radius > 500) {
-                                    Stage newStage = new Stage();
-                                    Group group = new Group();
-                                    Label label = new Label("Radius is out of bounds");
-                                    group.getChildren().add(label);
-                                    Scene scene = new Scene(group, 150, 100);
-                                    newStage.setScene(scene);
-                                    newStage.show();
-                                } else {
-                                    graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
-                                    graphScene.switchToInfo();
-                                    newstage.close();
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        Stage newstage = new Stage();
+                        newstage.setTitle("Select the radius");
+                        GridPane box = new GridPane();
+                        TextField textField = new TextField();
+                        TextField textField2 = new TextField();
+                        Button btn = new Button("Submit");
+                        btn.setOnAction(
+                                event2 -> {
+                                    if (textField.getText().length() == 0 || textField.getText().contains("\\D")) {
+                                        errorPopup("Please enter a number as id.");
+                                    } else if (textField2.getText().length() == 0 || textField2.getText().contains("\\D")) {
+                                        errorPopup("Please enter a number as radius.");
+                                    } else {
+                                        int center = Integer.parseInt(textField.getText());
+                                        int radius = Integer.parseInt(textField2.getText());
+
+                                        if (center < 0 || center >= NodeGraph.getCurrentInstance().getSize()) {
+                                            errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
+                                        } else if (radius < 5 || radius > 500) {
+                                            errorPopup("Input radius is out of bounds, \nplease provide a different radius.");
+                                        } else {
+                                            graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
+                                            graphScene.switchToInfo();
+                                            newstage.close();
+                                        }
+                                    }
                                 }
-                            }
-                    );
-                    box.add(new Label("Node Id:"), 1, 1);
-                    box.add(textField, 1, 2, 3, 1);
-                    box.add(new Label("Radius:"), 1, 3);
-                    box.add(textField2, 1, 4, 3, 1);
-                    box.add(btn, 1, 5);
-                    Scene scene = new Scene(box);
-                    newstage.setScene(scene);
-                    newstage.show();
-                    logger.info("state has been switched to centerId");
+                        );
+                        box.add(new Label("Node Id:"), 1, 1);
+                        box.add(textField, 1, 2, 3, 1);
+                        box.add(new Label("Radius:"), 1, 3);
+                        box.add(textField2, 1, 4, 3, 1);
+                        box.add(btn, 1, 5);
+                        Scene scene = new Scene(box);
+                        newstage.setScene(scene);
+                        newstage.show();
+                        logger.info("state has been switched to centerId");
+                    } else {
+                      errorPopup("Please load a graph.");
+                    }
                 }
         );
         menu.getItems().add(item1);
@@ -268,7 +281,7 @@ public class Window extends Application {
      * @return Menu object.
      */
     private Menu addClear() {
-        Menu menu = new Menu("Clear");
+        Menu menu = new Menu("Reset");
         MenuItem item1 = new MenuItem("Info");
         item1.setOnAction(
                 event -> {
@@ -279,14 +292,37 @@ public class Window extends Application {
         MenuItem item2 = new MenuItem("Graph");
         item2.setOnAction(
                 event -> {
-                    graphScene.drawGraph(0, 200);
-                    logger.info("drawing returned to original");
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        graphScene.drawGraph(0, 200);
+                        logger.info("drawing returned to original");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
                 }
         );
         menu.getItems().addAll(item1, item2);
         return menu;
     }
 
+    /**
+     * Creates a popup containing an error message if the user gives invalid input.
+     * @param message The error message.
+     */
+    private void errorPopup(String message) {
+        Stage newStage = new Stage();
+        Label label = new Label(message);
+        Group group = new Group();
+        group.getChildren().add(label);
+        newStage.setWidth(label.getWidth());
+        newStage.setResizable(false);
+        newStage.setTitle("Error");
+        newStage.initStyle(StageStyle.UTILITY);
+        newStage.setAlwaysOnTop(true);
+        Scene scene = new Scene(group, label.getMaxWidth(), Math.max(label.getMaxHeight(), 40));
+        newStage.centerOnScreen();
+        newStage.setScene(scene);
+        newStage.show();
+    }
     /**
      * The initialization of the game.
      * @param args the arguments to run.

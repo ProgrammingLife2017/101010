@@ -1,22 +1,18 @@
-package screens.scenehandler;
+package screens;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
-import screens.InfoScreen;
 
 /**
  * Implementation of the state that handles click events regarding the information of selected node.
  */
 public class NodeInfo implements INodeHandler {
-    /**
-     * Window to print content.
-     */
-    private InfoScreen infoScreen;
+
     /**
      * NodeInfo state handler constructor.
      */
-    public NodeInfo(InfoScreen iScreen) {
-        this.infoScreen = iScreen;
+    public NodeInfo() {
+
     }
 
     /**
@@ -24,6 +20,6 @@ public class NodeInfo implements INodeHandler {
      */
     @Override
     public void handle(DrawNode node) {
-        this.infoScreen.getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
+        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
     }
 }

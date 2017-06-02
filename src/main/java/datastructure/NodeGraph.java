@@ -1,14 +1,13 @@
 package datastructure;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.TreeSet;
+import java.util.Queue;
+import java.util.Iterator;
+import java.util.ListIterator;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Queue;
-import java.util.TreeSet;
 
 
 /**

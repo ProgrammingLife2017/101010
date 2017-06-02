@@ -1,7 +1,9 @@
-package screens;
+package screens.scenehandler;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
+import screens.Window;
+import screens.scenehandler.INodeHandler;
 
 /**
  * Implementation of the state that handles click events regarding the information of selected node.

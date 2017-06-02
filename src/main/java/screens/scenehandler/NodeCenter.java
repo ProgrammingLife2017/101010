@@ -1,4 +1,4 @@
-package screens;
+package screens.scenehandler;
 
 import datastructure.DrawNode;
 import javafx.scene.Scene;
@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import screens.GraphScene;
 
 /**
  * Implementation of the state that handles click events regarding the center query of selected node.

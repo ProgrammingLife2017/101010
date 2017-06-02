@@ -8,9 +8,12 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import screens.scenehandler.INodeHandler;
+import screens.scenehandler.NodeCenter;
+import screens.scenehandler.NodeInfo;
+
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -19,7 +22,7 @@ import java.util.Set;
 /**
  * Implementation of the window that handles graph visualization.
  */
- public final class GraphScene extends Pane {
+ public class GraphScene extends Pane {
 
     /**
      * State for handling center queries.
@@ -56,16 +59,20 @@ import java.util.Set;
         }
      };
 
+     private double mouseX, mouseY;
+     private int x, y;
+
     /**
      * GraphScene pane constructor.
      * @param fact the Factory used to create JavaFX elements.
      */
      /*package*/ GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this);
-         info = new NodeInfo();
+         center = new NodeCenter(this, fact);
+         info = new NodeInfo(Window.getInfoScreen());
          state = info;
          this.fxElementsFactory = fact;
      }
+
 
     /**
      * Draws graph on the screen.

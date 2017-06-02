@@ -3,6 +3,8 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import screens.*;
+import screens.scenehandler.NodeCenterTest;
+import screens.scenehandler.NodeInfoTest;
 
 import javax.swing.*;
 import java.util.concurrent.CountDownLatch;

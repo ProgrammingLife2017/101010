@@ -9,11 +9,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import screens.scenehandler.INodeHandler;
+import screens.scenehandler.NodeCenter;
+import screens.scenehandler.NodeInfo;
 
 /**
  * Implementation of the window that handles graph visualization.
  */
- public final class GraphScene extends Pane {
+ public class GraphScene extends Pane {
 
     /**
      * State for handling center queries.

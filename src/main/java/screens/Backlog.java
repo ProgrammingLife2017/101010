@@ -15,8 +15,14 @@ public class Backlog extends AnchorPane {
      */
     private final TextArea textArea;
 
+    /**
+     * Stage where the scene with content is placed.
+     */
     private Stage stage;
 
+    /**
+     * Offset constant where
+     */
     private static double ANCHOR_OFFSET = 10d;
 
     private static int PREFFERED_HEIGHT = 300;
@@ -33,13 +39,15 @@ public class Backlog extends AnchorPane {
         this.setup();
     }
 
+    /**
+     * Sets up the window to show content.
+     */
     private void setup() {
         textArea.setEditable(false);
         textArea.setVisible(true);
         textArea.textProperty().addListener(
                 (observable, oldValue, newValue) -> textArea.setScrollTop(Double.MAX_VALUE)
         );
-
         stage = factory.createStage();
         this.setTopAnchor(textArea, ANCHOR_OFFSET);
         this.setLeftAnchor(textArea, ANCHOR_OFFSET);
@@ -60,6 +68,9 @@ public class Backlog extends AnchorPane {
         textArea.appendText(cont + "\n");
     }
 
+    /**
+     * Makes the window visible.
+     */
     public void show() {
         factory.show(stage);
     }

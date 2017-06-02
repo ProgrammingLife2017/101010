@@ -1,4 +1,4 @@
-package screens;
+package screens.scenehandler;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
+import screens.InfoScreen;
 
 import javax.swing.*;
 import java.util.concurrent.CountDownLatch;

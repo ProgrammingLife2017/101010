@@ -57,6 +57,8 @@ public class Window extends Application {
      */
     private static InfoScreen infoScreen = null;
 
+    private FXElementsFactory factory;
+
     private double mouseX, mouseY;
 
     /**
@@ -163,10 +165,10 @@ public class Window extends Application {
      * Sets up the necessary services.
      */
     private void setupService() {
-        FXElementsFactory fact = new FXElementsFactory();
-        graphScene = new GraphScene(fact);
-        this.backLog = new Backlog(fact);
-        this.infoScreen = new InfoScreen(fact);
+        factory = new FXElementsFactory();
+        graphScene = new GraphScene(factory);
+        this.backLog = new Backlog(factory);
+        this.infoScreen = new InfoScreen(factory);
         FileSystem fileSystem = new FileSystem();
         loggerFactory = new LoggerFactory(fileSystem);
         logger = loggerFactory.createLogger(this.getClass());
@@ -234,7 +236,7 @@ public class Window extends Application {
      * @param stage The container for these GUI nodes.
      * @return Menu object.
      */
-    private Menu addFileSelector(Stage stage) {
+    public Menu addFileSelector(Stage stage) {
         Menu menu = new Menu("File");
         MenuItem item = new MenuItem("New file");
         item.setOnAction(
@@ -255,7 +257,7 @@ public class Window extends Application {
      * Creates a menu that allows interaction with the graph.
      * @return Menu object.
      */
-    private Menu addController() {
+    public Menu addController() {
         Menu menu = new Menu("Tools");
         menu.getItems().addAll(showInfoScreenItem(), showBacklogItem(), centerClickItem(), centerFromTextItem());
         return menu;
@@ -265,7 +267,7 @@ public class Window extends Application {
      * Adds a menu that clears the info screen and returns the graph to the original view.
      * @return Menu object.
      */
-    private Menu addClear() {
+    public Menu addClear() {
         Menu menu = new Menu("Reset");
         MenuItem item1 = new MenuItem("Info");
         item1.setOnAction(
@@ -396,9 +398,9 @@ public class Window extends Application {
      * @param message The error message.
      */
     private void errorPopup(String message) {
-        Stage newStage = new Stage();
+        Stage newStage = factory.createStage();
         Label label = new Label(message);
-        Group group = new Group();
+        Group group = factory.createGroup();
         group.getChildren().add(label);
         newStage.setWidth(label.getWidth());
         newStage.setResizable(false);
@@ -407,8 +409,8 @@ public class Window extends Application {
         newStage.setAlwaysOnTop(true);
         Scene scene = new Scene(group, label.getMaxWidth(), Math.max(label.getMaxHeight(), 40));
         newStage.centerOnScreen();
-        newStage.setScene(scene);
-        newStage.show();
+        factory.setScene(newStage, scene);
+        factory.show(newStage);
     }
     /**
      * The initialization of the game.

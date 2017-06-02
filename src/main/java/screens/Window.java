@@ -17,7 +17,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -83,7 +82,7 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.setupService();
-        Pane mainPane = createMainPane(stage);
+        mainPane = createMainPane(stage);
         Scene scene = createMainScene(mainPane);
         setStageSettings(stage, scene);
         stage.show();
@@ -109,7 +108,7 @@ public class Window extends Application {
      * @param stage Main stage.
      * @return Pane object.
      */
-    private Pane createMainPane(Stage stage) {
+    private BorderPane createMainPane(Stage stage) {
         BorderPane mainPane = new BorderPane();
         mainPane.setMinSize(1500, 900);
         mainPane.setTop(createMenuBar(stage));
@@ -124,16 +123,16 @@ public class Window extends Application {
      * @return Scene object.
      */
     private Scene createMainScene(Pane pane) {
-        Rectangle indicatorBar = new Rectangle();
-        indicator = new Rectangle();
-        mainPane.setBottom(indicatorBar);
-        mainPane.setBottom(indicator);
+//        Rectangle indicatorBar = new Rectangle();
+//        indicator = new Rectangle();
+//        mainPane.setBottom(indicatorBar);
+//        mainPane.setBottom(indicator);
 
-        indicatorBar.setWidth(mainPane.getWidth() - 20);
-        indicatorBar.setX(10);
-        indicatorBar.setY(mainPane.getHeight() - 15);
-        indicatorBar.setHeight(10);
-        indicatorBar.setFill(Color.GRAY);
+//        indicatorBar.setWidth(mainPane.getWidth() - 20);
+//        indicatorBar.setX(10);
+//        indicatorBar.setY(mainPane.getHeight() - 15);
+//        indicatorBar.setHeight(10);
+//        indicatorBar.setFill(Color.GRAY);
         setScrolling();
 
         //Creating a scene object
@@ -265,7 +264,6 @@ public class Window extends Application {
                         graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
                         LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
                         graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
-
                         logger.info("file has been selected");
                     }
                 }

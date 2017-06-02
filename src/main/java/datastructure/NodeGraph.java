@@ -467,10 +467,18 @@ public class NodeGraph {
         return dummyNodes;
     }
 
+    /**
+     * Get the root nodes of the current SubGraph.
+     * @return LinkedList containing the AbsIds of the Root Nodes of the current SubGraph.
+     */
     protected LinkedList<Double> getRootNodes() {
         return rootNodes;
     }
 
+    /**
+     * Get the leaf nodes of the current SubGraph.
+     * @return LinkedList containing the AbsIds of the Lead Nodes of the current SubGraph.
+     */
     protected LinkedList<Double> getLeafNodes() {
         return leafNodes;
     }

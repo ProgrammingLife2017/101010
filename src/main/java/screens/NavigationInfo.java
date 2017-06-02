@@ -3,7 +3,7 @@ package screens;
 /**
  * Class that can store information about the current state on the drawn graph used for navigation.
  */
-public class NavigationInfo {
+public final class NavigationInfo {
 
     /**
      * The radius of the currently drawn graph.
@@ -36,7 +36,7 @@ public class NavigationInfo {
 
     /**
      * Getter for the instance of the NavigationInfo.
-     * @return
+     * @return the currrent instance of the NavigationInfo.
      */
     public static NavigationInfo getInstance() {
         if (instance == null) {

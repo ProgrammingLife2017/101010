@@ -1,32 +1,40 @@
 package datastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import org.junit.jupiter.api.Test;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+
+import java.util.Random;
+
 
 /**
  * Created by 101010.
  */
-class NodeTest {
+public class NodeTest {
     /**
      * The node used to test.
      */
-    private Node node = null;
+    public Node node = null;
 
     /**
      * Before each test we set the node to a new node.
      */
-    @org.junit.jupiter.api.BeforeEach
-    void setUp() {
-        node = new Node();
+    @Before
+    public void setUp() {
+        node = new datastructure.Node();
     }
 
     /**
      * After each test we set the node back to null.
      */
-    @org.junit.jupiter.api.AfterEach
-    void tearDown() {
+    @After
+    public void tearDown() {
         node = null;
     }
 
@@ -34,15 +42,15 @@ class NodeTest {
      * Check if a new node has length 0.
      */
     @Test
-    void getLength() {
+    public void getLength() {
         assertEquals(0, node.getLength());
     }
-    
+
     /**
      * Check if a new node has no outgoing edges.
      */
     @Test
-    void getOutgoingEdges() {
+    public void getOutgoingEdges() {
         assertEquals(0, node.getOutgoingEdges().length);
     }
 
@@ -50,7 +58,7 @@ class NodeTest {
      * Check if a new node has no incoming edges.
      */
     @Test
-    void getIncomingEdges() {
+    public void getIncomingEdges() {
         assertEquals(0, node.getIncomingEdges().length);
     }
 
@@ -58,7 +66,7 @@ class NodeTest {
      * Test the addIncomingEdgeMethod of Node.
      */
     @Test
-    void addIncomingEdgeTest() {
+    public void addIncomingEdgeTest() {
         assertEquals(0, node.getIncomingEdges().length);
         node.addIncomingEdge(5);
         node.addIncomingEdge(2);
@@ -70,7 +78,7 @@ class NodeTest {
      * Test the addOutgoingEdgeMethod of Node.
      */
     @Test
-    void addOutgoingEdgeTest() {
+    public void addOutgoingEdgeTest() {
         assertEquals(0, node.getOutgoingEdges().length);
         node.addOutgoingEdge(5);
         node.addOutgoingEdge(2);
@@ -82,7 +90,7 @@ class NodeTest {
      * Check if the default constructor is the same as constructing with size 0 integer arrays.
      */
     @Test
-    void equalsTrue() {
+    public void equalsTrue() {
         assertTrue(node.equals(new Node(0, new int[0], new int[0])));
     }
 
@@ -90,64 +98,97 @@ class NodeTest {
      * Check if a new node is not null.
      */
     @Test
-    void equalsNull() {
+    public void equalsNull() {
         assertFalse(node == null);
     }
 
     /**
-     * Test the getX and getY method of Node.
+     * Check if computeLength properly sets lengths below 100 to 10.
      */
     @Test
-    void testGetXY() {
-        assertEquals(0, node.getX());
-        assertEquals(0, node.getY());
+    public void computeLengthMin() {
+        assertEquals(0, node.getLength());
+        node.computeLength();
+        assertEquals(10, node.getLength());
     }
 
     /**
-     * Test the setX and setY method of Node.
+     * Check if computeLength properly sets lengths above 255^2 to 255.
      */
     @Test
-    void testSetXY() {
-        node.setX(100);
-        node.setY(300);
-        assertEquals(100, node.getX());
-        assertEquals(300, node.getY());
+    public void computeLengthMax() {
+        node = new Node(Integer.MAX_VALUE, new int[0], new int[0]);
+        assertEquals(Integer.MAX_VALUE, node.getLength());
+        node.computeLength();
+        assertEquals(255, node.getLength());
     }
 
     /**
-     * Test the getChild method of Node.
+     * Check whether negative lengths are handled properly by computeLength.
      */
     @Test
-    void testGetChild() {
-        assertEquals(0, node.getChild());
+    public void computeLengthNeg() {
+        node = new Node(Integer.MIN_VALUE, new int[0], new int[0]);
+        assertEquals(Integer.MIN_VALUE, node.getLength());
+        node.computeLength();
+        assertEquals(10, node.getLength());
     }
 
     /**
-     * Test the getChild method of Node.
+     * Checks whether computeLength functions properly with lengths between 100 and 255^2.
      */
     @Test
-    void testSetChild() {
-        node.setChild(2);
-        assertEquals(2, node.getChild());
+    public void computeLengthSt() {
+        int rInt = new Random().nextInt(65015) + 10;
+        node = new Node(rInt, new int[0], new int[0]);
+        assertEquals(rInt, node.getLength());
+        node.computeLength();
+        assertEquals((int) Math.sqrt((double) rInt), node.getLength());
     }
 
     /**
-     * Test the getChild method of Node.
+     * Checks whether setIncomingEdges properly sets the incomingedges field.
      */
     @Test
-    void testGetSetInDegree() {
-        assertEquals(0, node.getInDegree());
-        node.setInDegree(4);
-        assertEquals(4, node.getInDegree());
+    public void setIncomingEdgesTest() {
+        Random r = new Random();
+        int[] rIntA = new int[r.nextInt(300000000)];
+        for (int i = 0; i < rIntA.length; i++) {
+            rIntA[i] = r.nextInt();
+        }
+        node.setIncomingEdges(rIntA);
+        int[] edges = node.getIncomingEdges();
+        for (int i = 0; i < rIntA.length; i++) {
+            assertEquals(rIntA[i], edges[i]);
+        }
     }
 
     /**
-     * Test the getChild method of Node.
+     * Checks whether the hashCodes of two equal nodes are equal.
      */
     @Test
-    void testSetInDegree() {
-        node.setChild(2);
-        assertEquals(node.getChild(), 2);
+    public void hashCodeSame() {
+        assertEquals(new Node(0, new int[0], new int[0]).hashCode(), node.hashCode());
+    }
+
+    /**
+     * Generates two random equal nodes and checks whether their hashcodes are equal.
+     */
+    @Test
+    public void hashCodeRandom() {
+        Random r = new Random();
+        int l = r.nextInt();
+        int i = r.nextInt(75000);
+        int j = r.nextInt(75000);
+        int[] iEdges = new int[i];
+        int[] jEdges = new int[j];
+        for (int k = 0; k < i; k++) {
+            iEdges[k] = r.nextInt();
+        }
+        for (int k = 0; k < j; k++) {
+            jEdges[k] = r.nextInt();
+        }
+        node = new Node(l, iEdges, jEdges);
+        assertEquals(new Node(l, iEdges, jEdges).hashCode(), node.hashCode());
     }
 }
-

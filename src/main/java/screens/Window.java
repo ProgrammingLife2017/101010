@@ -191,8 +191,7 @@ public class Window extends Application {
 //                        graphScene.setScaleY(graphScene.getScaleY() / 1.02);
 //                        //TODO update graph edge
 //                        graphScene.drawGraph(centerId, oldRadius + 2);
-                    graphScene.zoomOut();
-                    }
+                    graphScene.zoomOut(event.getX(), event.getY());
                 } else {
 //                    if (oldRadius - 2 < 5) {
 //                        graphScene.drawGraph(centerId, 5);
@@ -205,9 +204,10 @@ public class Window extends Application {
 //                        //TODO update graph edge
 //                        graphScene.drawGraph(centerId, oldRadius - 2);
 //                    }
-                graphScene.zoomIn();
+                    graphScene.zoomIn();
                 }
-            graphScene.toBack();
+                graphScene.toBack();
+            }
         });
     }
 
@@ -258,6 +258,7 @@ public class Window extends Application {
                     if (file != null) {
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
                         graphScene.drawGraph(0, 200);
+                        graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
                         logger.info("file has been selected");
                     }
                 }
@@ -267,12 +268,12 @@ public class Window extends Application {
     }
 
     public static void updateIndicator(Node center) {
-        double centerX = center.getX();
-        int max = NodeGraph.getCurrentInstance().getMaxX();
-        double relPos = (centerX - 543) / max * mainPane.getWidth() + 5;
+        //double centerX = center.getX();
+        //int max = NodeGraph.getCurrentInstance().getMaxX();
+        //double relPos = (centerX - 543) / max * mainPane.getWidth() + 5;
         indicator.setHeight(10);
         indicator.setWidth(5);
-        indicator.setX(relPos);
+        //indicator.setX(relPos);
         indicator.setY(mainPane.getHeight() - 15);
     }
 

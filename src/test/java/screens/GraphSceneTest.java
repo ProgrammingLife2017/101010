@@ -22,12 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the GraphScene class.
@@ -117,7 +112,7 @@ public class GraphSceneTest {
         gs.drawGraph(0, 20);
         verify(fact, never()).createGroup();
         verify(fact, never()).createLabel(anyString());
-        //verify(fact, never()).createStage();
+        verify(fact, never()).createStage();
         verify(fact, never()).createScene(group, 150, 100);
         verify(fact, never()).setScene(stage, scene);
         verify(group, never()).getChildren();

@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 /**
  * Created by 101010.
  */
@@ -117,10 +114,6 @@ public final class Parser {
             }
             in.close();
             out.close();
-            for (int i = 0; i < graph.getSize(); i++) {
-                graph.getNode(i).setInDegree(graph.getNode(i).getIncomingEdges().length);
-            }
-            kahnAlgorithm(graph);
             createCache(absoluteFilePath, graph);
         } catch (FileNotFoundException e) {
             System.out.println("Wrong file Destination");
@@ -143,26 +136,23 @@ public final class Parser {
     public NodeGraph parseCache(NodeGraph graph, File cache) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
-            String line = in.readLine();
-            int graphSize = Integer.parseInt(line);
+            int graphSize = Integer.parseInt(in.readLine());
             graph.getNodes().ensureCapacity(graphSize);
             for (int i = 0; i < graphSize; i++) {
-                line = in.readLine();
-                int length = Integer.parseInt(line);
-                line = in.readLine();
-                int x = Integer.parseInt(line);
-                line = in.readLine();
-                int y = Integer.parseInt(line);
-                line = in.readLine();
-                int outLength = Integer.parseInt(line);
+                int length = Integer.parseInt(in.readLine());
+                int outLength = Integer.parseInt(in.readLine());
                 int[] outgoing = new int[outLength];
+                String[] tempLine = in.readLine().split("\t");
                 for (int j = 0; j < outLength; j++) {
-                    line = in.readLine();
-                    outgoing[j] = Integer.parseInt(line);
+                    outgoing[j] = Integer.parseInt(tempLine[j]);
                 }
-                Node temp = new Node(length, outgoing, new int[0]);
-                temp.setX(x);
-                temp.setY(y);
+                int inLength = Integer.parseInt(in.readLine());
+                int[] incoming = new int[inLength];
+                tempLine = in.readLine().split("\t");
+                for (int j = 0; j < inLength; j++) {
+                    incoming[j] = Integer.parseInt(tempLine[j]);
+                }
+                Node temp = new Node(length, outgoing, incoming);
                 graph.addNodeCache(i, temp);
             }
             in.close();
@@ -171,41 +161,6 @@ public final class Parser {
             e.printStackTrace();
         }
         return graph;
-    }
-
-
-    /**
-     * Uses Kahn's Algorithm to determine the coordinates of nodes.
-     * @param graph The NodeGraph for which the coordinates of nodes are computed.
-     */
-    private void kahnAlgorithm(NodeGraph graph) {
-        Queue<Node> q = new ArrayDeque<>();
-        int x = 503;
-        int y;
-        int child;
-        for (int i = 0; i < graph.getSize(); i++) {
-            if (graph.getNode(i).getIncomingEdges().length == 0) {
-                q.add(graph.getNode(i));
-            }
-        }
-        while (!q.isEmpty()) {
-            Node current = q.poll();
-            if (current.getChild() == 0) {
-                x += 40;
-            }
-            y = 291 + 40 * current.getChild();
-            current.setX(x);
-            current.setY(y);
-            child = 0;
-            for (int i : current.getOutgoingEdges()) {
-                graph.getNode(i).setChild(child);
-                graph.getNode(i).setInDegree(graph.getNode(i).getInDegree() - 1);
-                if (graph.getNode(i).getInDegree() == 0) {
-                    q.add(graph.getNode(i));
-                }
-                child += 1;
-            }
-        }
     }
 
     /**
@@ -219,27 +174,29 @@ public final class Parser {
             int graphSize = graph.getSize();
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);
-            writer.write(Integer.toString(graphSize));
-            writer.newLine();
+            writer.write(Integer.toString(graphSize) + "\n");
             int size;
             for (int i = 0; i < graphSize; i++) {
                 Node temp = graph.getNode(i);
-                writer.write(Integer.toString(temp.getLength()));
-                writer.newLine();
-                writer.write(Integer.toString(temp.getX()));
-                writer.newLine();
-                writer.write(Integer.toString(temp.getY()));
-                writer.newLine();
+                writer.write(Integer.toString(temp.getLength()) + "\n");
                 int[] tempList = temp.getOutgoingEdges();
                 size = tempList.length;
-                writer.write(Integer.toString(size));
-                writer.newLine();
+                writer.write(Integer.toString(size) + "\n");
                 for (int j = 0; j < size; j++) {
-                    writer.write(Integer.toString(tempList[j]));
-                    writer.newLine();
+                    writer.write(Integer.toString(tempList[j]) + "\t");
                 }
+                writer.newLine();
+                tempList = temp.getIncomingEdges();
+                size = tempList.length;
+                writer.write(Integer.toString(size) + "\n");
+                for (int j = 0; j < size; j++) {
+                    writer.write(Integer.toString(tempList[j]) + "\t");
+                }
+                writer.newLine();
             }
             writer.close();
+            ow.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

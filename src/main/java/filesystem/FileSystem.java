@@ -67,9 +67,9 @@ public final class FileSystem {
         }
 
         assert file != null;
-        try (final OutputStream outputStream = new FileOutputStream(file);
-             final Writer w = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-             final PrintWriter pw = new PrintWriter(w, false)) {
+        try (OutputStream outputStream = new FileOutputStream(file);
+             Writer w = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+             PrintWriter pw = new PrintWriter(w, false)) {
             pw.flush();
             pw.close();
             w.close();
@@ -101,6 +101,5 @@ public final class FileSystem {
      */
    public void closeWriter() throws IOException {
         logWriter.close();
-        System.out.println("Writer has been closed");
    }
 }

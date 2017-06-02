@@ -10,11 +10,6 @@ public class DummyNode {
     private int id;
 
     /**
-     * The absolute id of this DummyNode.
-     */
-    private double absId;
-
-    /**
      * Id of the incoming edge's origin node.
      */
     private int from;
@@ -44,7 +39,6 @@ public class DummyNode {
      */
     public DummyNode(int id, int from, int to, int x, int y) {
         this.id = id;
-        this.absId = Double.parseDouble(Integer.toString(id) + Integer.toString(from) + Integer.toString(to));
         this.from = from;
         this.to = to;
         this.x = x;
@@ -64,10 +58,8 @@ public class DummyNode {
      * @return the absolute id of this DummyNode.
      */
     public double getAbsId() {
-        return absId;
+        return Double.parseDouble(Integer.toString(id) + Integer.toString(from) + Integer.toString(to));
     }
-
-    protected void setAbsId(double absId) { this.absId = absId; }
 
     /**
      * Gets the id of the incoming edge's origin node.

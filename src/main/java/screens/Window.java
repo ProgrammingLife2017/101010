@@ -17,7 +17,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
@@ -63,11 +62,6 @@ public class Window extends Application {
     private FXElementsFactory factory;
 
     private double mouseX, mouseY;
-
-    /**
-     * A rectangle that shows where the user is in the the graph.
-     */
-    private static Rectangle indicator;
 
     /**
      * The main pane of the application window.
@@ -123,16 +117,6 @@ public class Window extends Application {
      * @return Scene object.
      */
     private Scene createMainScene(Pane pane) {
-//        Rectangle indicatorBar = new Rectangle();
-//        indicator = new Rectangle();
-//        mainPane.setBottom(indicatorBar);
-//        mainPane.setBottom(indicator);
-
-//        indicatorBar.setWidth(mainPane.getWidth() - 20);
-//        indicatorBar.setX(10);
-//        indicatorBar.setY(mainPane.getHeight() - 15);
-//        indicatorBar.setHeight(10);
-//        indicatorBar.setFill(Color.GRAY);
         setScrolling();
 
         //Creating a scene object

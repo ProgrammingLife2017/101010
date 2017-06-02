@@ -49,15 +49,13 @@ public class ParserTest {
 
         String absoluteFilePath = workingDirectory + File.separator;
         NodeGraph data = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
-        Node node2 = data.getNode(7);
-        assertEquals(data.getSegment(7).length(), node2.getLength());
-        assertTrue(node2.getLength() != 0);
+        assertEquals(2221, data.getSegment(7).length());
+        assertTrue(data.getSegment(7).length() != 0);
 
 
         NodeGraph data2 = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
-        Node node3 = data2.getNode(7);
-        assertEquals(data2.getSegment(7).length(), node3.getLength());
-        assertTrue(node3.getLength() != 0);
+        assertEquals(2221, data2.getSegment(7).length());
+        assertTrue(data2.getSegment(7).length() != 0);
     }
 
     @Test
@@ -74,22 +72,26 @@ public class ParserTest {
             int[] out;
             for(int i = 0; i < data.getSize(); i++) {
                 assertEquals(data.getNode(i).getLength(), Integer.parseInt(br.readLine()));
-                Integer.parseInt(br.readLine());
-                Integer.parseInt(br.readLine());
-                assertEquals(data.getNode(i).getOutgoingEdges().length, Integer.parseInt(br.readLine()));
                 out = data.getNode(i).getOutgoingEdges();
-                for (int j : out) {
-                    assertEquals(j, Integer.parseInt(br.readLine()));
+                in = data.getNode(i).getIncomingEdges();
+
+                assertEquals(out.length, Integer.parseInt(br.readLine()));
+                String[] tempLine = br.readLine().split("\t");
+                for (int j = 0; j < out.length; j++) {
+                    assertEquals(out[j], Integer.parseInt(tempLine[j]));
                 }
+
+                assertEquals(in.length, Integer.parseInt(br.readLine()));
+                tempLine = br.readLine().split("\t");
+                for (int j = 0; j < in.length; j++) {
+                    assertEquals(in[j], Integer.parseInt(tempLine[j]));
+                }
+
+
             }
-            File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
-            File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
-            segments.delete();
             br.close();
-            if (cache.exists()) {
-                cache.delete();
-            }
         } catch(Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
@@ -104,25 +106,25 @@ public class ParserTest {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
             bw.write("4\n" +
                     "5\n" +
-                    "0\n" +
-                    "0\n" +
                     "3\n" +
-                    "1\n" +
-                    "2\n" +
-                    "3\n" +
+                    "1\t2\t3\n" +
+                    "0\n" +
+                    "\n" +
                     "6\n" +
-                    "0\n" +
-                    "0\n" +
                     "1\n" +
                     "3\n" +
+                    "1\n" +
+                    "0\n" +
                     "7\n" +
                     "0\n" +
-                    "0\n" +
+                    "\n" +
+                    "1\n" +
                     "0\n" +
                     "8\n" +
                     "0\n" +
-                    "0\n" +
-                    "0");
+                    "\n" +
+                    "2\n" +
+                    "1\t2");
             bw.close();
             NodeGraph graph = new NodeGraph();
             Node node1 = new Node();
@@ -158,7 +160,6 @@ public class ParserTest {
                 testNode2 = testGraph.getNode(i);
                 out1 = testNode1.getOutgoingEdges();
                 out2= testNode2.getOutgoingEdges();
-                assertEquals(testNode1.getLength(), testNode2.getLength());
                 for (int j = 0; j < out1.length; j++) {
                     assertEquals(out1[j], out2[j]);
                 }

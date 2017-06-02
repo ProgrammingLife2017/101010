@@ -28,5 +28,25 @@ public class DrawNode extends Rectangle {
         return this.id;
     }
 
+    /**
+     * Checks if given object is the same as current DrawNode.
+     * @param other The objectto be checked.
+     * @return true iff object is the same.
+     */
+    public boolean equals(Object other) {
+         if (other instanceof DrawNode) {
+             DrawNode that = (DrawNode) other;
+             return this.id == that.id;
+         }
+         return false;
+    }
+
+    /**
+     * Givens the hashcode of the DrawNode
+     * @return the hashcode
+     */
+    public int hashCode() {
+        return id;
+    }
 
 }

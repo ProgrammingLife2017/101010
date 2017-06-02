@@ -71,13 +71,12 @@ public class GraphSceneTest {
     @Before
     public void setUp() {
         Node n1 = new Node();
-        n1.setX(544);
         n1.addOutgoingEdge(1);
         Node n2 = new Node();
         n2.addIncomingEdge(0);
         nodes.add(n1);
         nodes.add(n2);
-        ngTest = new NodeGraph(nodes, null);
+        ngTest = new NodeGraph(nodes, null, null, null);
         when(fact.createStage()).thenReturn(stage);
         when(fact.createLabel(anyString())).thenReturn(label);
         when(fact.createGroup()).thenReturn(group);

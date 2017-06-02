@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
@@ -30,6 +31,7 @@ import java.io.IOException;
 @SuppressWarnings("FieldCanBeLocal")
 public class Window extends Application {
 
+    private double mouseX, mouseY;
     /**
      * Logger that keeps track of actions executed by this class.
      */
@@ -70,7 +72,7 @@ public class Window extends Application {
 
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
-
+        setPaneEventHandlers(mainPane);
 
         //Creating a scene object
         Scene scene = new Scene(mainPane);
@@ -93,6 +95,20 @@ public class Window extends Application {
         //Displaying the contents of the stage
         stage.show();
         logger.info("the main application has started");
+    }
+
+    public void setPaneEventHandlers(Pane pane) {
+        pane.onMousePressedProperty().set(event -> {
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+        });
+        pane.onMouseDraggedProperty().set(event -> {
+            double offsetX = event.getSceneX() - mouseX;
+            graphScene.setTranslateX(graphScene.getTranslateX() + offsetX);
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+            event.consume();
+        });
     }
 
     /**

@@ -1,4 +1,4 @@
-package screens.scenehandler;
+package screens;
 
 import datastructure.DrawNode;
 

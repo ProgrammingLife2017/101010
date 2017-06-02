@@ -1,6 +1,5 @@
 package datastructure;
 
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -9,9 +8,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import screens.GraphScene;
 
-import javax.sound.sampled.Line;
 
 /**
  * Created by 101010.
@@ -40,12 +37,12 @@ public class NodeGraph {
     /**
      * LinkedList of the nodes that are in the first layer.
      */
-    private LinkedList<Pair<Double, Boolean>> rootNodes;
+    private LinkedList<Double> rootNodes;
 
     /**
      * LinkedList of the nodes that are in the last layer.
      */
-    private LinkedList<Pair<Double, Boolean>> leafNodes;
+    private LinkedList<Double> leafNodes;
 
     /**
      * Instance of the current graph.
@@ -208,9 +205,6 @@ public class NodeGraph {
         computeDummyNodes();
         verticalSpacing();
         retrieveEdgeNodes();
-        for (DummyNode d : dummyNodes) {
-            System.out.println(d.getId() + ", " + d.getFrom() + ", " + d.getTo() + ", " + d.getX() + ", " + d.getY());
-        }
     }
 
     /**
@@ -314,17 +308,20 @@ public class NodeGraph {
         DrawNode current;
 
         while (it.hasNext()) {
-             current = it.next();
+            current = it.next();
 
+             int size = drawNodes.size();
              for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
-                 for (DrawNode temp : drawNodes) {
+                 for (int j = 0; j < size; j++) {
+                     DrawNode temp = drawNodes.get(j);
+                     int ind2 = temp.getIndex();
                      if (temp.getIndex() == i && temp.getX() < layer) {
                          layer = temp.getX();
                      }
                  }
              }
 
-             current.setX(layer - 100);
+            current.setX(layer - 100);
         }
     }
 
@@ -412,7 +409,7 @@ public class NodeGraph {
                 if (cDrawNode != null && Math.abs(current.getX() - cDrawNode.getX()) > 100) {
                     dummyNodeQueue.add(new DummyNode(-1, cDrawNode.getIndex(), current.getIndex(), (int) currentLayer - 100, 50));
                 } else if (cDrawNode == null && drawNodes.peekLast().getX() < currentLayer) {
-                    dummyNodeQueue.add(new DummyNode(-1, edges[i], current.getIndex(), (int) currentLayer - 100, 50));
+                    dummyNodeQueue.add(new DummyNode(-1, i, current.getIndex(), (int) currentLayer - 100, 50));
                 }
             }
         }
@@ -441,7 +438,7 @@ public class NodeGraph {
             } else {
                 maxY = 0;
                 for (DummyNode dN : dummyNodes) {
-                    if (dN.getX() == (int) drawNodes.get(i).getX() && dN.getY() > maxY) {
+                    if (dN.getX() == (int) drawNodes.get(i).getX()) {
                         maxY = dN.getY();
                     }
                 }
@@ -507,7 +504,7 @@ public class NodeGraph {
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getX() == endX) {
-                leafNodes.add(new Pair<>((double) temp.getIndex(), false));
+                leafNodes.add((double) temp.getIndex());
             } else {
                 break;
             }
@@ -518,7 +515,7 @@ public class NodeGraph {
         while (rit.hasNext()) {
             temp = rit.next();
             if (temp.getX() == startX) {
-                rootNodes.add(new Pair<>((double) temp.getIndex(), false));
+                rootNodes.add((double) temp.getIndex());
             } else {
                 break;
             }
@@ -537,7 +534,7 @@ public class NodeGraph {
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getX() == endX) {
-                leafNodes.add(new Pair<>(temp.getAbsId(), true));
+                leafNodes.add(temp.getAbsId());
             } else {
                 break;
             }
@@ -548,7 +545,7 @@ public class NodeGraph {
         while (rit.hasNext()) {
             temp = rit.next();
             if (temp.getX() == startX) {
-                rootNodes.add(new Pair<>(temp.getAbsId(), true));
+                rootNodes.add(temp.getAbsId());
             } else {
                 break;
             }
@@ -592,15 +589,15 @@ public class NodeGraph {
     public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtRoot() {
         ArrayList<Integer> visited = new ArrayList<>();
         LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
-        for (Pair<Double, Boolean> id : rootNodes) {
-            if (id.getKey() >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.getKey().intValue()).getIncomingEdges()) {
+        for (Double id : rootNodes) {
+            if (id >= 0) {
+                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {
                     if (!visited.contains(m)) {
                         visited.add(m);
                     }
                 }
             } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id.getKey());
+                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
                 if (!visited.contains(dummy.getFrom())) {
                     visited.add(dummy.getFrom());
                 }
@@ -631,8 +628,8 @@ public class NodeGraph {
                 Node dummyIn = nodes.get(newNodes.get(i).getIndex());
                 int dummyOut = -1;
                 for (int j = 0; j < dummyIn.getOutgoingEdges().length; j++) {
-                    for (Pair<Double, Boolean> id : rootNodes) {
-                        if (id.getKey().intValue() == dummyIn.getOutgoingEdges()[j]) {
+                    for (Double id : rootNodes) {
+                        if (id.intValue() == dummyIn.getOutgoingEdges()[j]) {
                             dummyOut = j;
                             break;
                         }
@@ -659,15 +656,15 @@ public class NodeGraph {
     public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtLeaf() {
         ArrayList<Integer> visited = new ArrayList<>();
         LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
-        for (Pair<Double, Boolean> id : leafNodes) {
-            if (id.getKey() >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.getKey().intValue()).getOutgoingEdges()) {
+        for (Double id : leafNodes) {
+            if (id.>= 0) {
+                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getOutgoingEdges()) {
                     if (!visited.contains(m)) {
                         visited.add(m);
                     }
                 }
             } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id.getKey());
+                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id.);
                 if (!visited.contains(dummy.getTo())) {
                     visited.add(dummy.getTo());
                 }
@@ -697,8 +694,8 @@ public class NodeGraph {
                 Node dummyOut = nodes.get(newNodes.get(i).getIndex());
                 int dummyIn = -1;
                 for (int j = 0; j < dummyOut.getIncomingEdges().length; j++) {
-                    for (Pair<Double, Boolean> id : leafNodes) {
-                        if (id.getKey().intValue() == dummyOut.getIncomingEdges()[j]) {
+                    for (Double id : leafNodes) {
+                        if (id.intValue() == dummyOut.getIncomingEdges()[j]) {
                             dummyIn = j;
                             break;
                         }
@@ -721,15 +718,15 @@ public class NodeGraph {
      */
     public double removeAtRoot() {
         ArrayList<Integer> visited = new ArrayList<Integer>();
-        for (Pair<Double, Boolean> id : rootNodes) {
-            if (id.getKey() >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.getKey().intValue()).getOutgoingEdges()) {
+        for (Double id : rootNodes) {
+            if (id >= 0) {
+                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getOutgoingEdges()) {
                     if (!visited.contains(m)) {
                         visited.add(m);
                     }
                 }
             } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id.getKey());
+                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
                 if (!visited.contains(dummy.getTo())) {
                     visited.add(dummy.getTo());
                 }
@@ -760,15 +757,15 @@ public class NodeGraph {
      */
     public double removeAtLeaf() {
         ArrayList<Integer> visited = new ArrayList<Integer>();;
-        for (Pair<Double, Boolean> id : leafNodes) {
-            if (id.getKey() >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.getKey().intValue()).getIncomingEdges()) {
+        for (Double id : leafNodes) {
+            if (id >= 0) {
+                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {
                     if (!visited.contains(m)) {
                         visited.add(m);
                     }
                 }
             } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id.getKey());
+                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
                 if (!visited.contains(dummy.getFrom())) {
                     visited.add(dummy.getFrom());
                     break;
@@ -789,16 +786,6 @@ public class NodeGraph {
         }
         return drawNodes.getFirst().getX();
     }
-//            for (int m: n.getIncomingEdges)
-//                if(!list.contains(m))
-//                    list.add(NodeGraph.getNode(m));
-//        GraphScene.getChildren().remove(GraphScene.lookup(Integer.toString(m)));
-//        while(rootnodes.contains(drawnNodes.getFirst())
-//        drawnNodes.removeFirst();
-//        rootnodes = list;
-//    }
-//
-
     /**
      * Getter for a Dummy Node.
      * @param id id of the Dummy Node.
@@ -811,5 +798,20 @@ public class NodeGraph {
             }
         }
         return null;
+    }
+
+     /** Get the root nodes of the current SubGraph.
+     * @return LinkedList containing the AbsIds of the Root Nodes of the current SubGraph.
+     */
+    protected LinkedList<Double> getRootNodes() {
+        return rootNodes;
+    }
+
+    /**
+     * Get the leaf nodes of the current SubGraph.
+     * @return LinkedList containing the AbsIds of the Lead Nodes of the current SubGraph.
+     */
+    protected LinkedList<Double> getLeafNodes() {
+        return leafNodes;
     }
 }

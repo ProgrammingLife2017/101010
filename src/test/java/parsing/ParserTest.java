@@ -2,10 +2,15 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
-import java.io.*;
 import org.junit.After;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,13 +38,13 @@ public class ParserTest {
 
     @Test
     public void getInstance() {
-        Object parser = Parser.getInstance();
-        assertTrue(parser != null);
+        Object parser = parsing.Parser.getInstance();
+        assertTrue(parser instanceof parsing.Parser);
     }
 
     @Test
     public void parse() {
-        Parser parser = Parser.getInstance();
+        parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
 
         String absoluteFilePath = workingDirectory + File.separator;
@@ -55,7 +60,7 @@ public class ParserTest {
 
     @Test
     public void createCache() {
-        Parser parser = Parser.getInstance();
+        parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
 
         String absoluteFilePath = workingDirectory + File.separator;
@@ -93,7 +98,7 @@ public class ParserTest {
 
     @Test
     public void parseCache() {
-        Parser parser = Parser.getInstance();
+        parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
         File file = new File(absoluteFilePath + "/src/test/resources/testCache.txt");
@@ -163,5 +168,4 @@ public class ParserTest {
             fail();
         }
     }
-
 }

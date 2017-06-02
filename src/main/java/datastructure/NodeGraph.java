@@ -719,7 +719,7 @@ public class NodeGraph {
     }
 
     public double removeAtLeaf() {
-        ArrayList<Integer> visited = new ArrayList<Integer>();
+        ArrayList<Integer> visited = new ArrayList<Integer>();;
         for (Pair<Double, Boolean> id : leafNodes) {
             if (id.getKey() >= 0) {
                 for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.getKey().intValue()).getIncomingEdges()) {
@@ -735,7 +735,7 @@ public class NodeGraph {
                 }
             }
         }
-        double maxX = Double.MIN_VALUE;
+        double maxX = -Double.MAX_VALUE;
         for (Integer i : visited) {
             for (int j = 0; j < drawNodes.size(); j++) {
                 if (drawNodes.get(j).getIndex() == i && drawNodes.get(j).getX() > maxX) {

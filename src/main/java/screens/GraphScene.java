@@ -14,6 +14,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import sun.awt.image.ImageWatched;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -184,23 +185,31 @@ import java.util.Set;
     /**
      * Updates the visualized graph when zooming out.
      */
-    public void zoomOut(double cursorX, double cursorY) {
+    public void zoomOut(double transX, double transY) {
         Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
         Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
         drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
         drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
-        setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
-        setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+        setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2 + transX) * getScaleX() - getWidth() / 2);
     }
 
-    public void zoomIn() {
+    public void zoomIn(double transX, double transY) {
         double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
         removeNodesLeaf(maxX);
+        double newX = getTranslate(transX, getWidth());
         double minX = NodeGraph.getCurrentInstance().removeAtRoot();
         removeNodesRoot(minX);
-        //setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
-        setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-        System.out.println(getScaleX());
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
+        setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2 + newX) * getScaleX() - getWidth() / 2);
+    }
+
+    private double getTranslate(double cursorPos, double screenDimension) {
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        double change = screenDimension * (getScaleX() - getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
+        return change * cursorPos / screenDimension - change / 2;
     }
 
     private void removeNodesRoot(double minX) {

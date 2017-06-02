@@ -177,8 +177,8 @@ public class Window extends Application {
             if (NodeGraph.getCurrentInstance() != null) {
 //                int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
 //                int oldRadius = NavigationInfo.getInstance().getCurrentRadius();
-//                double transX = getTranslate(event.getX(), graphScene.getWidth());
-//                double transY = getTranslate(event.getY(), graphScene.getHeight());
+                double transX = getTranslate(event.getX(), graphScene.getWidth());
+                double transY = getTranslate(event.getY(), graphScene.getHeight());
                 double deltaY = event.getDeltaY();
                 if (deltaY < 0) {
 //                    if (oldRadius + 2 > 500) {
@@ -204,7 +204,7 @@ public class Window extends Application {
 //                        //TODO update graph edge
 //                        graphScene.drawGraph(centerId, oldRadius - 2);
 //                    }
-                    graphScene.zoomIn();
+                    graphScene.zoomIn(event.getX(), event.getY());
                 }
                 graphScene.toBack();
             }

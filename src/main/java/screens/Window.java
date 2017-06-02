@@ -5,12 +5,7 @@ import filesystem.FileSystem;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -21,8 +16,7 @@ import logging.LoggerFactory;
 import parsing.Parser;
 import window.FileSelector;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Main application.
@@ -56,6 +50,11 @@ public class Window extends Application {
     private static InfoScreen infoScreen = null;
 
     /**
+     * The load bar which shows how far the parser is.
+     */
+    private static ProgressBar pB;
+
+    /**
      * Starts the frame.
      * @param stage Main stage where the content is placed.
      * @throws Exception Thrown when application can't be started.
@@ -71,6 +70,12 @@ public class Window extends Application {
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
 
+        pB = new ProgressBar();
+//        pB.setVisible(false);
+        pB.setMaxWidth(1212);
+        pB.setMaxHeight(5);
+        pB.setProgress(0.0);
+        mainPane.setBottom(pB);
 
         //Creating a scene object
         Scene scene = new Scene(mainPane);
@@ -182,7 +187,17 @@ public class Window extends Application {
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
+                        pB.setVisible(true);
+                        try {
+                            LineNumberReader lnr = new LineNumberReader(new FileReader(file));
+                            lnr.skip(Long.MAX_VALUE);
+                            pB.setId(Integer.toString(lnr.getLineNumber() + 1));
+                            lnr.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
+//                        pB.setVisible(false);
                         graphScene.drawGraph(0, 200);
                         logger.info("file has been selected");
                     }
@@ -323,6 +338,11 @@ public class Window extends Application {
         newStage.setScene(scene);
         newStage.show();
     }
+
+    public static void setProgress(int currentLine) {
+        pB.setProgress((double) currentLine / Double.parseDouble(pB.getId()));
+    }
+
     /**
      * The initialization of the game.
      * @param args the arguments to run.

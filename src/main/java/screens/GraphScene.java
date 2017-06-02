@@ -4,10 +4,13 @@ import datastructure.DrawNode;
 import datastructure.DummyNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import parsing.Parser;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -71,7 +74,18 @@ import java.util.Set;
      */
     public void drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-        drawGraphUtil(id, radius);
+
+        new Thread() {
+            public void run() {
+                try {
+                    Parser.getThread().join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                drawGraphUtil(id, radius);
+            }
+        }.start();
     }
 
     /**
@@ -88,7 +102,7 @@ import java.util.Set;
         for (DrawNode dNode : drawNodes) {
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
+            Platform.runLater(() -> this.getChildren().add(dNode));
             DrawNode nOut;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
@@ -146,7 +160,7 @@ import java.util.Set;
         l.setEndX(endX);
         l.setEndY(endY);
         l.setOnMousePressed(click);
-        this.getChildren().add(l);
+        Platform.runLater(() -> this.getChildren().add(l));
     }
     /**
      * Switches event handler to center queries.

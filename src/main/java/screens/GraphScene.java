@@ -180,12 +180,12 @@ import java.util.Set;
      * @param transY y-coordinate of cursor
      */
     public void zoomOut(double transX, double transY) {
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
         Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
         Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
         drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
         drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
         setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
         setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
     }
 
@@ -195,13 +195,16 @@ import java.util.Set;
      * @param transY y-coordinate of cursor
      */
     public void zoomIn(double transX, double transY) {
-        double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
-        removeNodesLeaf(maxX);
-        double minX = NodeGraph.getCurrentInstance().removeAtRoot();
-        removeNodesRoot(minX);
         LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
-        setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+        if (drawNodes.size() > 3) {
+            double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
+            removeNodesLeaf(maxX);
+            double minX = NodeGraph.getCurrentInstance().removeAtRoot();
+            removeNodesRoot(minX);
+            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+            setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
+            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+        }
     }
 
     /**

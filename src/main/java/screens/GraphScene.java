@@ -75,17 +75,15 @@ import java.util.Set;
     public void drawGraph(final int id, final int radius) {
         this.getChildren().clear();
 
-        new Thread() {
-            public void run() {
-                try {
-                    Parser.getThread().join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                drawGraphUtil(id, radius);
+        new Thread(() -> {
+            try {
+                Parser.getThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.start();
+
+            drawGraphUtil(id, radius);
+        }).start();
     }
 
     /**

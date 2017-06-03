@@ -259,7 +259,7 @@ public class NodeGraph {
     }
 
     /**
-     * Recursive method for topological sorting
+     * Recursive method for topological sorting.
      * @param current current node.
      * @param sorted current list of sorted nodes.
      * @param dNodes current list of nodes to be sorted.

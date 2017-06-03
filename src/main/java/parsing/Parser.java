@@ -73,9 +73,8 @@ public final class Parser {
             BufferedReader in = new BufferedReader(
                     new FileReader(file));
             String line = in.readLine();
+            line = in.readLine();
             line = line.substring(line.indexOf('\t') + 1);
-            line = line.replaceAll(":", "");
-
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
 
             String sDB = absoluteFilePath + "Segments.txt";
@@ -90,6 +89,7 @@ public final class Parser {
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
             BufferedWriter gw = new BufferedWriter(new FileWriter(genomes));
 
+            addGenomes(gw, line);
 
             while (line != null) {
                 if (line.startsWith("S")) {
@@ -105,14 +105,7 @@ public final class Parser {
                     line = line.substring(line.indexOf('\t') + 1);
                     line = line.substring(line.indexOf('\t') + 1);
                     String nodeGenomes = line.substring(0, line.indexOf('\t'));
-                    nodeGenomes = nodeGenomes.substring(nodeGenomes.indexOf(':') + 1);
-                    nodeGenomes = nodeGenomes.substring(nodeGenomes.indexOf(':') + 1);
-                    String[] genomeTemp = nodeGenomes.split(";");
-                    for(String string : genomeTemp) {
-                        gw.write(string.substring(0, string.length() - 6) + "\t");
-                    }
-                    gw.write("\n");
-                    gw.flush();
+                    addGenomes(gw, nodeGenomes);
                     line = in.readLine();
                     while (line != null && line.startsWith("L")) {
                         int from;
@@ -216,6 +209,28 @@ public final class Parser {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Writes alle genomes in the string to the file given by the writer.
+     * @param gw Writer that writes the string.
+     * @param str String with the genomes.
+     */
+    private void addGenomes(BufferedWriter gw, String str) {
+        str = str.substring(str.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        String[] genomeTemp = str.split(";");
+        try {
+            gw.write(genomeTemp.length + "\t");
+            for (String string : genomeTemp) {
+                gw.write(string.substring(0, string.length() - 6) + "\t");
+            }
+            gw.write("\n");
+            gw.flush();
+        } catch(IOException e) {
+            e.printStackTrace();
+            System.out.println("adding genomes failed");
         }
     }
 }

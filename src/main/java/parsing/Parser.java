@@ -3,6 +3,7 @@ package parsing;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
+import window.FileSelector;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,6 +29,11 @@ public final class Parser {
     private static Parser instance = null;
 
     /**
+     * The filename of the currently selected file.
+     */
+    private String currentFile;
+
+    /**
      * Constructor of the parser.
      */
     private Parser() { }
@@ -51,7 +57,7 @@ public final class Parser {
      */
     public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
-
+        currentFile = file.getName().substring(0, file.getName().length() - 4);
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
         graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
@@ -75,18 +81,23 @@ public final class Parser {
             BufferedReader in = new BufferedReader(
                     new FileReader(file));
             String line = in.readLine();
+            line = in.readLine();
             line = line.substring(line.indexOf('\t') + 1);
-            line = line.replaceAll(":", "");
-
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
 
             String sDB = absoluteFilePath + "Segments.txt";
+            String genomesName = absoluteFilePath + "Genomes.txt";
             graph.setSegmentDB(new SegmentDB(sDB));
             File segments = new File(sDB);
+            File genomes = new File(genomesName);
 
             segments.createNewFile();
+            genomes.createNewFile();
 
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
+            BufferedWriter gw = new BufferedWriter(new FileWriter(genomes));
+
+            addGenomes(gw, line);
 
             while (line != null) {
                 if (line.startsWith("S")) {
@@ -99,6 +110,10 @@ public final class Parser {
                     graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
                     out.write(segment + "\n");
                     out.flush();
+                    line = line.substring(line.indexOf('\t') + 1);
+                    line = line.substring(line.indexOf('\t') + 1);
+                    String nodeGenomes = line.substring(0, line.indexOf('\t'));
+                    addGenomes(gw, nodeGenomes);
                     line = in.readLine();
                     while (line != null && line.startsWith("L")) {
                         int from;
@@ -116,6 +131,7 @@ public final class Parser {
             }
             in.close();
             out.close();
+            gw.close();
             createCache(absoluteFilePath, graph);
         } catch (FileNotFoundException e) {
             System.out.println("Wrong file Destination");
@@ -212,14 +228,17 @@ public final class Parser {
     public Set<Integer> getGenomeNodes(String genomeName) {
         Set<Integer> genNodes = new HashSet<>();
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("TB10Genomes.txt")));
-            int nodes = Integer.parseInt(br.readLine());
-            for (int i = 0; i < nodes; i++) {
-                int current = Integer.parseInt(br.readLine());
-                int noOfGenomes = Integer.parseInt(br.readLine());
-                for (int j = 0; j < noOfGenomes; j++) {
-                    if (br.readLine().equals(genomeName)) {
-                        genNodes.add(current);
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FileSelector.getDirectory() + currentFile + "Genomes.txt")));
+            br.readLine();
+            for (int i = 0; i < NodeGraph.getCurrentInstance().getNodes().size(); i++) {
+                String line = br.readLine();
+                if (i == 23) {
+                    System.out.println(line);
+                }
+                String[] genomes = line.split("\t");
+                for (int j = 1; j < genomes.length; j++) {
+                    if (genomes[j].equals(genomeName)) {
+                        genNodes.add(i);
                     }
                 }
             }
@@ -229,5 +248,26 @@ public final class Parser {
             e.printStackTrace();
         }
         return null;
+    }
+
+     /** Writes all genomes in the string to the file given by the writer.
+     * @param gw Writer that writes the string.
+     * @param str String with the genomes.
+     */
+    private void addGenomes(BufferedWriter gw, String str) {
+        str = str.substring(str.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        String[] genomeTemp = str.split(";");
+        try {
+            gw.write(genomeTemp.length + "\t");
+            for (String string : genomeTemp) {
+                gw.write(string.substring(0, string.length() - 6) + "\t");
+            }
+            gw.write("\n");
+            gw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("adding genomes failed");
+        }
     }
 }

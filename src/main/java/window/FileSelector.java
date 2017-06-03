@@ -81,7 +81,7 @@ public final class FileSelector {
      * Finds the last used directory from which a file was chosen.
      * @return the path of the directory.
      */
-    private static String getDirectory() {
+    public static String getDirectory() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("directory.txt")));
             String dir = br.readLine();
@@ -102,7 +102,7 @@ public final class FileSelector {
             File file = new File("directory.txt");
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);
-            ow.write(directory);
+            ow.write(directory + "\\");
             logger.info("Directory saved as: " + directory);
             ow.close();
         } catch (Exception e) {

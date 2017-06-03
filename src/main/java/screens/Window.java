@@ -294,7 +294,7 @@ public class Window extends Application {
         item5.setOnAction(
                 event -> {
                     if (NodeGraph.getCurrentInstance() != null) {
-                        graphScene.genomeSelect(Parser.getInstance().getGenomeNodes("test"));
+                        graphScene.genomeSelect(Parser.getInstance().getGenomeNodes("TKK-01-0015"));
                         logger.info("genome select called");
                     } else {
                         errorPopup("Please load a graph.");

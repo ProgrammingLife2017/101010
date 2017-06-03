@@ -11,6 +11,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -310,6 +313,19 @@ import java.util.Set;
      */
     public INodeHandler getInfo() {
         return this.info;
+    }
+
+    /**
+     * Turn the nodes occurring in a genome green.
+     * @param genomeNodes the occurring nodes.
+     */
+    public void genomeSelect(Set<Integer> genomeNodes) {
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        for (DrawNode node : drawNodes) {
+            if (genomeNodes.contains(node.getIndex())) {
+                node.setFill(javafx.scene.paint.Color.GREEN);
+            }
+        }
     }
 
 }

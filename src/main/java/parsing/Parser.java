@@ -15,6 +15,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by 101010.
@@ -200,5 +202,32 @@ public final class Parser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Reads the genome cache file and returns the node ID's with a certain genomeName.
+     * @param genomeName the name of the genome of which occurring nodes are selected.
+     * @return a set of all occurring nodes in the genome.
+     */
+    public Set<Integer> getGenomeNodes(String genomeName) {
+        Set<Integer> genNodes = new HashSet<>();
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("TB10Genomes.txt")));
+            int nodes = Integer.parseInt(br.readLine());
+            for (int i = 0; i < nodes; i++) {
+                int current = Integer.parseInt(br.readLine());
+                int noOfGenomes = Integer.parseInt(br.readLine());
+                for (int j = 0; j < noOfGenomes; j++) {
+                    if (br.readLine().equals(genomeName)) {
+                        genNodes.add(current);
+                    }
+                }
+            }
+            return genNodes;
+        } catch (IOException e) {
+            System.out.println("Can't find genome cache.");
+            e.printStackTrace();
+        }
+        return null;
     }
 }

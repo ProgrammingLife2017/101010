@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
 import logging.LoggerFactory;
+import org.apache.velocity.runtime.directive.Parse;
 import parsing.Parser;
 import window.FileSelector;
 
@@ -289,10 +290,22 @@ public class Window extends Application {
                     }
                 }
         );
+        MenuItem item5 = new MenuItem("Select genome");
+        item5.setOnAction(
+                event -> {
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        graphScene.genomeSelect(Parser.getInstance().getGenomeNodes("test"));
+                        logger.info("genome select called");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
+                }
+        );
         menu.getItems().add(item1);
         menu.getItems().add(item2);
         menu.getItems().add(item3);
         menu.getItems().add(item4);
+        menu.getItems().add(item5);
         return menu;
     }
 

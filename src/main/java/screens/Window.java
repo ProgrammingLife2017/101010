@@ -198,7 +198,21 @@ public class Window extends Application {
                             e.printStackTrace();
                         }
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-//                        pB.setVisible(false);
+
+                        new Thread () {
+                            public void run () {
+                                try {
+                                    Parser.getThread().join();
+
+                                    this.join(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                pB.setVisible(false);
+                                pB.setProgress(0.0);
+                            }
+                        }.start();
+
                         graphScene.drawGraph(0, 200);
                         logger.info("file has been selected");
                     }

@@ -125,7 +125,7 @@ public final class Parser {
                                 e.printStackTrace();
                             }
                             int finalCount = lineCounter;
-                            if (finalCount % 1000 == 0) {
+                            if (finalCount % 2500 == 0) {
                                 Platform.runLater(() -> Window.setProgress(finalCount));
                             }
                         }
@@ -196,7 +196,7 @@ public final class Parser {
 
                             lineCounter = lineCounter + 5;
                             int finalCount = lineCounter;
-                            if (finalCount % 1000 == 0) {
+                            if (finalCount % 2500 == 0) {
                                 Platform.runLater(() -> Window.setProgress(finalCount));
                             }
                         }

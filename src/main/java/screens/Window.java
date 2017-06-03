@@ -33,7 +33,6 @@ import java.util.LinkedList;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class Window extends Application {
-
     /**
      * Logger that keeps track of actions executed by this class.
      */
@@ -60,9 +59,15 @@ public class Window extends Application {
     private static InfoScreen infoScreen = null;
 
     /**
-     * A rectangle that shows where the user is in the the graph.
+     * Factory for creating JavaFX components.
      */
-    private static Rectangle indicator;
+    private FXElementsFactory factory;
+
+    /**
+     * X- and Y-coordinates of the mouse when an event is captured.
+     */
+    private double mouseX, mouseY;
+
 
     /**
      * The main pane of the application window.
@@ -80,8 +85,15 @@ public class Window extends Application {
         backLog = new Backlog();
         mainPane = new BorderPane();
 
-        mainPane.setMinSize(1200, 700);
 
+    /**
+     * Creates main pane for placing content.
+     * @param stage Main stage.
+     * @return Pane object.
+     */
+    private BorderPane createMainPane(Stage stage) {
+        mainPane = new BorderPane();
+        mainPane.setMinSize(1500, 900);
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
 
@@ -91,8 +103,6 @@ public class Window extends Application {
         mainPane.getChildren().add(indicator);
 
         setScrolling();
-
-        //Creating a scene object
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("layoutstyles.css");
 
@@ -121,6 +131,27 @@ public class Window extends Application {
 
         logger.info("the main application has started");
     }
+
+    /**
+     * Installs events on a pane.
+     * @param pane Pane where events should be captured.
+     */
+    public void setPaneEventHandlers(Pane pane) {
+        pane.onMousePressedProperty().set(event -> {
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+        });
+        pane.onMouseDraggedProperty().set(event -> {
+            double offsetX = event.getSceneX() - mouseX;
+            double offsetY = event.getSceneY() - mouseY;
+            graphScene.setTranslateX(graphScene.getTranslateX() + offsetX);
+            graphScene.setTranslateY(graphScene.getTranslateY() + offsetY);
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+            event.consume();
+        });
+    }
+
     /**
      * Sets up the necessary services.
      */

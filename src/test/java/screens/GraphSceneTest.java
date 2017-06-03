@@ -2,6 +2,7 @@ package screens;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.*;
  * Tests the GraphScene class.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Parser.class})
+@PrepareForTest({Platform.class, Parser.class})
 public class GraphSceneTest {
 
     @Mock
@@ -119,6 +120,10 @@ public class GraphSceneTest {
 
     @Test
     public void drawGraphTestInRadius() throws Exception {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         thread = mock(Thread.class);
         PowerMockito.mockStatic(Parser.class);
         PowerMockito.when(Parser.getThread()).thenReturn(thread);

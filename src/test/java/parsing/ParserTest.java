@@ -2,23 +2,24 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import javafx.application.Platform;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 
 /**
  * Created by 101010.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Platform.class})
 public class ParserTest {
 
     @After
@@ -44,27 +45,53 @@ public class ParserTest {
 
     @Test
     public void parse() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
 
         String absoluteFilePath = workingDirectory + File.separator;
         NodeGraph data = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
+        try {
+            Parser.getThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         assertEquals(2221, data.getSegment(7).length());
         assertTrue(data.getSegment(7).length() != 0);
 
-
         NodeGraph data2 = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
-        assertEquals(2221, data2.getSegment(7).length());
-        assertTrue(data2.getSegment(7).length() != 0);
+        try {
+            Parser.getThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(2221, data.getSegment(7).length());
+        assertTrue(data.getSegment(7).length() != 0);
     }
 
     @Test
     public void createCache() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
 
         String absoluteFilePath = workingDirectory + File.separator;
         NodeGraph data = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
+
+        try {
+            Parser.getThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(absoluteFilePath + "/src/main/resources/test2.txt"))));
             assertEquals(data.getSize(), Integer.parseInt(br.readLine()));
@@ -86,8 +113,6 @@ public class ParserTest {
                 for (int j = 0; j < in.length; j++) {
                     assertEquals(in[j], Integer.parseInt(tempLine[j]));
                 }
-
-
             }
             br.close();
         } catch(Exception e) {
@@ -98,6 +123,10 @@ public class ParserTest {
 
     @Test
     public void parseCache() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
@@ -149,6 +178,13 @@ public class ParserTest {
             graph.addNode(3, node4);
             NodeGraph testGraph = new NodeGraph();
             parser.parseCache(testGraph, file);
+
+            try {
+                Parser.getThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             file.delete();
             assertEquals(graph.getSize(), testGraph.getSize());
             Node testNode1;

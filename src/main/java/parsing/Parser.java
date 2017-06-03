@@ -11,7 +11,7 @@ import java.io.*;
 /**
  * Created by 101010.
  */
-public final class Parser {
+public class Parser {
     /**
      * Initial Parser.
      */
@@ -120,7 +120,7 @@ public final class Parser {
                                 lineCounter++;
                             }
                             int finalCount = lineCounter;
-                            if (finalCount % (nol / 100) == 0) {
+                            if (nol < 100 || finalCount % (nol / 100) == 0) {
                                 Platform.runLater(() -> Window.setProgress((double) finalCount / (double) nol));
                             }
                         } catch (IOException e) {
@@ -193,7 +193,7 @@ public final class Parser {
 
                         lineCounter = lineCounter + 5;
                         int finalCount = lineCounter;
-                        if (finalCount % (nol / 100) == 0) {
+                        if (nol < 100 || finalCount % (nol / 100) == 0) {
                             Platform.runLater(() -> Window.setProgress((double) finalCount / (double) nol));
                         }
                     }

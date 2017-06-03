@@ -13,8 +13,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import parsing.Parser;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -27,7 +33,8 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the GraphScene class.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Parser.class})
 public class GraphSceneTest {
 
     @Mock
@@ -51,6 +58,9 @@ public class GraphSceneTest {
     NodeGraph ngTest = new NodeGraph();
 
     GraphScene gs;
+
+    @Mock
+    Thread thread;
 
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
@@ -108,7 +118,11 @@ public class GraphSceneTest {
     }
 
     @Test
-    public void drawGraphTestInRadius() {
+    public void drawGraphTestInRadius() throws Exception {
+        thread = mock(Thread.class);
+        PowerMockito.mockStatic(Parser.class);
+        PowerMockito.when(Parser.getThread()).thenReturn(thread);
+
         gs.drawGraph(0, 20);
         verify(fact, never()).createGroup();
         verify(fact, never()).createLabel(anyString());

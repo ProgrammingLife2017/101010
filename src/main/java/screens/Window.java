@@ -294,8 +294,28 @@ public class Window extends Application {
         item5.setOnAction(
                 event -> {
                     if (NodeGraph.getCurrentInstance() != null) {
-                        graphScene.genomeSelect(Parser.getInstance().getGenomeNodes("TKK-01-0015"));
-                        logger.info("genome select called");
+                        Stage newstage = new Stage();
+                        newstage.setTitle("Select the genome");
+                        GridPane box = new GridPane();
+                        TextField textField = new TextField();
+                        Button btn = new Button("Submit");
+                        btn.setOnAction(
+                                event2 -> {
+                                    if (textField.getText().length() == 0) {
+                                        errorPopup("Please enter a name in the text field.");
+                                    } else {
+                                        graphScene.genomeSelect(Parser.getInstance().getGenomeNodes(textField.getText()));
+                                        logger.info("genome select called");
+                                        newstage.close();
+                                    }
+                                }
+                        );
+                        box.add(new Label("Genome name:"), 1, 1);
+                        box.add(textField, 1, 2, 3, 1);
+                        box.add(btn, 1, 3);
+                        Scene scene = new Scene(box);
+                        newstage.setScene(scene);
+                        newstage.show();
                     } else {
                         errorPopup("Please load a graph.");
                     }

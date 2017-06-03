@@ -79,12 +79,17 @@ public final class Parser {
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
 
             String sDB = absoluteFilePath + "Segments.txt";
+            String genomesName = absoluteFilePath + "Genomes.txt";
             graph.setSegmentDB(new SegmentDB(sDB));
             File segments = new File(sDB);
+            File genomes = new File(genomesName);
 
             segments.createNewFile();
+            genomes.createNewFile();
 
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
+            BufferedWriter gw = new BufferedWriter(new FileWriter(genomes));
+
 
             while (line != null) {
                 if (line.startsWith("S")) {
@@ -97,6 +102,17 @@ public final class Parser {
                     graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
                     out.write(segment + "\n");
                     out.flush();
+                    line = line.substring(line.indexOf('\t') + 1);
+                    line = line.substring(line.indexOf('\t') + 1);
+                    String nodeGenomes = line.substring(0, line.indexOf('\t'));
+                    nodeGenomes = nodeGenomes.substring(nodeGenomes.indexOf(':') + 1);
+                    nodeGenomes = nodeGenomes.substring(nodeGenomes.indexOf(':') + 1);
+                    String[] genomeTemp = nodeGenomes.split(";");
+                    for(String string : genomeTemp) {
+                        gw.write(string.substring(0, string.length() - 6) + "\t");
+                    }
+                    gw.write("\n");
+                    gw.flush();
                     line = in.readLine();
                     while (line != null && line.startsWith("L")) {
                         int from;
@@ -114,6 +130,7 @@ public final class Parser {
             }
             in.close();
             out.close();
+            gw.close();
             createCache(absoluteFilePath, graph);
         } catch (FileNotFoundException e) {
             System.out.println("Wrong file Destination");

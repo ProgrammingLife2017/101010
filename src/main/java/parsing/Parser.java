@@ -125,7 +125,9 @@ public final class Parser {
                                 e.printStackTrace();
                             }
                             int finalCount = lineCounter;
-                            Platform.runLater(() -> Window.setProgress(finalCount));
+                            if (finalCount % 1000 == 0) {
+                                Platform.runLater(() -> Window.setProgress(finalCount));
+                            }
                         }
                         in.close();
                         out.close();
@@ -177,28 +179,26 @@ public final class Parser {
                     try {
                         for (int i = 0; i < graphSize; i++) {
                             int length = Integer.parseInt(in.readLine());
-                            lineCounter++;
                             int outLength = Integer.parseInt(in.readLine());
-                            lineCounter++;
                             int[] outgoing = new int[outLength];
                             String[] tempLine = in.readLine().split("\t");
-                            lineCounter++;
                             for (int j = 0; j < outLength; j++) {
                                 outgoing[j] = Integer.parseInt(tempLine[j]);
                             }
                             int inLength = Integer.parseInt(in.readLine());
-                            lineCounter++;
                             int[] incoming = new int[inLength];
                             tempLine = in.readLine().split("\t");
-                            lineCounter++;
                             for (int j = 0; j < inLength; j++) {
                                 incoming[j] = Integer.parseInt(tempLine[j]);
                             }
                             Node temp = new Node(length, outgoing, incoming);
                             graph.addNodeCache(i, temp);
 
+                            lineCounter = lineCounter + 5;
                             int finalCount = lineCounter;
-                            Platform.runLater(() -> Window.setProgress(finalCount));
+                            if (finalCount % 1000 == 0) {
+                                Platform.runLater(() -> Window.setProgress(finalCount));
+                            }
                         }
                         in.close();
                     } catch (IOException e) {

@@ -71,9 +71,10 @@ public class Window extends Application {
         mainPane.setCenter(graphScene);
 
         pB = new ProgressBar();
-//        pB.setVisible(false);
+        pB.setVisible(false);
         pB.setMaxWidth(1212);
-        pB.setMaxHeight(5);
+        pB.setPrefHeight(10.0);
+        pB.setMinHeight(10.0);
         pB.setProgress(0.0);
         mainPane.setBottom(pB);
 
@@ -187,8 +188,8 @@ public class Window extends Application {
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
-                        pB.setVisible(true);
                         try {
+                            pB.setVisible(true);
                             LineNumberReader lnr = new LineNumberReader(new FileReader(file));
                             lnr.skip(Long.MAX_VALUE);
                             pB.setId(Integer.toString(lnr.getLineNumber() + 1));

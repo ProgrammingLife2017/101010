@@ -188,15 +188,7 @@ public class Window extends Application {
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
-                        try {
-                            pB.setVisible(true);
-                            LineNumberReader lnr = new LineNumberReader(new FileReader(file));
-                            lnr.skip(Long.MAX_VALUE);
-                            pB.setId(Integer.toString(lnr.getLineNumber() + 1));
-                            lnr.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
 
                         new Thread () {
@@ -354,8 +346,8 @@ public class Window extends Application {
         newStage.show();
     }
 
-    public static void setProgress(int currentLine) {
-        pB.setProgress((double) currentLine / Double.parseDouble(pB.getId()));
+    public static void setProgress(double progress) {
+        pB.setProgress(progress);
     }
 
     /**

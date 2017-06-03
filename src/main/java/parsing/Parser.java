@@ -91,6 +91,10 @@ public final class Parser {
                 public void run() {
                     try {
                         int lineCounter = 1;
+                        LineNumberReader lnr = new LineNumberReader(new FileReader(file));
+                        lnr.skip(Long.MAX_VALUE);
+                        int nol = lnr.getLineNumber() + 1;
+                        lnr.close();
                         String line2 = line1;
                         while (line2 != null) {
                             try {
@@ -121,12 +125,12 @@ public final class Parser {
                                     line2 = in.readLine();
                                     lineCounter++;
                                 }
+                                int finalCount = lineCounter;
+                                if (finalCount % (nol / 100) == 0) {
+                                    Platform.runLater(() -> Window.setProgress((double) finalCount / (double) nol));
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
-                            }
-                            int finalCount = lineCounter;
-                            if (finalCount % 2500 == 0) {
-                                Platform.runLater(() -> Window.setProgress(finalCount));
                             }
                         }
                         in.close();
@@ -177,6 +181,10 @@ public final class Parser {
                 public void run() {
                     int lineCounter = 0;
                     try {
+                        LineNumberReader lnr = new LineNumberReader(new FileReader(cache));
+                        lnr.skip(Long.MAX_VALUE);
+                        int nol = lnr.getLineNumber() + 1;
+                        lnr.close();
                         for (int i = 0; i < graphSize; i++) {
                             int length = Integer.parseInt(in.readLine());
                             int outLength = Integer.parseInt(in.readLine());
@@ -196,8 +204,8 @@ public final class Parser {
 
                             lineCounter = lineCounter + 5;
                             int finalCount = lineCounter;
-                            if (finalCount % 2500 == 0) {
-                                Platform.runLater(() -> Window.setProgress(finalCount));
+                            if (finalCount % (nol / 100) == 0) {
+                                Platform.runLater(() -> Window.setProgress((double) finalCount / (double) nol));
                             }
                         }
                         in.close();

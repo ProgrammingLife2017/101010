@@ -275,13 +275,13 @@ public class Parser {
             }
             gw.write("\n");
             gw.flush();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("adding genomes failed");
         }
     }
 
-    /*
+    /**
      * Returns the number of lines in the given file.
      * @param file The file we want to know the number of line of.
      * @return The number of lines the given file contains.

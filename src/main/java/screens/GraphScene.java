@@ -74,18 +74,22 @@ import java.util.Set;
      * @param id Id of the node/segment.
      * @param radius Radius.
      */
-    public void drawGraph(final int id, final int radius) {
+    public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();
 
-        new Thread(() -> {
-            try {
-                Parser.getThread().join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    Parser.getThread().join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-            drawGraphUtil(id, radius);
-        }).start();
+                drawGraphUtil(id, radius);
+            }
+        };
+        thread.start();
+        return thread;
     }
 
     /**

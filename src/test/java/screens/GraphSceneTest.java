@@ -2,9 +2,9 @@ package screens;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -14,19 +14,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import parsing.Parser;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -68,15 +62,10 @@ public class GraphSceneTest {
      * @throws InterruptedException that triggers when the drawing is interrupted.
      */
     @BeforeClass
-    public static void initToolkit() throws InterruptedException
-    {
-        final CountDownLatch latch = new CountDownLatch(1);
-        SwingUtilities.invokeLater(() -> {
-            new JFXPanel();
-            latch.countDown();
-        });
-        if (!latch.await(5L, TimeUnit.SECONDS))
-            throw new ExceptionInInitializerError();
+    public static void initToolkit() throws InterruptedException {
+        new Thread(() -> {
+            Application.launch(Window.class, new String[0]);
+        }).start();
     }
 
     @Before

@@ -73,6 +73,7 @@ import java.util.Set;
      * Draws graph on the screen.
      * @param id Id of the node/segment.
      * @param radius Radius.
+     * @return The thread drawing is running in.
      */
     public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();

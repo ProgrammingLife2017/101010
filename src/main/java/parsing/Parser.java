@@ -36,7 +36,7 @@ public class Parser {
     /**
      * Constructor of the parser.
      */
-    private Parser() {}
+    private Parser() { }
 
     /**
      * Getter for the Singleton parser.

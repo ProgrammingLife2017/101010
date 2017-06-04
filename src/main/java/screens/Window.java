@@ -65,7 +65,7 @@ public class Window extends Application {
      * The load bar which shows how far the parser is.
      */
     private static ProgressBar pB;
-    
+
     /**
      * A rectangle that shows where the user is in the the graph.
      */
@@ -99,7 +99,7 @@ public class Window extends Application {
         pB.setMinHeight(10.0);
         pB.setProgress(0.0);
         mainPane.setBottom(pB);
-        
+
         Rectangle indicatorBar = new Rectangle();
         indicator = new Rectangle();
         mainPane.getChildren().add(indicatorBar);
@@ -215,7 +215,7 @@ public class Window extends Application {
                         pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
 
-                        new Thread () {
+                        new Thread() {
                             public void run () {
                                 try {
                                     Parser.getThread().join();
@@ -384,6 +384,10 @@ public class Window extends Application {
         newStage.show();
     }
 
+    /**
+     * Sets the progress of the ProgressBar to the given value.
+     * @param progress the new progress to be shown.
+     */
     public static void setProgress(double progress) {
         pB.setProgress(progress);
     }

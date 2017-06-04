@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.DrawNode;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
@@ -15,6 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
@@ -24,6 +27,7 @@ import window.FileSelector;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 
 /**
@@ -61,6 +65,16 @@ public class Window extends Application {
      * The load bar which shows how far the parser is.
      */
     private static ProgressBar pB;
+    
+    /**
+     * A rectangle that shows where the user is in the the graph.
+     */
+    private static Rectangle indicator;
+
+    /**
+     * The main pane of the application window.
+     */
+    private static BorderPane mainPane;
 
     /**
      * Starts the frame.
@@ -71,7 +85,7 @@ public class Window extends Application {
     public void start(Stage stage) throws Exception {
         this.setupService();
         backLog = new Backlog();
-        BorderPane mainPane = new BorderPane();
+        mainPane = new BorderPane();
 
         mainPane.setMinSize(1200, 700);
 
@@ -85,6 +99,13 @@ public class Window extends Application {
         pB.setMinHeight(10.0);
         pB.setProgress(0.0);
         mainPane.setBottom(pB);
+        
+        Rectangle indicatorBar = new Rectangle();
+        indicator = new Rectangle();
+        mainPane.getChildren().add(indicatorBar);
+        mainPane.getChildren().add(indicator);
+
+        setScrolling();
 
         //Creating a scene object
         Scene scene = new Scene(mainPane);
@@ -106,9 +127,15 @@ public class Window extends Application {
 
         //Displaying the contents of the stage
         stage.show();
+
+        indicatorBar.setWidth(mainPane.getWidth() - 20);
+        indicatorBar.setX(10);
+        indicatorBar.setY(mainPane.getHeight() - 15);
+        indicatorBar.setHeight(10);
+        indicatorBar.setFill(Color.GRAY);
+
         logger.info("the main application has started");
     }
-
     /**
      * Sets up the necessary services.
      */
@@ -118,7 +145,6 @@ public class Window extends Application {
         logger = loggerFactory.createLogger(this.getClass());
         FXElementsFactory fact = new FXElementsFactory();
         graphScene = new GraphScene(fact);
-        setScrolling(graphScene);
     }
 
     /**
@@ -159,27 +185,17 @@ public class Window extends Application {
 
     /**
      * Sets a scroll event to the pane that handles the zooming of the graph.
-     * @param scene the GraphScene to which the scroll event is added.
      */
-    private void setScrolling(GraphScene scene) {
-        scene.setOnScroll((ScrollEvent event) -> {
+    private void setScrolling() {
+        mainPane.setOnScroll((ScrollEvent event) -> {
             if (NodeGraph.getCurrentInstance() != null) {
-                int centerId = NavigationInfo.getInstance().getCurrentCenterNode();
-                int oldRadius = NavigationInfo.getInstance().getCurrentRadius();
                 double deltaY = event.getDeltaY();
                 if (deltaY < 0) {
-                    if (oldRadius - 2 < 5) {
-                        scene.drawGraph(centerId, 5);
-                    } else {
-                        scene.drawGraph(centerId, oldRadius - 2);
-                    }
+                    graphScene.zoomOut(event.getX(), event.getY());
                 } else {
-                    if (oldRadius + 2 > 500) {
-                        scene.drawGraph(centerId, 500);
-                    } else {
-                        scene.drawGraph(centerId, oldRadius + 2);
-                    }
+                    graphScene.zoomIn(event.getX(), event.getY());
                 }
+                graphScene.toBack();
             }
         });
     }
@@ -214,6 +230,11 @@ public class Window extends Application {
                         }.start();
 
                         graphScene.drawGraph(0, 200);
+                        graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
+                        graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+                        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+                        graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
+
                         logger.info("file has been selected");
                     }
                 }

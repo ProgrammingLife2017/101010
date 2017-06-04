@@ -3,6 +3,7 @@ package datastructure;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -395,33 +396,45 @@ public class NodeGraph {
     }
 
     /**
+     * Computes the y coordinates for dummy nodes in dummyedges.
+     */
+    private void dummyEdgeSpacing() {
+        DummyEdge otherEdge;
+        int currentLayer;
+        for (int i = 0; i < dummyEdges.size(); i++) {
+            for (int j = 0; j < dummyEdges.get(i).getLength(); j++) {
+                currentLayer = dummyEdges.get(i).getX(j);
+                for (int k = i - 1; k >= 0; k--) {
+                    otherEdge = dummyEdges.get(k);
+                    if (otherEdge.traversesLayer(currentLayer)) {
+                        dummyEdges.get(i).setYOfLayer(currentLayer, otherEdge.getYOfLayer(currentLayer) + 50);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Computes the Y coordinate of the drawNodes
      * by looping over all nodes and adding to their Y coordinate
      * when the X coordinate is the same.
      */
     private void verticalSpacing() {
-        int maxY;
-        for (int i = 0; i < dummyNodes.size(); i++) {
-            maxY = 0;
-            for (int j = i - 1; j >= 0; j--) {
-                if (dummyNodes.get(i).getX() == dummyNodes.get(j).getX() && maxY < dummyNodes.get(j).getY()) {
-                   maxY = dummyNodes.get(j).getY();
-                }
-            }
-            dummyNodes.get(i).setY(maxY + 50);
-        }
+        dummyEdgeSpacing();
 
         for (int i = 0; i < drawNodes.size(); i++) {
             if (i > 0 && drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
                 drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
             } else {
-                maxY = 0;
-                for (DummyNode dN : dummyNodes) {
-                    if (dN.getX() == (int) drawNodes.get(i).getX()) {
-                        maxY = dN.getY();
+                DummyEdge current;
+                for (int j = dummyEdges.size() - 1; j >= 0; j--) {
+                    current = dummyEdges.get(j);
+                    if (current.traversesLayer((int) drawNodes.get(i).getX())) {
+                        drawNodes.get(i).setY(current.getYOfLayer((int) drawNodes.get(i).getX()));
+                        break;
                     }
                 }
-                drawNodes.get(i).setY(maxY + 50);
             }
         }
     }
@@ -432,30 +445,7 @@ public class NodeGraph {
      * @param newDummyNodes new leaf and root dummy nodes.
      */
     private void verticalSpacingNew(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummyNodes) {
-        int maxY;
-        for (int i = 0; i < newDummyNodes.size(); i++) {
-            maxY = 0;
-            for (int j = i - 1; j >= 0; j--) {
-                if (newDummyNodes.get(i).getX() == newDummyNodes.get(j).getX() && maxY < newDummyNodes.get(j).getY()) {
-                    maxY = newDummyNodes.get(j).getY();
-                }
-            }
-            newDummyNodes.get(i).setY(maxY + 50);
-        }
 
-        for (int i = 0; i < newNodes.size(); i++) {
-            if (i > 0 && newNodes.get(i - 1).getX() == newNodes.get(i).getX()) {
-                newNodes.get(i).setY(newNodes.get(i - 1).getY() + 50);
-            } else {
-                maxY = 0;
-                for (DummyNode dN : newDummyNodes) {
-                    if (dN.getX() == (int) newNodes.get(i).getX() && dN.getY() > maxY) {
-                        maxY = dN.getY();
-                    }
-                }
-                newNodes.get(i).setY(maxY + 50);
-            }
-        }
     }
 
     /**
@@ -482,8 +472,8 @@ public class NodeGraph {
         DrawNode temp;
         while (it.hasNext()) {
             temp = it.next();
-            if (temp.getX() == endX) {
-                leafNodes.add((double) temp.getIndex());
+            if (temp.getBoundsInLocal().getMinX() <= endX && temp.getBoundsInLocal().getMaxX() >= endX) {
+                leafNodes.add(temp.getIndex());
             } else {
                 break;
             }
@@ -493,8 +483,8 @@ public class NodeGraph {
 
         while (rit.hasNext()) {
             temp = rit.next();
-            if (temp.getX() == startX) {
-                rootNodes.add((double) temp.getIndex());
+            if (temp.getBoundsInLocal().getMinX() <= startX && temp.getBoundsInLocal().getMaxX() >= startX) {
+                rootNodes.add(temp.getIndex());
             } else {
                 break;
             }
@@ -507,28 +497,7 @@ public class NodeGraph {
      * @param endX the rightmost layer.
      */
     private void retrieveDummies(double startX, double endX) {
-        Iterator<DummyNode> it = dummyNodes.iterator();
 
-        DummyNode temp;
-        while (it.hasNext()) {
-            temp = it.next();
-            if (temp.getX() == endX) {
-                leafNodes.add(temp.getAbsId());
-            } else {
-                break;
-            }
-        }
-
-        Iterator<DummyNode> rit = dummyNodes.descendingIterator();
-
-        while (rit.hasNext()) {
-            temp = rit.next();
-            if (temp.getX() == startX) {
-                rootNodes.add(temp.getAbsId());
-            } else {
-                break;
-            }
-        }
     }
 
     /**
@@ -554,11 +523,11 @@ public class NodeGraph {
     }
 
     /**
-     * Gets the LinkedList of DummyNodes.
-     * @return The LinkedList of DummyNodes.
+     * Gets the LinkedList of DummyEdges.
+     * @return The LinkedList of DummyEdges.
      */
-    public LinkedList<DummyNode> getDummyNodes() {
-        return dummyNodes;
+    public LinkedList<DummyEdge> getDummyEdges() {
+        return dummyEdges;
     }
 
     /**
@@ -566,66 +535,7 @@ public class NodeGraph {
      * @return the new root nodes.
      */
     public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtRoot() {
-        ArrayList<Integer> visited = new ArrayList<>();
-        LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
-        for (Double id : rootNodes) {
-            if (id >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {
-                    if (!visited.contains(m)) {
-                        visited.add(m);
-                    }
-                }
-            } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
-                if (!visited.contains(dummy.getFrom())) {
-                    visited.add(dummy.getFrom());
-                }
-            }
-        }
-        for (int i = 0; i < visited.size(); i++) {
-            newNodes.addLast(new DrawNode(visited.get(i)));
-        }
-        newNodes = newTopoSort(newNodes);
-        assignLayersRoot(newNodes);
-        LinkedList<DrawNode> newDrawNodes = new LinkedList<>();
-        LinkedList<DummyNode> newDummyNodes = new LinkedList<>();
-        double maxX = -Double.MAX_VALUE;
-        for (int i = 0; i < newNodes.size(); i++) {
-            double currentX = newNodes.get(i).getX();
-            if (currentX > maxX) {
-                maxX = currentX;
-            }
-        }
-        for (int i = 0; i < newNodes.size(); i++) {
-            if (Math.abs(newNodes.get(i).getX() - maxX) < 0.1) {
-                nodes.get(newNodes.get(i).getIndex()).computeLength();
-                newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
-                newNodes.get(i).setHeight(10);
-                newNodes.get(i).setFill(Color.CRIMSON);
-                newDrawNodes.add(newNodes.get(i));
-            } else {
-                Node dummyIn = nodes.get(newNodes.get(i).getIndex());
-                int dummyOut = -1;
-                for (int j = 0; j < dummyIn.getOutgoingEdges().length; j++) {
-                    for (Double id : rootNodes) {
-                        if (id.intValue() == dummyIn.getOutgoingEdges()[j]) {
-                            dummyOut = j;
-                            break;
-                        }
-                    }
-                }
-                newDummyNodes.add(new DummyNode(-1, newNodes.get(i).getIndex(), dummyOut, (int) maxX, 0));
-            }
-        }
-        verticalSpacingNew(newDrawNodes, newDummyNodes);
-        for (int i = 0; i < newDrawNodes.size(); i++) {
-            drawNodes.addLast(newDrawNodes.get(i));
-        }
-        dummyNodes.addAll(newDummyNodes);
-        rootNodes.clear();
-        leafNodes.clear();
-        retrieveDrawNodes(drawNodes.getLast().getX(), drawNodes.getFirst().getX());
-        return new Pair(newDrawNodes, newDummyNodes);
+
     }
 
     /**
@@ -633,62 +543,7 @@ public class NodeGraph {
      * @return the new leaf nodes.
      */
     public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtLeaf() {
-        ArrayList<Integer> visited = new ArrayList<>();
-        LinkedList<DrawNode> newNodes = new LinkedList<DrawNode>();
-        for (Double id : leafNodes) {
-            if (id >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getOutgoingEdges()) {
-                    if (!visited.contains(m)) {
-                        visited.add(m);
-                    }
-                }
-            } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
-                if (!visited.contains(dummy.getTo())) {
-                    visited.add(dummy.getTo());
-                }
-            }
-        }
-        for (int i = 0; i < visited.size(); i++) {
-            newNodes.addLast(new DrawNode(visited.get(i)));
-        }
-        newNodes = newTopoSort(newNodes);
-        assignLayersLeaf(newNodes);
-        LinkedList<DrawNode> newDrawNodes = new LinkedList<>();
-        LinkedList<DummyNode> newDummyNodes = new LinkedList<>();
-        double minX = Double.MAX_VALUE;
-        for (int i = 0; i < newNodes.size(); i++) {
-            if (newNodes.get(i).getX() < minX) {
-                minX = newNodes.get(i).getX();
-            }
-        }
-        for (int i = 0; i < newNodes.size(); i++) {
-            if (newNodes.get(i).getX() == minX) {
-                nodes.get(newNodes.get(i).getIndex()).computeLength();
-                newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
-                newNodes.get(i).setHeight(10);
-                newNodes.get(i).setFill(Color.CRIMSON);
-                newDrawNodes.add(newNodes.get(i));
-            } else {
-                Node dummyOut = nodes.get(newNodes.get(i).getIndex());
-                int dummyIn = -1;
-                for (int j = 0; j < dummyOut.getIncomingEdges().length; j++) {
-                    for (Double id : leafNodes) {
-                        if (id.intValue() == dummyOut.getIncomingEdges()[j]) {
-                            dummyIn = j;
-                            break;
-                        }
-                    }
-                }
-                newDummyNodes.add(new DummyNode(-1, dummyIn, newNodes.get(i).getIndex(), (int) minX, 0));
-            }
-        }
-        verticalSpacingNew(newDrawNodes, newDummyNodes);
-        for (int i = 0; i < newDrawNodes.size(); i++) {
-            drawNodes.addFirst(newDrawNodes.get(i));
-        }
-        dummyNodes.addAll(newDummyNodes);
-        return new Pair(newDrawNodes, newDummyNodes);
+
     }
 
     /**
@@ -696,38 +551,7 @@ public class NodeGraph {
      * @return the xCoordinate of nodes that will get deleted.
      */
     public double removeAtRoot() {
-        ArrayList<Integer> visited = new ArrayList<Integer>();
-        for (Double id : rootNodes) {
-            if (id >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getOutgoingEdges()) {
-                    if (!visited.contains(m)) {
-                        visited.add(m);
-                    }
-                }
-            } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
-                if (!visited.contains(dummy.getTo())) {
-                    visited.add(dummy.getTo());
-                }
-            }
-        }
-        double minX = Double.MAX_VALUE;
-        for (Integer i : visited) {
-            for (int j = 0; j < drawNodes.size(); j++) {
-                if (drawNodes.get(j).getIndex() == i && drawNodes.get(j).getX() < minX) {
-                    minX = drawNodes.get(j).getX();
-                    break;
-                }
-            }
-        }
-        ArrayList<DrawNode> removeNodes = new ArrayList<DrawNode>();
-        while (drawNodes.getLast().getX() < minX) {
-            removeNodes.add(drawNodes.removeLast());
-        }
-        leafNodes.clear();
-        rootNodes.clear();
-        retrieveDrawNodes(drawNodes.getLast().getX(), drawNodes.getFirst().getX());
-        return minX;
+
     }
 
     /**
@@ -735,45 +559,20 @@ public class NodeGraph {
      * @return the x-coordinate of the leaf nodes to be deleted.
      */
     public double removeAtLeaf() {
-        ArrayList<Integer> visited = new ArrayList<>();
-        for (Double id : leafNodes) {
-            if (id >= 0) {
-                for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {
-                    if (!visited.contains(m)) {
-                        visited.add(m);
-                    }
-                }
-            } else {
-                DummyNode dummy = NodeGraph.getCurrentInstance().getDummyNode(id);
-                if (!visited.contains(dummy.getFrom())) {
-                    visited.add(dummy.getFrom());
-                    break;
-                }
-            }
-        }
-        double maxX = -Double.MAX_VALUE;
-        for (Integer i : visited) {
-            for (int j = 0; j < drawNodes.size(); j++) {
-                if (drawNodes.get(j).getIndex() == i && drawNodes.get(j).getX() > maxX) {
-                    maxX = drawNodes.get(j).getX();
-                }
-            }
-        }
-        ArrayList<DrawNode> removeNodes = new ArrayList<DrawNode>();
-        while (drawNodes.getFirst().getX() > maxX) {
-            removeNodes.add(drawNodes.remove());
-        }
-        return drawNodes.getFirst().getX();
+
     }
+
     /**
-     * Getter for a Dummy Node.
-     * @param id id of the Dummy Node.
-     * @return the Dummy Node.
+     * Getter for a Dummy Edge.
+     * @param parent id of the parent Node.
+     * @param child id of the child Node
+     * @return the Dummy Edge, null if it isn't found.
      */
-    private DummyNode getDummyNode(double id) {
-        for (int i = 0; i < dummyNodes.size(); i++) {
-            if (dummyNodes.get(i).getAbsId() == id) {
-                return dummyNodes.get(i);
+    @Nullable
+    private DummyEdge getDummyEdge(int parent, int child) {
+        for (DummyEdge e : dummyEdges) {
+            if (e.getParent() == parent && e.getChild() == child) {
+                return e;
             }
         }
         return null;
@@ -782,7 +581,7 @@ public class NodeGraph {
      /** Get the root nodes of the current SubGraph.
      * @return LinkedList containing the AbsIds of the Root Nodes of the current SubGraph.
      */
-    protected LinkedList<Double> getRootNodes() {
+    protected LinkedList<Integer> getRootNodes() {
         return rootNodes;
     }
 
@@ -790,7 +589,7 @@ public class NodeGraph {
      * Get the leaf nodes of the current SubGraph.
      * @return LinkedList containing the AbsIds of the Lead Nodes of the current SubGraph.
      */
-    protected LinkedList<Double> getLeafNodes() {
+    protected LinkedList<Integer> getLeafNodes() {
         return leafNodes;
     }
 }

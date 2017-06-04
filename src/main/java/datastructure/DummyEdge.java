@@ -31,6 +31,22 @@ public class DummyEdge {
     }
 
     /**
+     * Retrieves the id of the parent of this DummyEdge.
+     * @return The id of the parent of this DummyEdge.
+     */
+    public int getParent() {
+        return parent;
+    }
+
+    /**
+     * Retrieves the id of the child of this DummyEdge.
+     * @return The id of the child of this DummyEdge.
+     */
+    public int getChild() {
+        return child;
+    }
+
+    /**
      * Adds a new Dummy Node at the start of the edge.
      * @param x The x coordinate for the new Dummy Node.
      * @param y The y coordinate for the new Dummy Node.

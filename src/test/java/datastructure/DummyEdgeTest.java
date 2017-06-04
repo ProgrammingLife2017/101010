@@ -26,6 +26,16 @@ public class DummyEdgeTest {
     }
 
     @Test
+    public void getParent() {
+        assertEquals(0, dummyEdge.getParent());
+    }
+
+    @Test
+    public void getChild() {
+        assertEquals(1, dummyEdge.getChild());
+    }
+    
+    @Test
     public void addFirstXYEmpty() {
         int x = 10;
         int y = 15;

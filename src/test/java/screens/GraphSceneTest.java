@@ -2,9 +2,8 @@ package screens;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -15,12 +14,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import parsing.Parser;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -28,8 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the GraphScene class.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Platform.class, Parser.class})
+@RunWith(MockitoJUnitRunner.class)
 public class GraphSceneTest {
 
     @Mock
@@ -54,18 +52,20 @@ public class GraphSceneTest {
 
     GraphScene gs;
 
-    @Mock
-    Thread thread;
-
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
      * @throws InterruptedException that triggers when the drawing is interrupted.
      */
     @BeforeClass
-    public static void initToolkit() throws InterruptedException {
-        new Thread(() -> {
-            Application.launch(Window.class, new String[0]);
-        }).start();
+    public static void initToolkit() throws InterruptedException
+    {
+        final CountDownLatch latch = new CountDownLatch(1);
+        SwingUtilities.invokeLater(() -> {
+            new JFXPanel();
+            latch.countDown();
+        });
+        if (!latch.await(5L, TimeUnit.SECONDS))
+            throw new ExceptionInInitializerError();
     }
 
     @Before
@@ -108,15 +108,7 @@ public class GraphSceneTest {
     }
 
     @Test
-    public void drawGraphTestInRadius() throws Exception {
-        PowerMockito.mockStatic(Platform.class);
-        PowerMockito.doNothing().when(Platform.class);
-        Platform.runLater(any());
-
-        thread = mock(Thread.class);
-        PowerMockito.mockStatic(Parser.class);
-        PowerMockito.when(Parser.getThread()).thenReturn(thread);
-
+    public void drawGraphTestInRadius() {
         gs.drawGraph(0, 20);
         verify(fact, never()).createGroup();
         verify(fact, never()).createLabel(anyString());

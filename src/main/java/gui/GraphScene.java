@@ -1,4 +1,4 @@
-package screens;
+package gui;
 
 import datastructure.DrawNode;
 import datastructure.DummyNode;
@@ -10,9 +10,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
-import screens.scenehandler.INodeHandler;
-import screens.scenehandler.NodeCenter;
-import screens.scenehandler.NodeInfo;
+import gui.scenehandler.INodeHandler;
+import gui.scenehandler.NodeCenter;
+import gui.scenehandler.NodeInfo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,12 +50,9 @@ import java.util.Set;
      private EventHandler<MouseEvent> click = event -> {
 
         if (event.getSource() instanceof DrawNode) {
-            DrawNode rect = (DrawNode) (event.getSource());
-            state.handle(rect);
+            state.handleNode((DrawNode) (event.getSource()));
         } else if (event.getSource() instanceof Line) {
-            Line l = (Line) (event.getSource());
-            String edgeNodes = l.getId();
-            Window.getInfoScreen().getTextArea().appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
+            state.handleLine((Line) (event.getSource()));
         }
      };
 
@@ -64,7 +61,7 @@ import java.util.Set;
      * @param fact the Factory used to create JavaFX elements.
      */
      /*package*/ GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this);
+         center = new NodeCenter(this, fact);
          info = new NodeInfo();
          state = info;
          this.fxElementsFactory = fact;

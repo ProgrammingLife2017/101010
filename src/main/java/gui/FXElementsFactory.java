@@ -1,6 +1,8 @@
-package screens;
+package gui;
 
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -65,5 +67,9 @@ public class FXElementsFactory {
     public Stage show(Stage stage) {
         stage.show();
         return stage;
+    }
+
+    public void setOnAction(Node node, EventHandler eventHandler) {
+
     }
 }

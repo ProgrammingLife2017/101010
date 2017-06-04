@@ -1,4 +1,4 @@
-package window;
+package gui;
 
 
 import filesystem.FileSystem;

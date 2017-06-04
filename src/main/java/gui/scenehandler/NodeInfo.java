@@ -1,9 +1,8 @@
-package screens.scenehandler;
+package gui.scenehandler;
 
 import datastructure.DrawNode;
-import datastructure.NodeGraph;
-import screens.Window;
-import screens.scenehandler.INodeHandler;
+import gui.Window;
+import javafx.scene.shape.Line;
 
 /**
  * Implementation of the state that handles click events regarding the information of selected node.
@@ -21,7 +20,12 @@ public class NodeInfo implements INodeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handle(DrawNode node) {
-        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
+    public void handleNode(DrawNode node) {
+        Window.getInfoScreen().displayNodeInfo(node);
+    }
+
+    @Override
+    public void handleLine(Line line) {
+        Window.getInfoScreen().displayLineInfo(line);
     }
 }

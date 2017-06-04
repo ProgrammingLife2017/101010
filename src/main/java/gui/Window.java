@@ -1,4 +1,4 @@
-package screens;
+package gui;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
@@ -6,23 +6,18 @@ import filesystem.FileSystem;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
 import logging.LoggerFactory;
 import parsing.Parser;
-import window.FileSelector;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,17 +52,9 @@ public class Window extends Application {
     /**
      * Window to print information of nodes or edges.
      */
-    private static InfoScreen infoScreen = null;
+    private static InfoScreen infoScreen;
 
-    /**
-     * A rectangle that shows where the user is in the the graph.
-     */
-    private static Rectangle indicator;
-
-    /**
-     * The main pane of the application window.
-     */
-    private static BorderPane mainPane;
+    private FXElementsFactory fxElementsFactory;
 
     /**
      * Starts the frame.
@@ -77,31 +64,41 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.setupService();
-        backLog = new Backlog();
-        mainPane = new BorderPane();
-
-        mainPane.setMinSize(1200, 700);
-
-        mainPane.setTop(createMenuBar(stage));
-        mainPane.setCenter(graphScene);
-
-        Rectangle indicatorBar = new Rectangle();
-        indicator = new Rectangle();
-        mainPane.getChildren().add(indicatorBar);
-        mainPane.getChildren().add(indicator);
-
-        setScrolling();
-
-        //Creating a scene object
+        Pane mainPane = createMainPane(stage);
+        setScrolling(mainPane);
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("layoutstyles.css");
-
-        //Setting title to the Stage
-        stage.setTitle("Main window");
-
-        //Adding scene to the stage
         stage.setScene(scene);
-        stage.setResizable(false);
+        setStageSettings(stage);
+        stage.show();
+        logger.info("the main application has started");
+    }
+    /**
+     * Sets up the necessary services.
+     */
+    private void setupService() {
+        backLog = new Backlog();
+        loggerFactory = new LoggerFactory(new FileSystem());
+        logger = loggerFactory.createLogger(this.getClass());
+        fxElementsFactory = new FXElementsFactory();
+        graphScene = new GraphScene(fxElementsFactory);
+        infoScreen = new InfoScreen(fxElementsFactory);
+    }
+
+    private BorderPane createMainPane(Stage stage) {
+        BorderPane pane = new BorderPane();
+        pane.setTop(createMenuBar(stage));
+        pane.setCenter(graphScene);
+        pane.setRight(infoScreen);
+        pane.toBack();
+        pane.setMaxWidth(stage.getWidth() - infoScreen.getWidth());
+        return pane;
+    }
+
+    private void setStageSettings(Stage stage) {
+        stage.setTitle("Main window");
+        stage.setResizable(true);
+        stage.setMaximized(true);
         stage.setOnCloseRequest(event -> {
             try {
                 Window.loggerFactory.getFileSystem().closeWriter();
@@ -109,27 +106,6 @@ public class Window extends Application {
                 e.printStackTrace();
             }
         });
-
-        //Displaying the contents of the stage
-        stage.show();
-
-        indicatorBar.setWidth(mainPane.getWidth() - 20);
-        indicatorBar.setX(10);
-        indicatorBar.setY(mainPane.getHeight() - 15);
-        indicatorBar.setHeight(10);
-        indicatorBar.setFill(Color.GRAY);
-
-        logger.info("the main application has started");
-    }
-    /**
-     * Sets up the necessary services.
-     */
-    private void setupService() {
-        FileSystem fileSystem = new FileSystem();
-        loggerFactory = new LoggerFactory(fileSystem);
-        logger = loggerFactory.createLogger(this.getClass());
-        FXElementsFactory fact = new FXElementsFactory();
-        graphScene = new GraphScene(fact);
     }
 
     /**
@@ -148,9 +124,6 @@ public class Window extends Application {
      * @return InfoScreen object.
      */
     public static InfoScreen getInfoScreen() {
-        if (infoScreen == null) {
-            infoScreen = new InfoScreen();
-        }
         return infoScreen;
     }
 
@@ -171,8 +144,8 @@ public class Window extends Application {
     /**
      * Sets a scroll event to the pane that handles the zooming of the graph.
      */
-    private void setScrolling() {
-        mainPane.setOnScroll((ScrollEvent event) -> {
+    private void setScrolling(Pane pane) {
+        pane.setOnScroll((ScrollEvent event) -> {
             if (NodeGraph.getCurrentInstance() != null) {
                 double deltaY = event.getDeltaY();
                 if (deltaY < 0) {
@@ -203,7 +176,6 @@ public class Window extends Application {
                         graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
                         LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
                         graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
-
                         logger.info("file has been selected");
                     }
                 }
@@ -218,13 +190,6 @@ public class Window extends Application {
      */
     private Menu addController() {
         Menu menu = new Menu("Tools");
-        MenuItem item1 = new MenuItem("Info");
-        item1.setOnAction(
-                event -> {
-                    getInfoScreen().show();
-                    logger.info("information screen has been opened");
-                }
-        );
         MenuItem item2 = new MenuItem("Console log");
         item2.setOnAction(
                 event -> {
@@ -232,67 +197,7 @@ public class Window extends Application {
                     logger.info("console window has been opened");
                 }
         );
-        MenuItem item3 = new MenuItem("Center from click");
-        item3.setOnAction(
-                event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
-                        graphScene.switchToCenter();
-                        logger.info("state has been switched to center");
-                    } else {
-                        errorPopup("Please load a graph.");
-                    }
-                }
-        );
-        MenuItem item4 = new MenuItem("Center from text");
-        item4.setOnAction(
-                event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
-                        Stage newstage = new Stage();
-                        newstage.setTitle("Select the radius");
-                        GridPane box = new GridPane();
-                        TextField textField = new TextField();
-                        TextField textField2 = new TextField();
-                        Button btn = new Button("Submit");
-                        btn.setOnAction(
-                                event2 -> {
-                                    if (textField.getText().length() == 0 || textField.getText().contains("\\D")) {
-                                        errorPopup("Please enter a number as id.");
-                                    } else if (textField2.getText().length() == 0 || textField2.getText().contains("\\D")) {
-                                        errorPopup("Please enter a number as radius.");
-                                    } else {
-                                        int center = Integer.parseInt(textField.getText());
-                                        int radius = Integer.parseInt(textField2.getText());
-
-                                        if (center < 0 || center >= NodeGraph.getCurrentInstance().getSize()) {
-                                            errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
-                                        } else if (radius < 5 || radius > 500) {
-                                            errorPopup("Input radius is out of bounds, \nplease provide a different radius.");
-                                        } else {
-                                            graphScene.drawGraph(Integer.parseInt(textField.getText()), Integer.parseInt(textField2.getText()));
-                                            graphScene.switchToInfo();
-                                            newstage.close();
-                                        }
-                                    }
-                                }
-                        );
-                        box.add(new Label("Node Id:"), 1, 1);
-                        box.add(textField, 1, 2, 3, 1);
-                        box.add(new Label("Radius:"), 1, 3);
-                        box.add(textField2, 1, 4, 3, 1);
-                        box.add(btn, 1, 5);
-                        Scene scene = new Scene(box);
-                        newstage.setScene(scene);
-                        newstage.show();
-                        logger.info("state has been switched to centerId");
-                    } else {
-                      errorPopup("Please load a graph.");
-                    }
-                }
-        );
-        menu.getItems().add(item1);
-        menu.getItems().add(item2);
-        menu.getItems().add(item3);
-        menu.getItems().add(item4);
+        menu.getItems().addAll(item2);
         return menu;
     }
 
@@ -302,15 +207,8 @@ public class Window extends Application {
      */
     private Menu addClear() {
         Menu menu = new Menu("Reset");
-        MenuItem item1 = new MenuItem("Info");
-        item1.setOnAction(
-                event -> {
-                    getInfoScreen().getTextArea().clear();
-                    logger.info("info screen has been switched to center");
-                }
-        );
-        MenuItem item2 = new MenuItem("Graph");
-        item2.setOnAction(
+        MenuItem item = new MenuItem("Graph");
+        item.setOnAction(
                 event -> {
                     if (NodeGraph.getCurrentInstance() != null) {
                         graphScene.drawGraph(0, 200);
@@ -320,7 +218,7 @@ public class Window extends Application {
                     }
                 }
         );
-        menu.getItems().addAll(item1, item2);
+        menu.getItems().addAll(item);
         return menu;
     }
 

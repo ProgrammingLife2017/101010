@@ -1,4 +1,4 @@
-package screens.scenehandler;
+package gui.scenehandler;
 
 import datastructure.DrawNode;
 import javafx.scene.Scene;
@@ -6,8 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
-import screens.GraphScene;
+import gui.FXElementsFactory;
+import gui.GraphScene;
 
 /**
  * Implementation of the state that handles click events regarding the center query of selected node.
@@ -19,20 +21,22 @@ public class NodeCenter implements INodeHandler {
      */
     private GraphScene graphScene;
 
+    private FXElementsFactory factory;
+
     /**
      * Constructor.
      * @param sc Scene for displaying graphs.
      */
-    public NodeCenter(GraphScene sc) {
+    public NodeCenter(GraphScene sc, FXElementsFactory fxElementsFactory) {
         this.graphScene = sc;
-
+        this.factory = fxElementsFactory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handle(DrawNode node) {
+    public void handleNode(DrawNode node) {
         Stage stage = new Stage();
         VBox box = new VBox();
         Label label = new Label("Enter radius:");
@@ -50,6 +54,11 @@ public class NodeCenter implements INodeHandler {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+    }
+
+    @Override
+    public void handleLine(Line line) {
+
     }
 
 }

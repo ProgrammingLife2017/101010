@@ -1,7 +1,7 @@
 package logging;
 
 import filesystem.FileSystem;
-import screens.Window;
+import gui.Window;
 
 import java.sql.Timestamp;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package screens;
+package gui;
 
 /**
  * Class that can store information about the current state on the drawn graph used for navigation.

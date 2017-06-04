@@ -1,4 +1,4 @@
-package screens;
+package gui;
 
 import datastructure.Node;
 import datastructure.NodeGraph;

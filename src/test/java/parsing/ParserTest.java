@@ -2,15 +2,16 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,11 +28,16 @@ public class ParserTest {
         String absoluteFilePath = workingDirectory + File.separator;
         File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
         File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
+        File genomes = new File(absoluteFilePath + "/src/main/resources/test2Genomes.txt");
+
         if (cache.exists()) {
             cache.delete();
         }
         if (segments.exists()) {
             segments.delete();
+        }
+        if (genomes.exists()) {
+            genomes.delete();
         }
     }
 
@@ -165,6 +171,30 @@ public class ParserTest {
                 }
             }
         } catch(Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void addGenomes() {
+        Parser parser = Parser.getInstance();
+        String workingDirectory = System.getProperty("user.dir");
+        String absoluteFilePath = workingDirectory + File.separator;
+        try {
+            parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(absoluteFilePath + "/src/main/resources/test2Genomes.txt"))));
+            assertEquals("10\tTKK-01-0015\tTKK-01-0026\tTKK-01-0029\tTKK-01-0058\tTKK-01-0066\tTKK_02_0018\tTKK_02_0068\tTKK_04_0002\tTKK_04_0031\tTKK_REF\t", br.readLine());
+            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("4\tTKK_02_0068\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
+            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("1\tTKK_04_0031\t", br.readLine());
+            assertEquals("5\tTKK_02_0068\tTKK-01-0066\tTKK_REF\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
+            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            br.close();
+        } catch(IOException e) {
+            e.printStackTrace();
             fail();
         }
     }

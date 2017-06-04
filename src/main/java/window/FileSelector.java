@@ -65,7 +65,7 @@ public final class FileSelector {
         File chosenFile = getInstance().showOpenDialog(ownerWindow);
         if (chosenFile != null && chosenFile.exists()) {
             logger.info("Selected file: " + chosenFile.getName());
-        } else if (chosenFile != null){
+        } else if (chosenFile != null) {
             logger.info("The selected file does not exist.");
         } else {
             logger.info("No file was selected.");

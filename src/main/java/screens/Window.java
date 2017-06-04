@@ -130,7 +130,7 @@ public class Window extends Application {
 
         indicatorBar.setWidth(mainPane.getWidth() - 20);
         indicatorBar.setX(10);
-        indicatorBar.setY(mainPane.getHeight() - 15);
+        indicatorBar.setY(mainPane.getHeight() - 25);
         indicatorBar.setHeight(10);
         indicatorBar.setFill(Color.GRAY);
 

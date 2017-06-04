@@ -96,10 +96,7 @@ public class Parser {
             parser = new Thread(() -> {
                 try {
                     int lineCounter = 1;
-                    LineNumberReader lnr = new LineNumberReader(new FileReader(file));
-                    lnr.skip(Long.MAX_VALUE);
-                    int nol = lnr.getLineNumber() + 1;
-                    lnr.close();
+                    int nol = getNumberOfLine(file);
                     String line2 = line1;
                     while (line2 != null) {
                         try {
@@ -130,10 +127,7 @@ public class Parser {
                                 line2 = in.readLine();
                                 lineCounter++;
                             }
-                            int finalCount = lineCounter;
-                            if (nol < 100 || finalCount % (nol / 100) == 0) {
-                                Platform.runLater(() -> Window.setProgress((double) finalCount / (double) nol));
-                            }
+                            updateProgressBar(lineCounter, nol);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -181,10 +175,7 @@ public class Parser {
             parser = new Thread(() -> {
                 int lineCounter = 0;
                 try {
-                    LineNumberReader lnr = new LineNumberReader(new FileReader(cache));
-                    lnr.skip(Long.MAX_VALUE);
-                    int nol = lnr.getLineNumber() + 1;
-                    lnr.close();
+                    int nol = getNumberOfLine(cache);
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());
                         int outLength = Integer.parseInt(in.readLine());
@@ -201,12 +192,9 @@ public class Parser {
                         }
                         Node temp = new Node(length, outgoing, incoming);
                         graph.addNodeCache(i, temp);
-
                         lineCounter = lineCounter + 5;
-                        int finalCount = lineCounter;
-                        if (nol < 100 || finalCount % (nol / 100) == 0) {
-                            Platform.runLater(() -> Window.setProgress((double) finalCount / (double) nol));
-                        }
+
+                        updateProgressBar(lineCounter, nol);
                     }
                     in.close();
                 } catch (IOException e) {
@@ -257,6 +245,32 @@ public class Parser {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns the number of lines in the given file.
+     * @param file The file we want to know the number of line of.
+     * @return The number of lines the given file contains.
+     * @throws IOException If the file cant be found this exception will be thrown.
+     */
+    private int getNumberOfLine(File file) throws IOException {
+        LineNumberReader lnr = new LineNumberReader(new FileReader(file));
+        lnr.skip(Long.MAX_VALUE);
+        int nol = lnr.getLineNumber() + 1;
+        lnr.close();
+
+        return nol;
+    }
+
+    /**
+     * Update the progressbar if enough progress is made.
+     * @param lineCount The current line the parser is within the file.
+     * @param nol The total number of lines in the file that is currently being parsed.
+     */
+    private void updateProgressBar(int lineCount, int nol) {
+        if (nol < 100 || lineCount % (nol / 100) == 0) {
+            Platform.runLater(() -> Window.setProgress((double) lineCount / (double) nol));
         }
     }
 

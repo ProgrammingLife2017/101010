@@ -4,10 +4,12 @@ import datastructure.DrawNode;
 import datastructure.DummyNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import parsing.Parser;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 
@@ -71,10 +73,24 @@ import java.util.Set;
      * Draws graph on the screen.
      * @param id Id of the node/segment.
      * @param radius Radius.
+     * @return The thread drawing is running in.
      */
-    public void drawGraph(final int id, final int radius) {
+    public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-        drawGraphUtil(id, radius);
+
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    Parser.getThread().join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                drawGraphUtil(id, radius);
+            }
+        };
+        thread.start();
+        return thread;
     }
 
     /**
@@ -91,7 +107,7 @@ import java.util.Set;
         for (DrawNode dNode : drawNodes) {
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
+            Platform.runLater(() -> this.getChildren().add(dNode));
             DrawNode nOut;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
@@ -272,7 +288,7 @@ import java.util.Set;
         l.setEndX(endX);
         l.setEndY(endY);
         l.setOnMousePressed(click);
-        this.getChildren().add(l);
+        Platform.runLater(() -> this.getChildren().add(l));
     }
     /**
      * Switches event handler to center queries.

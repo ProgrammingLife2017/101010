@@ -193,7 +193,7 @@ public class DummyEdge {
      */
     public int indexOfLayer(int x) {
         int res = -1;
-        if (traversesLayer(x)) {
+        if (!isEmpty() && traversesLayer(x)) {
             res = (x - getFirstX()) / 100;
         }
         return res;
@@ -211,6 +211,9 @@ public class DummyEdge {
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Tried to access a non existent Dummy Node in method setYOfLayer\n"
                     + "with args x: " + x + ", newY: " + newY + ", at index: " + i + ".");
+            if (i == -1) {
+                System.out.println("This index indicates that this DummyEdge does not have a Dummy Node in this layer.");
+            }
         }
     }
 
@@ -227,7 +230,48 @@ public class DummyEdge {
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Tried to access a non existent Dummy Node in method getYOfLayer\n"
                     + "with args x: " + x + ", at index: " + i + ".");
+            if (i == -1) {
+                System.out.println("This index indicates that this DummyEdge does not have a Dummy Node in this layer.");
+            }
         }
         return -1;
+    }
+
+    /**
+     * Removes the first Dummy Node of this DummyEdge.
+     */
+    public void removeFirst() {
+        int[][] newNodes = new int[Math.max(nodes.length - 1, 0)][];
+        for (int i = 0; i < newNodes.length; i++) {
+            newNodes[i] = nodes[i + 1];
+        }
+        nodes = newNodes;
+    }
+
+    /**
+     * Removes the last Dummy Node of this DummyEdge.
+     */
+    public void removeLast() {
+       int[][] newNodes = new int[Math.max(nodes.length - 1, 0)][];
+       for (int i = 0; i < newNodes.length; i++) {
+           newNodes[i] = nodes[i];
+       }
+       nodes = newNodes;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+       if (other instanceof DummyEdge) {
+           DummyEdge that = (DummyEdge) other;
+           return this.parent == that.parent && this.child == that.child;
+       }
+       return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = parent;
+        result = 31 * result + child;
+        return result;
     }
 }

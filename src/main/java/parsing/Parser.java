@@ -79,19 +79,25 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line = in.readLine();
+            line = in.readLine();
 
+            final String line1 = line;
             line = line.substring(line.indexOf('\t') + 1);
-            String line1 = line.replaceAll(":", "");
-
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
 
             String sDB = absoluteFilePath + "Segments.txt";
+            String genomesName = absoluteFilePath + "Genomes.txt";
             graph.setSegmentDB(new SegmentDB(sDB));
             File segments = new File(sDB);
+            File genomes = new File(genomesName);
 
             segments.createNewFile();
+            genomes.createNewFile();
 
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
+            BufferedWriter gw = new BufferedWriter(new FileWriter(genomes));
+
+            addGenomes(gw, line);
 
             parser = new Thread(() -> {
                 try {
@@ -110,6 +116,10 @@ public class Parser {
                                 graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
                                 out.write(segment + "\n");
                                 out.flush();
+                                line2 = line2.substring(line2.indexOf('\t') + 1);
+                                line2 = line2.substring(line2.indexOf('\t') + 1);
+                                String nodeGenomes = line2.substring(0, line2.indexOf('\t'));
+                                addGenomes(gw, nodeGenomes);
                                 line2 = in.readLine();
                                 lineCounter++;
                                 while (line2 != null && line2.startsWith("L")) {
@@ -134,6 +144,7 @@ public class Parser {
                     }
                     in.close();
                     out.close();
+                    gw.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -245,6 +256,28 @@ public class Parser {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Writes alle genomes in the string to the file given by the writer.
+     * @param gw Writer that writes the string.
+     * @param str String with the genomes.
+     */
+    private void addGenomes(BufferedWriter gw, String str) {
+        str = str.substring(str.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        String[] genomeTemp = str.split(";");
+        try {
+            gw.write(genomeTemp.length + "\t");
+            for (String string : genomeTemp) {
+                gw.write(string.substring(0, string.length() - 6) + "\t");
+            }
+            gw.write("\n");
+            gw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("adding genomes failed");
         }
     }
 

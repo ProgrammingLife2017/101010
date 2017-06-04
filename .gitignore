@@ -6,3 +6,6 @@
 #Generated files
 *.log
 directory.txt
+src/main/resources/test2.txt
+src/main/resources/test2Genomes.txt
+src/main/resources/test2Segments.txt

@@ -1,13 +1,13 @@
 package datastructure;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.TreeSet;
-import java.util.Queue;
-import java.util.Iterator;
-import java.util.ListIterator;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.TreeSet;
 
 
 /**
@@ -32,17 +32,17 @@ public class NodeGraph {
     /**
      * LinkedList of the dummynodes.
      */
-    private LinkedList<DummyNode> dummyNodes;
+    private LinkedList<DummyEdge> dummyEdges;
 
     /**
      * LinkedList of the nodes that are in the first layer.
      */
-    private LinkedList<Double> rootNodes;
+    private LinkedList<Integer> rootNodes;
 
     /**
      * LinkedList of the nodes that are in the last layer.
      */
-    private LinkedList<Double> leafNodes;
+    private LinkedList<Integer> leafNodes;
 
     /**
      * Instance of the current graph.
@@ -56,7 +56,7 @@ public class NodeGraph {
         this.nodes = new ArrayList<>(0);
         segments = new SegmentDB();
         drawNodes = new LinkedList<>();
-        dummyNodes = new LinkedList<>();
+        dummyEdges = new LinkedList<>();
     }
 
     /**
@@ -64,13 +64,13 @@ public class NodeGraph {
      * @param nodes The list of nodes for the graph.
      * @param segments The database containing the segments of the nodes.
      * @param drawNodes The LinkedList of nodes to be drawn.
-     * @param dummyNodes The LinkedList of DummyNodes.
+     * @param dummyEdges The LinkedList of DummyEdges.
      */
-    public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments, final LinkedList<DrawNode> drawNodes, final LinkedList<DummyNode> dummyNodes) {
+    public NodeGraph(final ArrayList<Node> nodes, final SegmentDB segments, final LinkedList<DrawNode> drawNodes, final LinkedList<DummyEdge> dummyEdges) {
         this.nodes = nodes;
         this.segments = segments;
         this.drawNodes = drawNodes;
-        this.dummyNodes = dummyNodes;
+        this.dummyEdges = dummyEdges;
     }
 
     /**
@@ -182,7 +182,7 @@ public class NodeGraph {
      */
     public void generateDrawNodes(int center, int radius) {
         drawNodes = new LinkedList<>();
-        dummyNodes = new LinkedList<>();
+        dummyEdges = new LinkedList<>();
         TreeSet<Integer> visited = new TreeSet<>();
         Queue<Integer> q = new LinkedList<>();
         int r = Math.min(radius, nodes.size());
@@ -202,7 +202,7 @@ public class NodeGraph {
         }
         topoSort();
         assignLayers();
-        computeDummyNodes();
+        computeDummyEdges();
         verticalSpacing();
         retrieveEdgeNodes();
     }
@@ -250,12 +250,7 @@ public class NodeGraph {
      * @return the updated list of nodes.
      */
     private LinkedList<DrawNode> newTopoSort(LinkedList<DrawNode> dNodes) {
-        LinkedList<DrawNode> sorted = new LinkedList<>();
-        while (!dNodes.isEmpty()) {
-            newTopoSortUtil(dNodes.getFirst(), sorted, dNodes);
-        }
-        dNodes = sorted;
-        return dNodes;
+
     }
 
     /**
@@ -265,18 +260,7 @@ public class NodeGraph {
      * @param dNodes current list of nodes to be sorted.
      */
     private void newTopoSortUtil(DrawNode current, LinkedList<DrawNode> sorted, LinkedList<DrawNode> dNodes) {
-        if (!sorted.contains(current)) {
-            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
-                for (DrawNode temp : dNodes) {
-                    if (temp.getIndex() == i) {
-                        newTopoSortUtil(temp, sorted, dNodes);
-                        break;
-                    }
-                }
-            }
-            sorted.addLast(current);
-            dNodes.remove(current);
-        }
+
     }
 
     /**
@@ -330,22 +314,7 @@ public class NodeGraph {
      * @param newNodes the new leaf nodes.
      */
     private void assignLayersLeaf(LinkedList<DrawNode> newNodes) {
-        ListIterator<DrawNode> it = newNodes.listIterator();
-        double layer = drawNodes.getFirst().getX();
-        DrawNode current;
 
-        while (it.hasNext()) {
-            current = it.next();
-
-            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
-                for (DrawNode temp : newNodes) {
-                    if (temp.getIndex() == i && temp.getX() > layer) {
-                        layer = temp.getX();
-                    }
-                }
-            }
-            current.setX(layer + 100);
-        }
     }
 
     /**
@@ -353,64 +322,74 @@ public class NodeGraph {
      * @param newNodes the new root nodes.
      */
     private void assignLayersRoot(LinkedList<DrawNode> newNodes) {
-        ListIterator<DrawNode> it = newNodes.listIterator(newNodes.size());
-        double layer = drawNodes.getLast().getX();
-        DrawNode current;
 
-        while (it.hasPrevious()) {
-            current = it.previous();
-
-            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
-                for (DrawNode temp : newNodes) {
-                    if (temp.getIndex() == i && temp.getX() < layer) {
-                        layer = temp.getX();
-                    }
-                }
-            }
-            current.setX(layer - 100);
-        }
     }
 
     /**
-     * Adds dummy nodes to make the graph more readable.
+     * Adds dummy edges to make the graph more readable.
      */
-    private void computeDummyNodes() {
-        ListIterator<DrawNode> it = drawNodes.listIterator();
-        Queue<DummyNode> dummyNodeQueue = new LinkedList<>();
-        DrawNode current;
-        DrawNode cDrawNode;
-        DummyNode cDummyNode;
-        double currentLayer = 1200;
-        int[] edges;
-
-        while (it.hasNext()) {
-            current = it.next();
-
-            if (current.getX() != currentLayer) {
-                currentLayer -= 100;
-                while (!dummyNodeQueue.isEmpty()) {
-                    cDummyNode = dummyNodeQueue.poll();
-                    cDrawNode = getDrawNode(cDummyNode.getFrom());
-                    Queue<DummyNode> temp = new LinkedList<>();
-                    if (cDrawNode != null && Math.abs(cDummyNode.getX() - cDrawNode.getX()) > 100) {
-                        temp.offer(new DummyNode(cDummyNode.getId() - 1, cDummyNode.getFrom(), cDummyNode.getTo(), cDummyNode.getX() - 100, 50));
-                    } else if (cDrawNode == null && drawNodes.peekLast().getX() < cDummyNode.getX()) {
-                        temp.offer(new DummyNode(cDummyNode.getId() - 1, cDummyNode.getFrom(), cDummyNode.getTo(), cDummyNode.getX() - 100, 50));
+    private void computeDummyEdges() {
+        Node currentNode;
+        DrawNode otherDrawNode;
+        DummyEdge edge;
+        for (DrawNode currentDrawNode : drawNodes) {
+            currentNode = nodes.get(currentDrawNode.getIndex());
+            for (int i : currentNode.getIncomingEdges()) {
+                otherDrawNode = getDrawNode(i);
+                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getX() - otherDrawNode.getX()) > 100)) {
+                    edge = new DummyEdge(i, currentDrawNode.getIndex());
+                    if (!dummyEdges.contains(edge)) {
+                    edge.addFirst((int) currentDrawNode.getX() - 100, (int) currentDrawNode.getY());
+                        dummyEdges.add(edge);
                     }
-                    dummyNodes.addLast(cDummyNode);
-                    dummyNodeQueue = temp;
                 }
             }
-
-            edges = nodes.get(current.getIndex()).getIncomingEdges();
-
-            for (int i : edges) {
-                cDrawNode = getDrawNode(i);
-                if (cDrawNode != null && Math.abs(current.getX() - cDrawNode.getX()) > 100) {
-                    dummyNodeQueue.add(new DummyNode(-1, cDrawNode.getIndex(), current.getIndex(), (int) currentLayer - 100, 50));
-                } else if (cDrawNode == null && drawNodes.peekLast().getX() < currentLayer) {
-                    dummyNodeQueue.add(new DummyNode(-1, i, current.getIndex(), (int) currentLayer - 100, 50));
+            for (int i : currentNode.getOutgoingEdges()) {
+                otherDrawNode = getDrawNode(i);
+                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getX() - otherDrawNode.getX()) > 100)) {
+                    edge = new DummyEdge(currentDrawNode.getIndex(), i);
+                    if (!dummyEdges.contains(edge)) {
+                        edge.addFirst((int) currentDrawNode.getX() + 100, (int) currentDrawNode.getY());
+                        dummyEdges.add(edge);
+                    }
                 }
+            }
+        }
+        updateDummyEdges();
+    }
+
+    /**
+     * Fills Dummy Edges with Dummy Nodes to fit the subgraph's size.
+     */
+    private void updateDummyEdges() {
+        Iterator<DummyEdge> it = dummyEdges.iterator();
+        DummyEdge currentDummyEdge;
+        DrawNode currentParent;
+        DrawNode currentChild;
+
+        while (it.hasNext()) {
+            currentDummyEdge = it.next();
+            currentParent = getDrawNode(currentDummyEdge.getParent());
+            currentChild = getDrawNode(currentDummyEdge.getChild());
+            if (currentParent == null && currentChild == null) {
+               dummyEdges.remove(currentDummyEdge);
+            } else if (currentParent == null) {
+                while (currentDummyEdge.getFirstX() < drawNodes.getFirst().getBoundsInLocal().getMinX()) {
+                    currentDummyEdge.removeFirst();
+                }
+                while (currentDummyEdge.getFirstX() >= drawNodes.getFirst().getBoundsInLocal().getMinX()) {
+                    currentDummyEdge.addFirst();
+                }
+            } else if (currentChild == null) {
+                while (currentDummyEdge.getLastX() > drawNodes.getLast().getBoundsInLocal().getMaxX()) {
+                    currentDummyEdge.removeLast();
+                }
+                while (currentDummyEdge.getLastX() <= drawNodes.getLast().getBoundsInLocal().getMaxX()) {
+                    currentDummyEdge.addLast();
+                }
+            }
+            if (currentDummyEdge.isEmpty()) {
+                dummyEdges.remove(currentDummyEdge);
             }
         }
     }
@@ -756,7 +735,7 @@ public class NodeGraph {
      * @return the x-coordinate of the leaf nodes to be deleted.
      */
     public double removeAtLeaf() {
-        ArrayList<Integer> visited = new ArrayList<Integer>();;
+        ArrayList<Integer> visited = new ArrayList<>();
         for (Double id : leafNodes) {
             if (id >= 0) {
                 for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {

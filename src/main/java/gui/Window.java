@@ -13,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
@@ -54,6 +55,8 @@ public class Window extends Application {
      */
     private static InfoScreen infoScreen;
 
+    private Controller controller;
+
     private FXElementsFactory fxElementsFactory;
 
     /**
@@ -73,6 +76,7 @@ public class Window extends Application {
         stage.show();
         logger.info("the main application has started");
     }
+
     /**
      * Sets up the necessary services.
      */
@@ -82,17 +86,24 @@ public class Window extends Application {
         logger = loggerFactory.createLogger(this.getClass());
         fxElementsFactory = new FXElementsFactory();
         graphScene = new GraphScene(fxElementsFactory);
+        graphScene.toBack();
         infoScreen = new InfoScreen(fxElementsFactory);
+        controller = new Controller(fxElementsFactory, graphScene);
     }
 
     private BorderPane createMainPane(Stage stage) {
         BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(stage));
         pane.setCenter(graphScene);
-        pane.setRight(infoScreen);
-        pane.toBack();
+        pane.setLeft(createSidePane(infoScreen, controller));
         pane.setMaxWidth(stage.getWidth() - infoScreen.getWidth());
         return pane;
+    }
+
+    private Pane createSidePane(Pane info, Pane control) {
+        VBox box = new VBox();
+        box.getChildren().addAll(info, control);
+        return box;
     }
 
     private void setStageSettings(Stage stage) {
@@ -226,7 +237,7 @@ public class Window extends Application {
      * Creates a popup containing an error message if the user gives invalid input.
      * @param message The error message.
      */
-    private void errorPopup(String message) {
+    public static void errorPopup(String message) {
         Stage newStage = new Stage();
         Label label = new Label(message);
         Group group = new Group();

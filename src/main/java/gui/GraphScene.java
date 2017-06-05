@@ -61,7 +61,7 @@ import java.util.Set;
      * @param fact the Factory used to create JavaFX elements.
      */
      /*package*/ GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this, fact);
+         center = new NodeCenter(this);
          info = new NodeInfo();
          state = info;
          this.fxElementsFactory = fact;
@@ -74,6 +74,7 @@ import java.util.Set;
      */
     public void drawGraph(final int id, final int radius) {
         this.getChildren().clear();
+        Controller.setCurrentCenter(id);
         drawGraphUtil(id, radius);
     }
 

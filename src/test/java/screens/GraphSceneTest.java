@@ -147,4 +147,23 @@ public class GraphSceneTest {
             }
         }
     }
+
+    @Test
+    public void clearGenomeSelect() {
+        LinkedList<DrawNode> drawNodes = new LinkedList<DrawNode>();
+        for (int i = -10; i < 25; i++) {
+            drawNodes.add(new DrawNode(i));
+        }
+        ngTest = new NodeGraph(null, null, drawNodes, null);
+        NodeGraph.setCurrentInstance(ngTest);
+        Set<Integer> genomes = new HashSet<Integer>();
+        for (int i = 0; i < 15 ; i++) {
+            genomes.add(i);
+        }
+        gs.genomeSelect(genomes);
+        gs.clearGenomeSelect();
+        for (int i = 0; i < 35; i++) {
+            assertEquals(Color.CRIMSON, drawNodes.get(i).getFill());
+        }
+    }
 }

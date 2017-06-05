@@ -196,7 +196,7 @@ public class NodeGraph {
             addEdges(current, q, visited);
             drawNode = new DrawNode(current);
             drawNode.setWidth(nodes.get(current).getLength());
-            drawNode.setFill(Color.CRIMSON);
+            colorDrawNode(drawNode);
             drawNode.setHeight(10);
             drawNodes.addLast(drawNode);
         }
@@ -622,7 +622,7 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                newNodes.get(i).setFill(Color.CRIMSON);
+                colorDrawNode(newNodes.get(i));
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyIn = nodes.get(newNodes.get(i).getIndex());
@@ -688,7 +688,7 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                newNodes.get(i).setFill(Color.CRIMSON);
+                colorDrawNode(newNodes.get(i));
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyOut = nodes.get(newNodes.get(i).getIndex());
@@ -813,5 +813,23 @@ public class NodeGraph {
      */
     protected LinkedList<Double> getLeafNodes() {
         return leafNodes;
+    }
+
+    private void colorDrawNode(DrawNode drawNode) {
+        String segment = getSegment(drawNode.getIndex()).substring(0,1);
+        switch (segment) {
+            case "A":   drawNode.setStroke(Color.CRIMSON);
+                break;
+            case "T":   drawNode.setStroke(Color.BLUE);
+                break;
+            case "C":   drawNode.setStroke(Color.CYAN);
+                break;
+            case "G":   drawNode.setStroke(Color.YELLOW);
+                break;
+            default:    drawNode.setStroke(Color.PURPLE);
+                break;
+        }
+        drawNode.setFill(Color.BLACK);
+        drawNode.setStrokeWidth(2.0);
     }
 }

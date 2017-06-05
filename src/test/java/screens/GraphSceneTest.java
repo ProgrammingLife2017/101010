@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.collections.ObservableList;
@@ -7,6 +8,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +20,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -117,5 +124,27 @@ public class GraphSceneTest {
         verify(fact, never()).setScene(stage, scene);
         verify(group, never()).getChildren();
         verify(fact, never()).show(stage);
+    }
+
+    @Test
+    public void genomeSelect() {
+        LinkedList<DrawNode> drawNodes = new LinkedList<DrawNode>();
+        for (int i = -10; i < 25; i++) {
+            drawNodes.add(new DrawNode(i));
+        }
+        ngTest = new NodeGraph(null, null, drawNodes, null);
+        NodeGraph.setCurrentInstance(ngTest);
+        Set<Integer> genomes = new HashSet<Integer>();
+        for (int i = 0; i < 15 ; i++) {
+            genomes.add(i);
+        }
+        gs.genomeSelect(genomes);
+        for (int i = 0; i < 35; i++) {
+            if (drawNodes.get(i).getIndex() >= 0 && drawNodes.get(i).getIndex() < 15) {
+                assertEquals(Color.GREEN, drawNodes.get(i).getFill());
+            } else {
+                assertEquals(Color.CRIMSON, drawNodes.get(i).getFill());
+            }
+        }
     }
 }

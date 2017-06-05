@@ -411,8 +411,8 @@ public class NodeGraph {
     private void retrieveEdgeNodes() {
         rootNodes = new LinkedList<>();
         leafNodes = new LinkedList<>();
-        double startX = drawNodes.getLast().getX();
-        double endX = drawNodes.getFirst().getX();
+        int startX = drawNodes.getLast().getLayer();
+        int endX = drawNodes.getFirst().getLayer();
 
         retrieveDrawNodes(startX, endX);
         retrieveDummies(startX, endX);
@@ -423,13 +423,13 @@ public class NodeGraph {
      * @param startX the leftmost layer.
      * @param endX the rightmost layer.
      */
-    private void retrieveDrawNodes(double startX, double endX) {
+    private void retrieveDrawNodes(int startX, int endX) {
         Iterator<DrawNode> it = drawNodes.iterator();
 
         DrawNode temp;
         while (it.hasNext()) {
             temp = it.next();
-            if (temp.getLayer() <= endX && temp.getLayer() >= endX) {
+            if (temp.getLayer() == endX) {
                 leafNodes.add(temp.getIndex());
             } else {
                 break;
@@ -440,7 +440,7 @@ public class NodeGraph {
 
         while (rit.hasNext()) {
             temp = rit.next();
-            if (temp.getLayer() <= startX && temp.getLayer() >= startX) {
+            if (temp.getLayer() == startX) {
                 rootNodes.add(temp.getIndex());
             } else {
                 break;
@@ -453,8 +453,15 @@ public class NodeGraph {
      * @param startX the leftmost layer.
      * @param endX the rightmost layer.
      */
-    private void retrieveDummies(double startX, double endX) {
-
+    private void retrieveDummies(int startX, int endX) {
+        for (DummyEdge edge : dummyEdges) {
+            if (edge.getFirstX() == startX) {
+                rootNodes.addLast(-edge.getParent());
+            }
+            if (edge.getLastX() == endX) {
+                leafNodes.add(-edge.getChild());
+            }
+        }
     }
 
     /**

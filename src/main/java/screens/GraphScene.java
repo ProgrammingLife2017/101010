@@ -88,7 +88,7 @@ import java.util.LinkedList;
             for (int i : nodeGraph.getNode(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
                 if (nOut != null && nOut.getLayer() - dNode.getLayer() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+                    drawLine(dNode, nOut, 2);
                 }
             }
         }

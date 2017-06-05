@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -27,6 +28,7 @@ import window.FileSelector;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+
 
 /**
  * Main application.
@@ -60,6 +62,11 @@ public class Window extends Application {
     private static InfoScreen infoScreen = null;
 
     /**
+     * The load bar which shows how far the parser is.
+     */
+    private static ProgressBar pB;
+
+    /**
      * A rectangle that shows where the user is in the the graph.
      */
     private static Rectangle indicator;
@@ -84,6 +91,14 @@ public class Window extends Application {
 
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
+
+        pB = new ProgressBar();
+        pB.setVisible(false);
+        pB.setMaxWidth(1212);
+        pB.setPrefHeight(10.0);
+        pB.setMinHeight(10.0);
+        pB.setProgress(0.0);
+        mainPane.setBottom(pB);
 
         Rectangle indicatorBar = new Rectangle();
         indicator = new Rectangle();
@@ -115,7 +130,7 @@ public class Window extends Application {
 
         indicatorBar.setWidth(mainPane.getWidth() - 20);
         indicatorBar.setX(10);
-        indicatorBar.setY(mainPane.getHeight() - 15);
+        indicatorBar.setY(mainPane.getHeight() - 25);
         indicatorBar.setHeight(10);
         indicatorBar.setFill(Color.GRAY);
 
@@ -197,14 +212,39 @@ public class Window extends Application {
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
+                        pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-                        graphScene.drawGraph(0, 200);
-                        graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
-                        graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-                        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-                        graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
 
-                        logger.info("file has been selected");
+                        new Thread() {
+                            public void run () {
+                                try {
+                                    Parser.getThread().join();
+
+                                    this.join(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                pB.setVisible(false);
+                                pB.setProgress(0.0);
+                            }
+                        }.start();
+
+                        Thread drawing = graphScene.drawGraph(0, 200);
+
+                        new Thread(() -> {
+                            try {
+                                drawing.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
+                            graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+                            LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+                            graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
+
+                            logger.info("file has been selected");
+                        }).start();
                     }
                 }
         );
@@ -343,6 +383,15 @@ public class Window extends Application {
         newStage.setScene(scene);
         newStage.show();
     }
+
+    /**
+     * Sets the progress of the ProgressBar to the given value.
+     * @param progress the new progress to be shown.
+     */
+    public static void setProgress(double progress) {
+        pB.setProgress(progress);
+    }
+
     /**
      * The initialization of the game.
      * @param args the arguments to run.

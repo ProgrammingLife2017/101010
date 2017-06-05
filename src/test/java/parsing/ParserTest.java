@@ -2,23 +2,33 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
-import org.junit.After;
-import org.junit.Test;
+import javafx.application.Platform;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+
+import org.junit.After;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 
 /**
  * Created by 101010.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Platform.class})
 public class ParserTest {
 
     @After
@@ -27,11 +37,16 @@ public class ParserTest {
         String absoluteFilePath = workingDirectory + File.separator;
         File cache = new File(absoluteFilePath + "/src/main/resources/test2.txt");
         File segments = new File(absoluteFilePath + "/src/main/resources/test2Segments.txt");
+        File genomes = new File(absoluteFilePath + "/src/main/resources/test2Genomes.txt");
+
         if (cache.exists()) {
             cache.delete();
         }
         if (segments.exists()) {
             segments.delete();
+        }
+        if (genomes.exists()) {
+            genomes.delete();
         }
     }
 
@@ -44,27 +59,53 @@ public class ParserTest {
 
     @Test
     public void parse() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
 
         String absoluteFilePath = workingDirectory + File.separator;
         NodeGraph data = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
+        try {
+            Parser.getThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         assertEquals(2221, data.getSegment(7).length());
         assertTrue(data.getSegment(7).length() != 0);
 
-
         NodeGraph data2 = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
-        assertEquals(2221, data2.getSegment(7).length());
-        assertTrue(data2.getSegment(7).length() != 0);
+        try {
+            Parser.getThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(2221, data.getSegment(7).length());
+        assertTrue(data.getSegment(7).length() != 0);
     }
 
     @Test
     public void createCache() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
 
         String absoluteFilePath = workingDirectory + File.separator;
         NodeGraph data = parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
+
+        try {
+            Parser.getThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(absoluteFilePath + "/src/main/resources/test2.txt"))));
             assertEquals(data.getSize(), Integer.parseInt(br.readLine()));
@@ -86,8 +127,6 @@ public class ParserTest {
                 for (int j = 0; j < in.length; j++) {
                     assertEquals(in[j], Integer.parseInt(tempLine[j]));
                 }
-
-
             }
             br.close();
         } catch(Exception e) {
@@ -98,6 +137,10 @@ public class ParserTest {
 
     @Test
     public void parseCache() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
         parsing.Parser parser = parsing.Parser.getInstance();
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
@@ -149,6 +192,13 @@ public class ParserTest {
             graph.addNode(3, node4);
             NodeGraph testGraph = new NodeGraph();
             parser.parseCache(testGraph, file);
+
+            try {
+                Parser.getThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             file.delete();
             assertEquals(graph.getSize(), testGraph.getSize());
             Node testNode1;
@@ -165,6 +215,40 @@ public class ParserTest {
                 }
             }
         } catch(Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void addGenomes() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+
+        Parser parser = Parser.getInstance();
+        String workingDirectory = System.getProperty("user.dir");
+        String absoluteFilePath = workingDirectory + File.separator;
+        try {
+            parser.parse(new File(absoluteFilePath + "/src/main/resources/test2.gfa"));
+            try {
+                Parser.getThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(absoluteFilePath + "/src/main/resources/test2Genomes.txt"))));
+            assertEquals("10\tTKK-01-0015\tTKK-01-0026\tTKK-01-0029\tTKK-01-0058\tTKK-01-0066\tTKK_02_0018\tTKK_02_0068\tTKK_04_0002\tTKK_04_0031\tTKK_REF\t", br.readLine());
+            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("4\tTKK_02_0068\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
+            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("1\tTKK_04_0031\t", br.readLine());
+            assertEquals("5\tTKK_02_0068\tTKK-01-0066\tTKK_REF\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
+            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            br.close();
+        } catch(IOException e) {
+            e.printStackTrace();
             fail();
         }
     }

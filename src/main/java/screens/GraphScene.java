@@ -1,20 +1,15 @@
 package screens;
 
 import datastructure.DrawNode;
-import datastructure.DummyNode;
-import datastructure.Node;
+import datastructure.DummyEdge;
 import datastructure.NodeGraph;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 /**
  * Implementation of the window that handles graph visualization.
@@ -85,71 +80,65 @@ import java.util.Set;
     private void drawGraphUtil(int center, int radius) {
         NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
         nodeGraph.generateDrawNodes(center, radius);
-        ArrayList<Node> nodes = nodeGraph.getNodes();
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
-        LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
+
         for (DrawNode dNode : drawNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
+            drawNode(dNode);
             DrawNode nOut;
-            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
+            for (int i : nodeGraph.getNode(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
-                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+                if (nOut != null && nOut.getLayer() - dNode.getLayer() <= 100) {
                     drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
             }
         }
 
-        DummyNode current;
-        DummyNode current2;
-        DrawNode dN;
-        Set<DummyNode> visited = new HashSet<>();
-        for (int i = dummyNodes.size() - 1; i >= 0; i--) {
-            current = dummyNodes.get(i);
-            if (!visited.contains(current)) {
-                visited.add(current);
-                if (!visited.contains(current.prevInEdge())) {
-                    dN = nodeGraph.getDrawNode(current.getFrom());
-                    if (dN != null) {
-                        drawLine(current.getFrom() + "-" + current.getTo(), 2, dN.getBoundsInLocal().getMaxX(), dN.getBoundsInLocal().getMinY() + 5, current.getX(), current.getY() + 5);
-                    }
-                }
-                for (int j = i; j >= 0; j--) {
-                    current2 = dummyNodes.get(j);
-                    if (current.nextInEdge(current2)) {
-                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, current2.getX(), current2.getY() + 5);
-                    }
-                }
-                if (current.getId() == -1) {
-                    dN = nodeGraph.getDrawNode(current.getTo());
-                    if (dN != null) {
-                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, dN.getBoundsInLocal().getMinX(), dN.getBoundsInLocal().getMinY() + 5);
-                    }
-                }
+        drawDummies();
+    }
+
+    /**
+     * Draws the DummyEdges from the nodegraph.
+     */
+    private void drawDummies() {
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        LinkedList<DummyEdge> dummyEdges = nodeGraph.getDummyEdges();
+        DrawNode parent;
+        DrawNode child;
+        String id;
+
+        for (DummyEdge e : dummyEdges) {
+            parent = nodeGraph.getDrawNode(e.getParent());
+            child = nodeGraph.getDrawNode(e.getChild());
+            id = e.getParent() + "-" + e.getChild();
+            if (parent != null) {
+                drawLine(parent, e, 2);
+            } else {
+                drawLine(id, 2, e.getFirstX() - 100,
+                        e.getFirstY() + 5, e.getFirstX(),
+                        e.getFirstY() + 5);
+            }
+            for (int i = 1; i < e.getLength(); i++) {
+                drawLine(id, 2, e.getX(i - 1),
+                        e.getY(i - 1) + 5, e.getX(i),
+                        e.getY(i) + 5);
+            }
+            if (child != null) {
+                drawLine(e, child, 2);
+            } else {
+                drawLine(id, 2, e.getLastX(),
+                        e.getLastY() + 5, e.getLastX() + 100,
+                        e.getLastY() + 5);
             }
         }
     }
+
     /**
      * Draws new root nodes.
      * @param newNodes the new root nodes.
      * @param newDummies the dummy nodes needed to draw the nodes.
      */
-    private void drawUpdateRoot(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummies) {
-        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
-        ArrayList<Node> nodes = nodeGraph.getNodes();
-        for (DrawNode dNode : newNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
-            DrawNode nOut;
-            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
-                nOut = nodeGraph.getDrawNode(i);
-                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
-                }
-            }
-        }
+    private void drawUpdateRoot(LinkedList<DrawNode> newNodes, LinkedList<DummyEdge> newDummies) {
+
     }
 
     /**
@@ -157,21 +146,8 @@ import java.util.Set;
      * @param newNodes the new leaf nodes.
      * @param newDummies the dummy nodes needed to draw the nodes.
      */
-    private void drawUpdateLeaf(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummies) {
-        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
-        ArrayList<Node> nodes = nodeGraph.getNodes();
-        for (DrawNode dNode : newNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
-            DrawNode nOut;
-            for (int i : nodes.get(dNode.getIndex()).getIncomingEdges()) {
-                nOut = nodeGraph.getDrawNode(i);
-                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(i + "-" + dNode.getIndex(), 2, dNode.getBoundsInLocal().getMinX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMaxX(), nOut.getBoundsInLocal().getMinY() + 5);
-                }
-            }
-        }
+    private void drawUpdateLeaf(LinkedList<DrawNode> newNodes, LinkedList<DummyEdge> newDummies) {
+
     }
 
     /**
@@ -180,16 +156,7 @@ import java.util.Set;
      * @param transY y-coordinate of cursor
      */
     public void zoomOut(double transX, double transY) {
-        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        if (drawNodes.size() < NodeGraph.getCurrentInstance().getNodes().size()) {
-            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
-            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
-            drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
-            drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
-            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-            setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
-        }
+
     }
 
     /**
@@ -198,16 +165,7 @@ import java.util.Set;
      * @param transY y-coordinate of cursor
      */
     public void zoomIn(double transX, double transY) {
-        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        if (drawNodes.size() > 3) {
-            double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
-            removeNodesLeaf(maxX);
-            double minX = NodeGraph.getCurrentInstance().removeAtRoot();
-            removeNodesRoot(minX);
-            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-            setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
-            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
-        }
+
     }
 
     /**
@@ -215,21 +173,7 @@ import java.util.Set;
      * @param minX x-coordinate of nodes to remove.
      */
     private void removeNodesRoot(double minX) {
-        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
-        for (javafx.scene.Node drawElement: this.getChildren()) {
-            if (drawElement instanceof Rectangle) {
-                Rectangle rect = (Rectangle) drawElement;
-                if (rect.getX() < minX) {
-                    remove.add(rect);
-                }
-            } else if (drawElement instanceof Line) {
-                Line line = (Line) drawElement;
-                if (line.getStartX() < minX) {
-                    remove.add(line);
-                }
-            }
-        }
-        this.getChildren().removeAll(remove);
+
     }
 
     /**
@@ -237,21 +181,63 @@ import java.util.Set;
      * @param maxX x-coordinate of nodes to remove.
      */
     private void removeNodesLeaf(double maxX) {
-        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
-        for (javafx.scene.Node drawElement: this.getChildren()) {
-            if (drawElement instanceof Rectangle) {
-                Rectangle rect = (Rectangle) drawElement;
-                if (rect.getX() > maxX) {
-                    remove.add(rect);
-                }
-            } else if (drawElement instanceof Line) {
-                Line line = (Line) drawElement;
-                if (line.getStartX() > maxX) {
-                    remove.add(line);
-                }
-            }
-        }
-        this.getChildren().removeAll(remove);
+
+    }
+
+    /**
+     * Draws a DrawNode.
+     * @param node The DrawNode.
+     */
+    private void drawNode(DrawNode node) {
+        node.setWidth(NodeGraph.getCurrentInstance().getNode(node.getIndex()).getLength());
+        node.setX(node.getLayer() - node.getWidth() / 2);
+        node.setHeight(10);
+        node.setFill(Color.CRIMSON);
+        node.setOnMousePressed(click);
+        this.getChildren().add(node);
+    }
+
+    /**
+     * Draws a line from the parent node to the child node.
+     * @param parent The parent node.
+     * @param child The child node.
+     * @param width The width of the line.
+     */
+    private void drawLine(DrawNode parent, DrawNode child, double width) {
+        drawLine(parent.getIndex() + "-" + child.getIndex(), width,
+                parent.getBoundsInLocal().getMaxX(),
+                parent.getBoundsInLocal().getMinY() + 5,
+                child.getBoundsInLocal().getMinX(),
+                child.getBoundsInLocal().getMinY() + 5);
+    }
+
+    /**
+     * Draws the first line from a parent node to a child node through a dummy edge.
+     * @param parent The parent node.
+     * @param edge The dummy edge.
+     * @param width The width of the line.
+     */
+    private void drawLine(DrawNode parent, DummyEdge edge, double width) {
+        drawLine(parent.getIndex() + "-" + edge.getChild(), width,
+                parent.getBoundsInLocal().getMaxX(),
+                parent.getBoundsInLocal().getMinY() + 5,
+                edge.getFirstX(),
+                edge.getFirstY() + 5
+                );
+    }
+
+    /**
+     * Draws the last line to a child node from a parent node through a dummy edge.
+     * @param edge The dummy edge.
+     * @param child The child node.
+     * @param width The width of the line.
+     */
+    private void drawLine(DummyEdge edge, DrawNode child, double width) {
+        drawLine(edge.getParent() + "-" + child.getIndex(), width,
+                edge.getLastX(), edge.getLastY() + 5,
+                child.getBoundsInLocal().getMinX(),
+                child.getBoundsInLocal().getMinY() + 5
+                );
     }
 
     /**
@@ -274,6 +260,7 @@ import java.util.Set;
         l.setOnMousePressed(click);
         this.getChildren().add(l);
     }
+
     /**
      * Switches event handler to center queries.
      */

@@ -420,11 +420,6 @@ public class DummyEdgeTest {
     }
 
     @Test
-    public void equalsSelf() {
-        assertTrue(dummyEdge.equals(dummyEdge));
-    }
-
-    @Test
     public void equalsOtherSame() {
         DummyEdge other = new DummyEdge(0, 1);
         assertTrue(dummyEdge.equals(other));

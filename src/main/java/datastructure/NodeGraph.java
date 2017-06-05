@@ -1,8 +1,5 @@
 package datastructure;
 
-import javafx.scene.paint.Color;
-import javafx.util.Pair;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -190,20 +187,17 @@ public class NodeGraph {
         visited.add(center);
         q.offer(center);
         int current;
-        DrawNode drawNode;
 
         while (drawNodes.size() < r) {
             current = q.poll();
             addEdges(current, q, visited);
-            drawNode = new DrawNode(current);
-            drawNode.setWidth(nodes.get(current).getLength());
-            drawNode.setFill(Color.CRIMSON);
-            drawNode.setHeight(10);
-            drawNodes.addLast(drawNode);
+            drawNodes.addLast(new DrawNode(current));
         }
-        topoSort();
+        topologicalSort();
         assignLayers();
         computeDummyEdges();
+        updateDummyEdges();
+        dummyEdgeSpacing();
         verticalSpacing();
         retrieveEdgeNodes();
     }
@@ -237,31 +231,12 @@ public class NodeGraph {
     /**
      * Sort the drawNodes.
      */
-    private void topoSort() {
+    private void topologicalSort() {
         LinkedList<DrawNode> sorted = new LinkedList<>();
         while (!drawNodes.isEmpty()) {
-            topoSortUtil(drawNodes.getFirst(), sorted);
+            topologicalSortUtil(drawNodes.getFirst(), sorted);
         }
         drawNodes = sorted;
-    }
-
-    /**
-     * Sort the nodes to be drawn.
-     * @param dNodes the nodes to be drawn.
-     * @return the updated list of nodes.
-     */
-    private LinkedList<DrawNode> newTopoSort(LinkedList<DrawNode> dNodes) {
-
-    }
-
-    /**
-     * Recursive method for topological sorting.
-     * @param current current node.
-     * @param sorted current list of sorted nodes.
-     * @param dNodes current list of nodes to be sorted.
-     */
-    private void newTopoSortUtil(DrawNode current, LinkedList<DrawNode> sorted, LinkedList<DrawNode> dNodes) {
-
     }
 
     /**
@@ -269,12 +244,12 @@ public class NodeGraph {
      * @param current the current node.
      * @param sorted the list which holds all sorted nodes.
      */
-    private void topoSortUtil(DrawNode current, LinkedList<DrawNode> sorted) {
+    private void topologicalSortUtil(DrawNode current, LinkedList<DrawNode> sorted) {
         if (!sorted.contains(current)) {
-            for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
+            for (int i : getNode(current.getIndex()).getOutgoingEdges()) {
                 for (DrawNode temp : drawNodes) {
                     if (temp.getIndex() == i) {
-                        topoSortUtil(temp, sorted);
+                        topologicalSortUtil(temp, sorted);
                         break;
                     }
                 }
@@ -289,41 +264,24 @@ public class NodeGraph {
      */
     private void assignLayers() {
         Iterator<DrawNode> it = drawNodes.iterator();
-        double layer = 1200;
+        int layer = 1200;
         DrawNode current;
 
         while (it.hasNext()) {
             current = it.next();
 
              int size = drawNodes.size();
-             for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
+             for (int i : getNode(current.getIndex()).getOutgoingEdges()) {
                  for (int j = 0; j < size; j++) {
                      DrawNode temp = drawNodes.get(j);
-                     int ind2 = temp.getIndex();
-                     if (temp.getIndex() == i && temp.getX() < layer) {
-                         layer = temp.getX();
+                     if (temp.getIndex() == i && temp.getLayer() < layer) {
+                         layer = temp.getLayer();
                      }
                  }
              }
 
-            current.setX(layer - 100);
+            current.setLayer(layer - 100);
         }
-    }
-
-    /**
-     * Assign layers to the new leaf nodes.
-     * @param newNodes the new leaf nodes.
-     */
-    private void assignLayersLeaf(LinkedList<DrawNode> newNodes) {
-
-    }
-
-    /**
-     * Assigns layers to the new root nodes.
-     * @param newNodes the new root nodes.
-     */
-    private void assignLayersRoot(LinkedList<DrawNode> newNodes) {
-
     }
 
     /**
@@ -334,29 +292,28 @@ public class NodeGraph {
         DrawNode otherDrawNode;
         DummyEdge edge;
         for (DrawNode currentDrawNode : drawNodes) {
-            currentNode = nodes.get(currentDrawNode.getIndex());
+            currentNode = getNode(currentDrawNode.getIndex());
             for (int i : currentNode.getIncomingEdges()) {
                 otherDrawNode = getDrawNode(i);
-                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getX() - otherDrawNode.getX()) > 100)) {
+                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
                     edge = new DummyEdge(i, currentDrawNode.getIndex());
                     if (!dummyEdges.contains(edge)) {
-                    edge.addFirst((int) currentDrawNode.getX() - 100, (int) currentDrawNode.getY());
+                        edge.addLast(currentDrawNode.getLayer() - 100, (int) currentDrawNode.getY());
                         dummyEdges.add(edge);
                     }
                 }
             }
             for (int i : currentNode.getOutgoingEdges()) {
                 otherDrawNode = getDrawNode(i);
-                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getX() - otherDrawNode.getX()) > 100)) {
+                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
                     edge = new DummyEdge(currentDrawNode.getIndex(), i);
                     if (!dummyEdges.contains(edge)) {
-                        edge.addFirst((int) currentDrawNode.getX() + 100, (int) currentDrawNode.getY());
+                        edge.addLast(currentDrawNode.getLayer() + 100, (int) currentDrawNode.getY());
                         dummyEdges.add(edge);
                     }
                 }
             }
         }
-        updateDummyEdges();
     }
 
     /**
@@ -374,23 +331,25 @@ public class NodeGraph {
             currentChild = getDrawNode(currentDummyEdge.getChild());
             if (currentParent == null && currentChild == null) {
                dummyEdges.remove(currentDummyEdge);
-            } else if (currentParent == null) {
-                while (currentDummyEdge.getFirstX() < drawNodes.getFirst().getBoundsInLocal().getMinX()) {
-                    currentDummyEdge.removeFirst();
+            } else {
+                if (currentParent == null) {
+                    while (currentDummyEdge.getFirstX() >= drawNodes.getFirst().getLayer()) {
+                        currentDummyEdge.addFirst();
+                    }
+                } else {
+                    while (currentDummyEdge.getFirstX() - 100 > currentParent.getLayer()) {
+                        currentDummyEdge.addFirst();
+                    }
                 }
-                while (currentDummyEdge.getFirstX() >= drawNodes.getFirst().getBoundsInLocal().getMinX()) {
-                    currentDummyEdge.addFirst();
+                if (currentChild == null) {
+                    while (currentDummyEdge.getLastX() <= drawNodes.getLast().getLayer()) {
+                        currentDummyEdge.addLast();
+                    }
+                } else {
+                    while (currentDummyEdge.getLastX() + 100 < currentChild.getLayer()) {
+                        currentDummyEdge.addLast();
+                    }
                 }
-            } else if (currentChild == null) {
-                while (currentDummyEdge.getLastX() > drawNodes.getLast().getBoundsInLocal().getMaxX()) {
-                    currentDummyEdge.removeLast();
-                }
-                while (currentDummyEdge.getLastX() <= drawNodes.getLast().getBoundsInLocal().getMaxX()) {
-                    currentDummyEdge.addLast();
-                }
-            }
-            if (currentDummyEdge.isEmpty()) {
-                dummyEdges.remove(currentDummyEdge);
             }
         }
     }
@@ -421,17 +380,15 @@ public class NodeGraph {
      * when the X coordinate is the same.
      */
     private void verticalSpacing() {
-        dummyEdgeSpacing();
-
         for (int i = 0; i < drawNodes.size(); i++) {
-            if (i > 0 && drawNodes.get(i - 1).getX() == drawNodes.get(i).getX()) {
+            if (i > 0 && drawNodes.get(i - 1).getLayer() == drawNodes.get(i).getLayer()) {
                 drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
             } else {
                 DummyEdge current;
                 for (int j = dummyEdges.size() - 1; j >= 0; j--) {
                     current = dummyEdges.get(j);
-                    if (current.traversesLayer((int) drawNodes.get(i).getX())) {
-                        drawNodes.get(i).setY(current.getYOfLayer((int) drawNodes.get(i).getX()));
+                    if (current.traversesLayer(drawNodes.get(i).getLayer())) {
+                        drawNodes.get(i).setY(current.getYOfLayer(drawNodes.get(i).getLayer()) + 50);
                         break;
                     }
                 }
@@ -442,9 +399,9 @@ public class NodeGraph {
     /**
      * Determine y-coordinates of new leaf and root nodes.
      * @param newNodes new leaf and root draw nodes.
-     * @param newDummyNodes new leaf and root dummy nodes.
+     * @param newDummyEdges new leaf and root dummy edges.
      */
-    private void verticalSpacingNew(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummyNodes) {
+    private void verticalSpacingNew(LinkedList<DrawNode> newNodes, LinkedList<DummyEdge> newDummyEdges) {
 
     }
 
@@ -472,7 +429,7 @@ public class NodeGraph {
         DrawNode temp;
         while (it.hasNext()) {
             temp = it.next();
-            if (temp.getBoundsInLocal().getMinX() <= endX && temp.getBoundsInLocal().getMaxX() >= endX) {
+            if (temp.getLayer() <= endX && temp.getLayer() >= endX) {
                 leafNodes.add(temp.getIndex());
             } else {
                 break;
@@ -483,7 +440,7 @@ public class NodeGraph {
 
         while (rit.hasNext()) {
             temp = rit.next();
-            if (temp.getBoundsInLocal().getMinX() <= startX && temp.getBoundsInLocal().getMaxX() >= startX) {
+            if (temp.getLayer() <= startX && temp.getLayer() >= startX) {
                 rootNodes.add(temp.getIndex());
             } else {
                 break;
@@ -528,38 +485,6 @@ public class NodeGraph {
      */
     public LinkedList<DummyEdge> getDummyEdges() {
         return dummyEdges;
-    }
-
-    /**
-     * Determines nodes to add before the root.
-     * @return the new root nodes.
-     */
-    public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtRoot() {
-
-    }
-
-    /**
-     * Determines the new nodes to be drawn after the current leaf nodes.
-     * @return the new leaf nodes.
-     */
-    public Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> addAtLeaf() {
-
-    }
-
-    /**
-     * Determines what nodes have to be deleted at root node.
-     * @return the xCoordinate of nodes that will get deleted.
-     */
-    public double removeAtRoot() {
-
-    }
-
-    /**
-     * Determines what nodes have to be deleted at the leaf nodes.
-     * @return the x-coordinate of the leaf nodes to be deleted.
-     */
-    public double removeAtLeaf() {
-
     }
 
     /**

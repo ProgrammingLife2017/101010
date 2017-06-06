@@ -237,15 +237,15 @@ public class ParserTest {
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(absoluteFilePath + "/src/main/resources/test2Genomes.txt"))));
-            assertEquals("10\tTKK-01-0015\tTKK-01-0026\tTKK-01-0029\tTKK-01-0058\tTKK-01-0066\tTKK_02_0018\tTKK_02_0068\tTKK_04_0002\tTKK_04_0031\tTKK_REF\t", br.readLine());
-            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("4\tTKK_02_0068\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
-            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("1\tTKK_04_0031\t", br.readLine());
-            assertEquals("5\tTKK_02_0068\tTKK-01-0066\tTKK_REF\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
-            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("10\tTKK-01-0015.fasta\tTKK-01-0026.fasta\tTKK-01-0029.fasta\tTKK-01-0058.fasta\tTKK-01-0066.fasta\tTKK_02_0018.fasta\tTKK_02_0068.fasta\tTKK_04_0002.fasta\tTKK_04_0031.fasta\tTKK_REF.fasta\t", br.readLine());
+            assertEquals("2\t4\t9\t", br.readLine());
+            assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
+            assertEquals("2\t4\t9\t", br.readLine());
+            assertEquals("4\t6\t8\t5\t1\t", br.readLine());
+            assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
+            assertEquals("1\t8\t", br.readLine());
+            assertEquals("5\t6\t4\t9\t5\t1\t", br.readLine());
+            assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
             br.close();
         } catch(IOException e) {
             e.printStackTrace();

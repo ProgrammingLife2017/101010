@@ -58,7 +58,7 @@ public class DrawNode extends Rectangle {
      * @param newLayer The new layer of the DrawNode.
      */
     public void setLayer(int newLayer) {
-        this.setX(Math.abs(newLayer - this.getBoundsInLocal().getMinX() - layer));
+        this.setX(newLayer - Math.abs(layer - this.getBoundsInLocal().getMinX()));
         this.layer = newLayer;
     }
 

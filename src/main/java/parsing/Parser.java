@@ -157,7 +157,6 @@ public class Parser {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 createCache(absoluteFilePath, graph);
             }).start();
         } catch (FileNotFoundException e) {

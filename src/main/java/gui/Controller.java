@@ -9,24 +9,48 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 /**
- * Created by Michael on 6/4/2017.
+ * Controller class to allow input that will be used for interacting with the graph.
  */
 public class Controller extends GridPane {
+    /**
+     * Labels
+     */
     private Label currentCenter, centerInput, radius;
 
+    /**
+     * Input field.
+     */
     private TextField centerInputField;
+
+    /**
+     * Input fields.
+     */
     private static TextField radiusInputField, currentCenterField;
 
+    /**
+     * Submit button to initiate center queries.
+     */
     private Button submitButton;
 
+    /**
+     * Scene where the graph is drawn.
+     */
     private GraphScene graphScene;
 
+    /**
+     * Event handler that checks content in the text fields in this object.
+     */
     private EventHandler<ActionEvent> buttonAction = event -> {
         if (NodeGraph.getCurrentInstance() != null) {
             checkTextFields();
         }
     };
 
+    /**
+     * Constructor.
+     * @param fxElementsFactory factory to create testable javaFX components.
+     * @param graphScene scene where the graph is drawn.
+     */
     /*package*/ Controller(FXElementsFactory fxElementsFactory, GraphScene graphScene) {
         this.graphScene = graphScene;
         currentCenter = fxElementsFactory.createLabel("Current center:");
@@ -46,6 +70,9 @@ public class Controller extends GridPane {
         this.add(submitButton, 1, 4);
     }
 
+    /**
+     * Settings for the fields and buttons are set.
+     */
     private void controllerSettings() {
         centerInputField.setMaxWidth(75d);
         radiusInputField.setMaxWidth(75d);
@@ -55,6 +82,9 @@ public class Controller extends GridPane {
         this.getStyleClass().addAll("grid", "border_bottom");
     }
 
+    /**
+     * Checks the content of center node field and radius field.
+     */
     private void checkTextFields() {
         if (centerInputField.getText().length() == 0 || centerInputField.getText().contains("\\D")
                 || radiusInputField.getText().length() == 0 || radiusInputField.getText().contains("\\D")) {
@@ -71,6 +101,10 @@ public class Controller extends GridPane {
         }
     }
 
+    /**
+     * Returns the radius in its text field.
+     * @return Radius.
+     */
     public static int getRadius() {
         if (radiusInputField.getText().length() == 0 || !radiusInputField.getText().contains("\\D")
                 || Integer.parseInt(radiusInputField.getText()) < 5
@@ -80,6 +114,10 @@ public class Controller extends GridPane {
         return Integer.parseInt(radiusInputField.getText());
     }
 
+    /**
+     * Enters the index of the current center node in its corresponding text field.
+     * @param center Index of the center node.
+     */
     public static void setCurrentCenter(int center) {
         currentCenterField.setText(Integer.toString(center));
     }

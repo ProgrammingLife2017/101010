@@ -17,14 +17,24 @@ public final class InfoScreen extends GridPane {
      */
     private final TextArea textArea;
 
+    /**
+     * Factory for creating javaFX components.
+     */
     private FXElementsFactory fxElementsFactory;
 
+    /**
+     * Minimum width of the window.
+     */
     private static double MIN_WIDTH = 200d;
 
+    /**
+     * Minimum height of the window.
+     */
     private static double MIN_HEIGHT = 150d;
 
     /**
      * Constructor.
+     * @param factory Factory for creating javaFX components.
      */
     /*package*/ InfoScreen(FXElementsFactory factory) {
         textArea = new TextArea();
@@ -37,12 +47,19 @@ public final class InfoScreen extends GridPane {
         screenSettings();
     }
 
+    /**
+     * Applies setting to the window.
+     */
     private void screenSettings() {
         this.setMinSize(MIN_WIDTH, MIN_HEIGHT);
         this.toFront();
         this.getStyleClass().add("grid");
     }
 
+    /**
+     * Displays information of a node.
+     * @param node Node object.
+     */
     public void displayNodeInfo(DrawNode node) {
         assert NodeGraph.getCurrentInstance() != null;
 
@@ -57,6 +74,10 @@ public final class InfoScreen extends GridPane {
         this.add(textArea, 1, 3, 3, 1);
     }
 
+    /**
+     * Displays information of a line/edge.
+     * @param line Line object.
+     */
     public void displayLineInfo(Line line) {
         assert NodeGraph.getCurrentInstance() != null;
         this.getChildren().clear();

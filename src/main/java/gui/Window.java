@@ -32,7 +32,6 @@ import java.util.LinkedList;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class Window extends Application {
-
     /**
      * Logger that keeps track of actions executed by this class.
      */
@@ -73,11 +72,19 @@ public class Window extends Application {
      */
     private static Rectangle indicator;
 
-
+    /**
+     * Factor for creating javaFX components.
+     */
     private FXElementsFactory fxElementsFactory;
 
+    /**
+     * Minimum width of the application window.
+     */
     private static double MIN_WIDTH = 1200d;
 
+    /**
+     * Minimum height of the application window.
+     */
     private static double MIN_HEIGHT = 700d;
 
     /**
@@ -112,6 +119,11 @@ public class Window extends Application {
         controller = new Controller(fxElementsFactory, graphScene);
     }
 
+    /**
+     * Creates the main pane for the application window where all content is placed.
+     * @param stage Stage object that is the container of all content.
+     * @return Pane object.
+     */
     private BorderPane createMainPane(Stage stage) {
         BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(stage));
@@ -130,6 +142,12 @@ public class Window extends Application {
         return pane;
     }
 
+    /**
+     * Creates the pane that's on the left side of the main window.
+     * @param info InfoScreen object.
+     * @param control Controller object.
+     * @return Pane object.
+     */
     private Pane createSidePane(Pane info, Pane control) {
         VBox box = new VBox();
         box.setMaxWidth(175);
@@ -138,16 +156,24 @@ public class Window extends Application {
         return box;
     }
 
+    /**
+     * Creates a progress bar.
+     * @return ProgressBar object.
+     */
     private ProgressBar createProgressBar() {
         pB = new ProgressBar();
         pB.setVisible(false);
         pB.setMaxWidth(1212);
-        pB.setPrefHeight(10.0);
+        pB.setPrefHeight(30.0);
         pB.setMinHeight(10.0);
         pB.setProgress(0.0);
         return pB;
     }
 
+    /**
+     * Initiate settings for the main stage.
+     * @param stage
+     */
     private void setStageSettings(Stage stage) {
         stage.setTitle("Main window");
         stage.setResizable(true);
@@ -255,7 +281,6 @@ public class Window extends Application {
                             graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
                             LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
                             graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
-
                             logger.info("file has been selected");
                         }).start();
                     }

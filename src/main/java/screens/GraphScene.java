@@ -328,4 +328,11 @@ import java.util.Set;
         return this.info;
     }
 
+    private void determineEdgeWidth(Node incNode) {
+        double outgoingWeight = 0;
+        for (Integer i : incNode.getOutgoingEdges()) {
+            NodeGraph.getCurrentInstance().getNode(i);
+        }
+    }
+
 }

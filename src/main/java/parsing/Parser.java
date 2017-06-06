@@ -132,7 +132,6 @@ public class Parser {
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 String nodeGenomes = line2.substring(0, line2.indexOf('\t'));
                                 node.setWeight(addGenomes(gw, nodeGenomes) / noOfGenomes);
-                                System.out.println(node.getWeight());
                                 line2 = in.readLine();
                                 lineCounter++;
                                 while (line2 != null && line2.startsWith("L")) {
@@ -200,7 +199,9 @@ public class Parser {
                 int lineCounter = 0;
                 try {
                     int nol = getNumberOfLine(cache);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FileSelector.getDirectory() + currentFile + "Genomes.txt")));
+                    String path = cache.getAbsolutePath();
+                    path = path.substring(0, path.length() - 4);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path + "Genomes.txt")));
                     noOfGenomes = Double.parseDouble(br.readLine().split("\t")[0]);
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());

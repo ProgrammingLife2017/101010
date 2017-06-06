@@ -145,6 +145,7 @@ public class ParserTest {
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
         File file = new File(absoluteFilePath + "/src/test/resources/testCache.txt");
+        File file2 = new File(absoluteFilePath + "/src/test/resources/testCacheGenomes.txt");
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
             bw.write("4\n" +
@@ -169,6 +170,13 @@ public class ParserTest {
                     "2\n" +
                     "1\t2");
             bw.close();
+            BufferedWriter bw2 = new BufferedWriter(new FileWriter(file2));
+            bw2.write("3\n" +
+                    "1\n" +
+                    "1\n" +
+                    "3\n" +
+                    "2\n");
+            bw2.close();
             NodeGraph graph = new NodeGraph();
             Node node1 = new Node();
             Node node2 = new Node();
@@ -200,6 +208,7 @@ public class ParserTest {
             }
 
             file.delete();
+            file2.delete();
             assertEquals(graph.getSize(), testGraph.getSize());
             Node testNode1;
             Node testNode2;

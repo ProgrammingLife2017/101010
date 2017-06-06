@@ -276,31 +276,27 @@ public class Parser {
      * @param str String with the genomes.
      * @param hasInt true iff the genomes displayed as integers instead of names.
      * @param genomeList list of all genomes in the gfa file.
+     * @throws IOException when the writer can't write to the file.
      */
-    private void addGenomes(BufferedWriter gw, String str, boolean hasInt, String[] genomeList) {
+    private void addGenomes(BufferedWriter gw, String str, boolean hasInt, String[] genomeList) throws IOException {
         str = str.substring(str.indexOf(':') + 1);
         str = str.substring(str.indexOf(':') + 1);
         String[] genomeTemp = str.split(";");
-        try {
-            gw.write(genomeTemp.length + "\t");
-            for (String string : genomeTemp) {
-                if (hasInt) {
-                    gw.write(string + "\t");
-                } else {
-                    for (int i = 0; i < genomeList.length; i++) {
-                        if (string.equals(genomeList[i])) {
-                            gw.write(i + "\t");
-                            break;
-                        }
+        gw.write(genomeTemp.length + "\t");
+        for (String string : genomeTemp) {
+            if (hasInt) {
+                gw.write(string + "\t");
+            } else {
+                for (int i = 0; i < genomeList.length; i++) {
+                    if (string.equals(genomeList[i])) {
+                        gw.write(i + "\t");
+                        break;
                     }
                 }
             }
-            gw.write("\n");
-            gw.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("adding genomes failed");
         }
+        gw.write("\n");
+        gw.flush();
     }
 
     /**

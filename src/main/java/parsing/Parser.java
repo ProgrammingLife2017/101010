@@ -79,7 +79,7 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line = in.readLine();
-            while(!line.startsWith("H\tORI")) {
+            while (!line.startsWith("H\tORI")) {
                 line = in.readLine();
             }
 
@@ -101,7 +101,7 @@ public class Parser {
 
             String str = line.substring(line.indexOf(':') + 1);
             str = str.substring(str.indexOf(':') + 1);
-            if (str.indexOf("\t") != -1) {
+            if (str.contains("\t")) {
                 str = str.substring(0, str.indexOf("\t"));
             }
             String[] allGenomes = str.split(";");
@@ -115,7 +115,7 @@ public class Parser {
             line = in.readLine();
             str = line.substring(line.indexOf(':') + 1);
             str = str.substring(str.indexOf(':') + 1);
-            if (str.indexOf("\t") != -1) {
+            if (str.contains("\t")) {
                 str = str.substring(0, str.indexOf("\t"));
             }
             str = str.split(";")[0];
@@ -150,7 +150,7 @@ public class Parser {
                                 out.flush();
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
-                                if (line2.indexOf("\t") != -1) {
+                                if (line2.contains("\t")) {
                                     line2 = line2.substring(0, line2.indexOf("\t"));
                                 }
                                 addGenomes(gw, line2, threadIntegerBased, allGenomes);
@@ -294,9 +294,11 @@ public class Parser {
     }
 
     /**
-     * Writes alle genomes in the string to the file given by the writer.
+     * Writes all genomes in the string to the file given by the writer.
      * @param gw Writer that writes the string.
      * @param str String with the genomes.
+     * @param hasInt true iff the genomes displayed as integers instead of names.
+     * @param genomeList list of all genomes in the gfa file.
      */
     private void addGenomes(BufferedWriter gw, String str, boolean hasInt, String[] genomeList) {
         str = str.substring(str.indexOf(':') + 1);

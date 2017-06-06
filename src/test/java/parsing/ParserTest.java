@@ -84,8 +84,8 @@ public class ParserTest {
             e.printStackTrace();
         }
 
-        assertEquals(2221, data.getSegment(7).length());
-        assertTrue(data.getSegment(7).length() != 0);
+        assertEquals(2221, data2.getSegment(7).length());
+        assertTrue(data2.getSegment(7).length() != 0);
     }
 
     @Test

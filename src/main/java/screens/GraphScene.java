@@ -99,9 +99,7 @@ import java.util.LinkedList;
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
 
         for (DrawNode dNode : drawNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            Platform.runLater(() -> this.getChildren().add(dNode));
+            Platform.runLater(() -> drawNode(dNode));
             DrawNode nOut;
             for (int i : nodeGraph.getNode(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);

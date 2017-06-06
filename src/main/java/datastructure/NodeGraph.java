@@ -229,27 +229,37 @@ public class NodeGraph {
     }
 
     /**
-     * Sort the drawNodes.
+     * Reverse topologically sort the list of DrawNodes in this NodeGraph.
      */
     private void topologicalSort() {
-        LinkedList<DrawNode> sorted = new LinkedList<>();
-        while (!drawNodes.isEmpty()) {
-            topologicalSortUtil(drawNodes.getFirst(), sorted);
-        }
-        drawNodes = sorted;
+        drawNodes = topologicalSort(drawNodes);
     }
 
     /**
-     * Recursive part of topoSort.
+     * Reverse topologically sort a list of DrawNodes.
+     * @param dNodes the unsorted LinkedList of DrawNodes.
+     * @return The sorted list of DrawNodes.
+     */
+    private LinkedList<DrawNode> topologicalSort(LinkedList<DrawNode> dNodes) {
+        LinkedList<DrawNode> sorted = new LinkedList<>();
+        while (!dNodes.isEmpty()) {
+            topologicalSortUtil(dNodes.getFirst(), sorted, dNodes);
+        }
+        return sorted;
+    }
+
+    /**
+     * Recursive part of topological sort.
      * @param current the current node.
      * @param sorted the list which holds all sorted nodes.
+     * @param dNodes the list which holds the remaining unsorted nodes.
      */
-    private void topologicalSortUtil(DrawNode current, LinkedList<DrawNode> sorted) {
+    private void topologicalSortUtil(DrawNode current, LinkedList<DrawNode> sorted, LinkedList<DrawNode> dNodes) {
         if (!sorted.contains(current)) {
             for (int i : getNode(current.getIndex()).getOutgoingEdges()) {
-                for (DrawNode temp : drawNodes) {
+                for (DrawNode temp : dNodes) {
                     if (temp.getIndex() == i) {
-                        topologicalSortUtil(temp, sorted);
+                        topologicalSortUtil(temp, sorted, dNodes);
                         break;
                     }
                 }
@@ -260,27 +270,35 @@ public class NodeGraph {
     }
 
     /**
-     * Assigns a layer to all drawNodes in the subgraph.
+     * Assigns a layer to all DrawNodes in this NodeGraph.
      */
     private void assignLayers() {
-        Iterator<DrawNode> it = drawNodes.iterator();
-        int layer = 1200;
+        assignLayers(drawNodes, 1200);
+    }
+
+    /**
+     * Assigns a layer to all drawNodes in the sub graph.
+     * @param dNodes The list of DrawNodes in the sub graph.
+     * @param maxLayer The X coordinate of the rightmost layer.
+     */
+    private void assignLayers(LinkedList<DrawNode> dNodes, int maxLayer) {
+        Iterator<DrawNode> it = dNodes.iterator();
         DrawNode current;
 
         while (it.hasNext()) {
             current = it.next();
 
-             int size = drawNodes.size();
+             int size = dNodes.size();
              for (int i : getNode(current.getIndex()).getOutgoingEdges()) {
                  for (int j = 0; j < size; j++) {
-                     DrawNode temp = drawNodes.get(j);
-                     if (temp.getIndex() == i && temp.getLayer() < layer) {
-                         layer = temp.getLayer();
+                     DrawNode temp = dNodes.get(j);
+                     if (temp.getIndex() == i && temp.getLayer() < maxLayer) {
+                         maxLayer = temp.getLayer();
                      }
                  }
              }
 
-            current.setLayer(layer - 100);
+            current.setLayer(maxLayer - 100);
         }
     }
 
@@ -293,22 +311,22 @@ public class NodeGraph {
         DummyEdge edge;
         for (DrawNode currentDrawNode : drawNodes) {
             currentNode = getNode(currentDrawNode.getIndex());
-            for (int i : currentNode.getIncomingEdges()) {
-                otherDrawNode = getDrawNode(i);
-                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
-                    edge = new DummyEdge(i, currentDrawNode.getIndex());
-                    if (!dummyEdges.contains(edge)) {
-                        edge.addLast(currentDrawNode.getLayer() - 100, (int) currentDrawNode.getY());
-                        dummyEdges.add(edge);
-                    }
-                }
-            }
             for (int i : currentNode.getOutgoingEdges()) {
                 otherDrawNode = getDrawNode(i);
                 if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
                     edge = new DummyEdge(currentDrawNode.getIndex(), i);
                     if (!dummyEdges.contains(edge)) {
-                        edge.addLast(currentDrawNode.getLayer() + 100, (int) currentDrawNode.getY());
+                        edge.addLast(currentDrawNode.getLayer() + 100, 0);
+                        dummyEdges.add(edge);
+                    }
+                }
+            }
+            for (int i : currentNode.getIncomingEdges()) {
+                otherDrawNode = getDrawNode(i);
+                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
+                    edge = new DummyEdge(i, currentDrawNode.getIndex());
+                    if (!dummyEdges.contains(edge)) {
+                        edge.addLast(currentDrawNode.getLayer() - 100, 0);
                         dummyEdges.add(edge);
                     }
                 }
@@ -317,7 +335,7 @@ public class NodeGraph {
     }
 
     /**
-     * Fills Dummy Edges with Dummy Nodes to fit the subgraph's size.
+     * Fills Dummy Edges with Dummy Nodes to fit the size of the sub graph.
      */
     private void updateDummyEdges() {
         Iterator<DummyEdge> it = dummyEdges.iterator();
@@ -355,54 +373,65 @@ public class NodeGraph {
     }
 
     /**
-     * Computes the y coordinates for dummy nodes in dummyedges.
+     * Computes the y coordinates for the dummy nodes
+     * in the list of DummyEdges in this NodeGraph.
      */
     private void dummyEdgeSpacing() {
+        dummyEdgeSpacing(dummyEdges);
+    }
+
+    /**
+     * Computes the y coordinates for dummy nodes in a list of DummyEdges.
+     * @param dEdges The LinkedList of DummyEdges.
+     */
+    private void dummyEdgeSpacing(LinkedList<DummyEdge> dEdges) {
         DummyEdge otherEdge;
         int currentLayer;
-        for (int i = 0; i < dummyEdges.size(); i++) {
-            for (int j = 0; j < dummyEdges.get(i).getLength(); j++) {
-                currentLayer = dummyEdges.get(i).getX(j);
+        for (int i = 0; i < dEdges.size(); i++) {
+            for (int j = 0; j < dEdges.get(i).getLength(); j++) {
+                currentLayer = dEdges.get(i).getX(j);
                 for (int k = i - 1; k >= 0; k--) {
-                    otherEdge = dummyEdges.get(k);
+                    otherEdge = dEdges.get(k);
                     if (otherEdge.traversesLayer(currentLayer)) {
-                        dummyEdges.get(i).setYOfLayer(currentLayer, otherEdge.getYOfLayer(currentLayer) + 50);
+                        dEdges.get(i).setYOfLayer(currentLayer, otherEdge.getYOfLayer(currentLayer) + 50);
                         break;
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Computes the Y coordinate of the drawNodes in this NodeGraph
+     * by looping over all nodes and adding to their Y coordinate
+     * when the X coordinate is the same.
+     */
+    private void verticalSpacing() {
+        verticalSpacing(drawNodes, dummyEdges);
     }
 
     /**
      * Computes the Y coordinate of the drawNodes
      * by looping over all nodes and adding to their Y coordinate
      * when the X coordinate is the same.
+     * @param dNodes The LinkedList of DrawNodes.
+     * @param dEdges The LinkedList of DummyEdges.
      */
-    private void verticalSpacing() {
-        for (int i = 0; i < drawNodes.size(); i++) {
-            if (i > 0 && drawNodes.get(i - 1).getLayer() == drawNodes.get(i).getLayer()) {
-                drawNodes.get(i).setY(drawNodes.get(i - 1).getY() + 50);
+    private void verticalSpacing(LinkedList<DrawNode> dNodes, LinkedList<DummyEdge> dEdges) {
+        for (int i = 0; i < dNodes.size(); i++) {
+            if (i > 0 && dNodes.get(i - 1).getLayer() == dNodes.get(i).getLayer()) {
+                dNodes.get(i).setY(dNodes.get(i - 1).getY() + 50);
             } else {
                 DummyEdge current;
-                for (int j = dummyEdges.size() - 1; j >= 0; j--) {
-                    current = dummyEdges.get(j);
-                    if (current.traversesLayer(drawNodes.get(i).getLayer())) {
-                        drawNodes.get(i).setY(current.getYOfLayer(drawNodes.get(i).getLayer()) + 50);
+                for (int j = dEdges.size() - 1; j >= 0; j--) {
+                    current = dEdges.get(j);
+                    if (current.traversesLayer(dNodes.get(i).getLayer())) {
+                        dNodes.get(i).setY(current.getYOfLayer(dNodes.get(i).getLayer()) + 50);
                         break;
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Determine y-coordinates of new leaf and root nodes.
-     * @param newNodes new leaf and root draw nodes.
-     * @param newDummyEdges new leaf and root dummy edges.
-     */
-    private void verticalSpacingNew(LinkedList<DrawNode> newNodes, LinkedList<DummyEdge> newDummyEdges) {
-
     }
 
     /**
@@ -473,12 +502,25 @@ public class NodeGraph {
     }
 
     /**
-     * Returns the DrawNode that represents the given node.
-     * @param index the index of the node we want the representing DrawNode for.
+     * Returns the DrawNode that represents the given node,
+     * from the list of DrawNodes in this NodeGraph.
+     * @param index The index of the node we want the representing DrawNode for.
      * @return a DrawNode.
      */
+    @Nullable
     public DrawNode getDrawNode(int index) {
-        for (DrawNode dNode : drawNodes) {
+        return getDrawNode(drawNodes, index);
+    }
+
+    /**
+     * Returns the DrawNode that represents the given node.
+     * @param dNodes The list of DrawNodes to search in.
+     * @param index The index of the node we want the representing DrawNode for.
+     * @return a DrawNode.
+     */
+    @Nullable
+    public DrawNode getDrawNode(LinkedList<DrawNode> dNodes, int index) {
+        for (DrawNode dNode : dNodes) {
             if (dNode.getIndex() == index) {
                 return dNode;
             }

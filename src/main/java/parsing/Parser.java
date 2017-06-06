@@ -232,9 +232,6 @@ public final class Parser {
             br.readLine();
             for (int i = 0; i < NodeGraph.getCurrentInstance().getNodes().size(); i++) {
                 String line = br.readLine();
-                if (i == 23) {
-                    System.out.println(line);
-                }
                 String[] genomes = line.split("\t");
                 for (int j = 1; j < genomes.length; j++) {
                     if (genomes[j].equals(genomeName)) {
@@ -242,6 +239,7 @@ public final class Parser {
                     }
                 }
             }
+            br.close();
             return genNodes;
         } catch (IOException e) {
             System.out.println("Can't find genome cache.");

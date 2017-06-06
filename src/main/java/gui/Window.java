@@ -10,10 +10,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
@@ -55,7 +58,21 @@ public class Window extends Application {
      */
     private static InfoScreen infoScreen;
 
+    /**
+     * Controller to initiate center queries.
+     */
     private Controller controller;
+
+    /**
+     * The load bar which shows how far the parser is.
+     */
+    private static ProgressBar pB;
+
+    /**
+     * A rectangle that shows where the user is in the the graph.
+     */
+    private static Rectangle indicator;
+
 
     private FXElementsFactory fxElementsFactory;
 
@@ -100,15 +117,35 @@ public class Window extends Application {
         pane.setTop(createMenuBar(stage));
         pane.setCenter(graphScene);
         pane.setLeft(createSidePane(controller, infoScreen));
+        pane.setBottom(createProgressBar());
+        Rectangle indicatorBar = new Rectangle();
+        indicator = new Rectangle();
+        pane.getChildren().add(indicatorBar);
+        pane.getChildren().add(indicator);
+        indicatorBar.setWidth(pane.getWidth() - 20);
+        indicatorBar.setX(10);
+        indicatorBar.setY(pane.getHeight() - 25);
+        indicatorBar.setHeight(10);
+        indicatorBar.setFill(Color.GRAY);
         return pane;
     }
 
     private Pane createSidePane(Pane info, Pane control) {
         VBox box = new VBox();
-        box.setMaxWidth(200);
+        box.setMaxWidth(175);
         box.getChildren().addAll(info, control);
         box.getStyleClass().add("vbox");
         return box;
+    }
+
+    private ProgressBar createProgressBar() {
+        pB = new ProgressBar();
+        pB.setVisible(false);
+        pB.setMaxWidth(1212);
+        pB.setPrefHeight(10.0);
+        pB.setMinHeight(10.0);
+        pB.setProgress(0.0);
+        return pB;
     }
 
     private void setStageSettings(Stage stage) {
@@ -188,13 +225,39 @@ public class Window extends Application {
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
+                        pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-                        graphScene.drawGraph(0, 200);
-                        graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
-                        graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-                        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-                        graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
-                        logger.info("file has been selected");
+
+                        new Thread() {
+                            public void run () {
+                                try {
+                                    Parser.getThread().join();
+
+                                    this.join(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                pB.setVisible(false);
+                                pB.setProgress(0.0);
+                            }
+                        }.start();
+
+                        Thread drawing = graphScene.drawGraph(0, 200);
+
+                        new Thread(() -> {
+                            try {
+                                drawing.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
+                            graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+                            LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+                            graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
+
+                            logger.info("file has been selected");
+                        }).start();
                     }
                 }
         );
@@ -259,6 +322,15 @@ public class Window extends Application {
         newStage.setScene(scene);
         newStage.show();
     }
+
+    /**
+     * Sets the progress of the ProgressBar to the given value.
+     * @param progress the new progress to be shown.
+     */
+    public static void setProgress(double progress) {
+        pB.setProgress(progress);
+    }
+
     /**
      * The initialization of the game.
      * @param args the arguments to run.

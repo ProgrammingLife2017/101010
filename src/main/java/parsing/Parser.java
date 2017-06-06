@@ -5,6 +5,7 @@ import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;
 import screens.Window;
+import window.FileSelector;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -113,13 +114,14 @@ public class Parser {
                                 id = Integer.parseInt(line2.substring(0, line2.indexOf('\t'))) - 1;
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 segment = line2.substring(0, line2.indexOf('\t'));
-                                graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
+                                Node node = new Node(segment.length(), new int[0], new int[0]);
+                                graph.addNode(id, node);
                                 out.write(segment + "\n");
                                 out.flush();
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 String nodeGenomes = line2.substring(0, line2.indexOf('\t'));
-                                addGenomes(gw, nodeGenomes);
+                                node.setWeight(addGenomes(gw, nodeGenomes));
                                 line2 = in.readLine();
                                 lineCounter++;
                                 while (line2 != null && line2.startsWith("L")) {
@@ -264,7 +266,7 @@ public class Parser {
      * @param gw Writer that writes the string.
      * @param str String with the genomes.
      */
-    private void addGenomes(BufferedWriter gw, String str) {
+    private int addGenomes(BufferedWriter gw, String str) {
         str = str.substring(str.indexOf(':') + 1);
         str = str.substring(str.indexOf(':') + 1);
         String[] genomeTemp = str.split(";");
@@ -279,6 +281,7 @@ public class Parser {
             e.printStackTrace();
             System.out.println("adding genomes failed");
         }
+        return genomeTemp.length;
     }
 
     /**
@@ -313,5 +316,14 @@ public class Parser {
      */
     public static Thread getThread() {
         return parser;
+    }
+
+    public void setWeights(NodeGraph ng) {
+        try {
+//            BufferedReader br = new BufferedReader(new FileInputStream())
+        } catch (Exception e) {
+            System.out.println("Error when reading in genome cache");
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package screens;
 
 import datastructure.DrawNode;
+import datastructure.Node;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
@@ -214,7 +215,6 @@ public class Window extends Application {
                     if (file != null && file.exists()) {
                         pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-
                         new Thread() {
                             public void run () {
                                 try {

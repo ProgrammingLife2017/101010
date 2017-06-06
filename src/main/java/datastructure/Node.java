@@ -24,6 +24,12 @@ public class Node {
     private int[] from;
 
     /**
+     * The ratio of the number of genome paths going through this nodes compared to the total number
+     * of genome paths.
+     */
+    private double weight;
+
+    /**
      * Empty constructor for Node.
      */
     public Node() {
@@ -162,5 +168,21 @@ public class Node {
      */
     public void setLength(int length) {
         this.length = length;
+    }
+
+    /**
+     * Getter for the weight of a node.
+     * @return the weight of a node.
+     */
+    public double getWeight() {
+        return this.weight;
+    }
+
+    /**
+     * Setter for the weight of a node.
+     * @param newWeight the new weight a node will be set to.
+     */
+    public void setWeight(double newWeight) {
+        this.weight = newWeight;
     }
 }

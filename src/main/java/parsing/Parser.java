@@ -341,25 +341,22 @@ public class Parser {
      * Reads all genomes of the gfa file and caches them.
      * @param gw the writer used to write to the cache.
      * @param line the line on which all genomes are listed.
+     * @throws IOException when the writer can't write to the file.
      * @return the array of all genomes in the gfa file.
      */
-    private String[] generateGenomes(BufferedWriter gw, String line) {
+    private String[] generateGenomes(BufferedWriter gw, String line) throws IOException {
         String str = line.substring(line.indexOf(':') + 1);
         str = str.substring(str.indexOf(':') + 1);
         if (str.contains("\t")) {
             str = str.substring(0, str.indexOf("\t"));
         }
         String[] allGenomes = str.split(";");
-        try {
-            gw.write(allGenomes.length + "\t");
-            for (int i = 0; i < allGenomes.length; i++) {
-                gw.write(allGenomes[i] + "\t");
-            }
-            gw.write("\n");
-            gw.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        gw.write(allGenomes.length + "\t");
+        for (int i = 0; i < allGenomes.length; i++) {
+            gw.write(allGenomes[i] + "\t");
         }
+        gw.write("\n");
+        gw.flush();
         return allGenomes;
     }
 

@@ -4,6 +4,7 @@ import datastructure.DrawNode;
 import datastructure.DummyNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
+import gui.interaction.Controller;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;

@@ -1,7 +1,8 @@
-package gui;
+package gui.interaction;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
+import gui.FXElementsFactory;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;

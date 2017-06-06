@@ -46,6 +46,8 @@ public class FXElementsFactory {
         return new Scene(g, width, height);
     }
 
+    public Scene createScene(Group g) { return new Scene(g); }
+
     /**
      * Sets a JavaFX scene in a JavaFX stage.
      * @param currentStage the stage in which the scene will be set.

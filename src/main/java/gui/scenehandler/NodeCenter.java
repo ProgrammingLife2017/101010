@@ -1,7 +1,7 @@
 package gui.scenehandler;
 
 import datastructure.DrawNode;
-import gui.Controller;
+import gui.interaction.Controller;
 import gui.GraphScene;
 import javafx.scene.shape.Line;
 

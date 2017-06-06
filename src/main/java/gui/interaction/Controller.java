@@ -1,6 +1,9 @@
-package gui;
+package gui.interaction;
 
 import datastructure.NodeGraph;
+import gui.FXElementsFactory;
+import gui.GraphScene;
+import gui.Window;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;

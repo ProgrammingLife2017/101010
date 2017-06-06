@@ -3,6 +3,8 @@ package gui;
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
+import gui.interaction.InfoScreen;
+import gui.interaction.InteractionScene;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,7 +16,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -47,21 +48,14 @@ public class Window extends Application {
      */
     private static Backlog backLog;
 
+    private BorderPane mainPane;
+
     /**
      * Pane used for displaying graphs.
      */
     private static GraphScene graphScene;
 
-    /**
-     * Window to print information of nodes or edges.
-     */
-    private static InfoScreen infoScreen;
-
-    /**
-     * Controller to initiate center queries.
-     */
-    private Controller controller;
-
+    private static InteractionScene interactionScene;
     /**
      * The load bar which shows how far the parser is.
      */
@@ -95,7 +89,7 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.setupService();
-        Pane mainPane = createMainPane(stage);
+        mainPane = createMainPane(stage);
         setScrolling(mainPane);
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("layoutstyles.css");
@@ -115,8 +109,7 @@ public class Window extends Application {
         fxElementsFactory = new FXElementsFactory();
         graphScene = new GraphScene(fxElementsFactory);
         graphScene.toBack();
-        infoScreen = new InfoScreen(fxElementsFactory);
-        controller = new Controller(fxElementsFactory, graphScene);
+        interactionScene = new InteractionScene(fxElementsFactory, graphScene);
     }
 
     /**
@@ -128,7 +121,6 @@ public class Window extends Application {
         BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(stage));
         pane.setCenter(graphScene);
-        pane.setLeft(createSidePane(controller, infoScreen));
         pane.setBottom(createProgressBar());
         Rectangle indicatorBar = new Rectangle();
         indicator = new Rectangle();
@@ -143,20 +135,6 @@ public class Window extends Application {
     }
 
     /**
-     * Creates the pane that's on the left side of the main window.
-     * @param info InfoScreen object.
-     * @param control Controller object.
-     * @return Pane object.
-     */
-    private Pane createSidePane(Pane info, Pane control) {
-        VBox box = new VBox();
-        box.setMaxWidth(175);
-        box.getChildren().addAll(info, control);
-        box.getStyleClass().add("vbox");
-        return box;
-    }
-
-    /**
      * Creates a progress bar.
      * @return ProgressBar object.
      */
@@ -164,7 +142,7 @@ public class Window extends Application {
         pB = new ProgressBar();
         pB.setVisible(false);
         pB.setMaxWidth(1212);
-        pB.setPrefHeight(30.0);
+        pB.setPrefHeight(20.0);
         pB.setMinHeight(10.0);
         pB.setProgress(0.0);
         return pB;
@@ -205,7 +183,7 @@ public class Window extends Application {
      * @return InfoScreen object.
      */
     public static InfoScreen getInfoScreen() {
-        return infoScreen;
+        return interactionScene.getInfoScreen();
     }
 
 
@@ -296,14 +274,22 @@ public class Window extends Application {
      */
     private Menu addController() {
         Menu menu = new Menu("Tools");
-        MenuItem item2 = new MenuItem("Console log");
-        item2.setOnAction(
+        MenuItem item1 = new MenuItem("Console log");
+        item1.setOnAction(
                 event -> {
-                    getBackLog().show();
+                    backLog.show();
                     logger.info("console window has been opened");
                 }
         );
-        menu.getItems().addAll(item2);
+        MenuItem item2 = new MenuItem("Open Interaction");
+        item2.setOnAction(event -> {
+            if (mainPane.getLeft() == null) {
+                mainPane.setLeft(interactionScene);
+            } else {
+                mainPane.setLeft(null);
+            }
+        });
+        menu.getItems().addAll(item1, item2);
         return menu;
     }
 

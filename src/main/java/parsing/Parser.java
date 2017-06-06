@@ -35,6 +35,16 @@ public class Parser {
     private static Thread parser;
 
     /**
+     * The name of the currently selected file.
+     */
+    private String currentFile;
+
+    /**
+     * The number of genome paths contained in the file.
+     */
+    private double noOfGenomes;
+
+    /**
      * Constructor of the parser.
      */
     private Parser() { }
@@ -58,7 +68,7 @@ public class Parser {
      */
     public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
-
+        currentFile = file.getName().substring(0, file.getName().length() - 4);
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
         graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
@@ -98,7 +108,7 @@ public class Parser {
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
             BufferedWriter gw = new BufferedWriter(new FileWriter(genomes));
 
-            addGenomes(gw, line);
+            noOfGenomes = (double) addGenomes(gw, line);
 
             parser = new Thread(() -> {
                 try {
@@ -121,7 +131,8 @@ public class Parser {
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 String nodeGenomes = line2.substring(0, line2.indexOf('\t'));
-                                node.setWeight(addGenomes(gw, nodeGenomes));
+                                node.setWeight(addGenomes(gw, nodeGenomes) / noOfGenomes);
+                                System.out.println(node.getWeight());
                                 line2 = in.readLine();
                                 lineCounter++;
                                 while (line2 != null && line2.startsWith("L")) {
@@ -189,6 +200,8 @@ public class Parser {
                 int lineCounter = 0;
                 try {
                     int nol = getNumberOfLine(cache);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(FileSelector.getDirectory() + currentFile + "Genomes.txt")));
+                    noOfGenomes = Double.parseDouble(br.readLine().split("\t")[0]);
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());
                         int outLength = Integer.parseInt(in.readLine());
@@ -206,9 +219,10 @@ public class Parser {
                         Node temp = new Node(length, outgoing, incoming);
                         graph.addNodeCache(i, temp);
                         lineCounter = lineCounter + 5;
-
+                        setWeights(br, temp);
                         updateProgressBar(lineCounter, nol);
                     }
+                    br.close();
                     in.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -318,9 +332,14 @@ public class Parser {
         return parser;
     }
 
-    public void setWeights(NodeGraph ng) {
+    /**
+     * Sets the weights of nodes when reading in from the cache file.
+     * @param br the reader that reads the cached file.
+     * @param node the node a weight is being set to.
+     */
+    private void setWeights(BufferedReader br, Node node) {
         try {
-//            BufferedReader br = new BufferedReader(new FileInputStream())
+            node.setWeight(Double.parseDouble(br.readLine().split("\t")[0]) / noOfGenomes);
         } catch (Exception e) {
             System.out.println("Error when reading in genome cache");
             e.printStackTrace();

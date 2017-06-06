@@ -72,7 +72,7 @@ public final class FileSelector {
         }
 
         if (chosenFile != null) {
-            saveDirectory(chosenFile.getParentFile().getAbsolutePath());
+            saveDirectory(chosenFile.getParentFile().getAbsolutePath() + "\\");
         }
         return chosenFile;
     }
@@ -81,7 +81,7 @@ public final class FileSelector {
      * Finds the last used directory from which a file was chosen.
      * @return the path of the directory.
      */
-    private static String getDirectory() {
+    public static String getDirectory() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("directory.txt")));
             String dir = br.readLine();

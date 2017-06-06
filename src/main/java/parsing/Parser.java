@@ -119,12 +119,10 @@ public class Parser {
                 str = str.substring(0, str.indexOf("\t"));
             }
             str = str.split(";")[0];
-            System.out.println(str);
 
             for (int i = 0; i < allGenomes.length; i++) {
                 if (str.equals(allGenomes[i])) {
                     integerBased = false;
-                    System.out.println(allGenomes[i]);
                     break;
                 }
             }
@@ -139,7 +137,6 @@ public class Parser {
                     int nol = getNumberOfLine(file);
                     String line2 = line1;
                     while (line2 != null) {
-//                        System.out.println(line2);
                         try {
                             if (line2.startsWith("S")) {
                                 int id;

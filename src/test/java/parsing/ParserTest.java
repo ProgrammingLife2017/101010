@@ -2,26 +2,17 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import java.io.*;
+import java.lang.reflect.Method;
 import javafx.application.Platform;
+import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
-
-import org.junit.After;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 
 /**
@@ -248,6 +239,57 @@ public class ParserTest {
             assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
             br.close();
         } catch(IOException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void generateGenomes() {
+        String workingDirectory = System.getProperty("user.dir");
+        String absoluteFilePath = workingDirectory + File.separator;
+        File file = new File(absoluteFilePath + "/src/test/resources/testGenerateGenomes.txt");
+        try {
+            file.createNewFile();
+            BufferedWriter gw = new BufferedWriter(new FileWriter(file));
+            String line = "::hallo;sjors";
+
+            Class[] classes = new Class[]{BufferedWriter.class, String.class};
+            Method method = Parser.class.getDeclaredMethod("generateGenomes", BufferedWriter.class, String.class);
+            method.setAccessible(true);
+            String[] result = (String[]) method.invoke(Parser.getInstance(), gw, line);
+            gw.close();
+            assertEquals("hallo", result[0]);
+            assertEquals("sjors", result[1]);
+            BufferedReader gr = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            String[] readLine = gr.readLine().split("\t");
+            assertEquals("2", readLine[0]);
+            assertEquals("hallo", readLine[1]);
+            assertEquals("sjors", readLine[2]);
+            gr.close();
+            file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void determineBasis() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+        try {
+            String line = "::1;2;3;4;5";
+            String line2 = "::hallo;2;3;4;5";
+            String[] allGenomes = new String[]{"sjors", "hallo", "asdcadca"};
+            Method method = Parser.class.getDeclaredMethod("determineBasis", String.class, String[].class);
+            method.setAccessible(true);
+            boolean result = (boolean) method.invoke(Parser.getInstance(), line, allGenomes);
+            boolean result2 = (boolean) method.invoke(Parser.getInstance(), line2, allGenomes);
+            assertTrue(result);
+            assertFalse(result2);
+        } catch (Exception e) {
             e.printStackTrace();
             fail();
         }

@@ -99,33 +99,10 @@ public class Parser {
 
             boolean integerBased = true;
 
-            String str = line.substring(line.indexOf(':') + 1);
-            str = str.substring(str.indexOf(':') + 1);
-            if (str.contains("\t")) {
-                str = str.substring(0, str.indexOf("\t"));
-            }
-            String[] allGenomes = str.split(";");
-            gw.write(allGenomes.length + "\t");
-            for (int i = 0; i < allGenomes.length; i++) {
-                gw.write(allGenomes[i] + "\t");
-            }
-            gw.write("\n");
-            gw.flush();
+            String[] allGenomes = generateGenomes(gw, line);
 
             line = in.readLine();
-            str = line.substring(line.indexOf(':') + 1);
-            str = str.substring(str.indexOf(':') + 1);
-            if (str.contains("\t")) {
-                str = str.substring(0, str.indexOf("\t"));
-            }
-            str = str.split(";")[0];
-
-            for (int i = 0; i < allGenomes.length; i++) {
-                if (str.equals(allGenomes[i])) {
-                    integerBased = false;
-                    break;
-                }
-            }
+            integerBased = determineBasis(line, allGenomes);
             final String line1 = line;
             final boolean threadIntegerBased = integerBased;
 
@@ -358,5 +335,55 @@ public class Parser {
      */
     public static Thread getThread() {
         return parser;
+    }
+
+    /**
+     * Reads all genomes of the gfa file and caches them.
+     * @param gw the writer used to write to the cache.
+     * @param line the line on which all genomes are listed.
+     * @return the array of all genomes in the gfa file.
+     */
+    private String[] generateGenomes(BufferedWriter gw, String line) {
+        String str = line.substring(line.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        if (str.contains("\t")) {
+            str = str.substring(0, str.indexOf("\t"));
+        }
+        String[] allGenomes = str.split(";");
+        try {
+            gw.write(allGenomes.length + "\t");
+            for (int i = 0; i < allGenomes.length; i++) {
+                gw.write(allGenomes[i] + "\t");
+            }
+            gw.write("\n");
+            gw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return allGenomes;
+    }
+
+    /**
+     * Determines if the gfa file displays genomes as ints or names.
+     * @param line a line of the gfa file that is to be determined.
+     * @param allGenomes all the gemones of the gfa file.
+     * @return true iff the genomes are displayed as integers.
+     */
+    private boolean determineBasis(String line, String[] allGenomes) {
+        boolean result = true;
+        String str = line.substring(line.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        if (str.contains("\t")) {
+            str = str.substring(0, str.indexOf("\t"));
+        }
+        str = str.split(";")[0];
+
+        for (int i = 0; i < allGenomes.length; i++) {
+            if (str.equals(allGenomes[i])) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 }

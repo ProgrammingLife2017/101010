@@ -59,6 +59,10 @@ public class Window extends Application {
 
     private FXElementsFactory fxElementsFactory;
 
+    private static double MIN_WIDTH = 1200d;
+
+    private static double MIN_HEIGHT = 700d;
+
     /**
      * Starts the frame.
      * @param stage Main stage where the content is placed.
@@ -95,14 +99,15 @@ public class Window extends Application {
         BorderPane pane = new BorderPane();
         pane.setTop(createMenuBar(stage));
         pane.setCenter(graphScene);
-        pane.setLeft(createSidePane(infoScreen, controller));
-        pane.setMaxWidth(stage.getWidth() - infoScreen.getWidth());
+        pane.setLeft(createSidePane(controller, infoScreen));
         return pane;
     }
 
     private Pane createSidePane(Pane info, Pane control) {
         VBox box = new VBox();
+        box.setMaxWidth(200);
         box.getChildren().addAll(info, control);
+        box.getStyleClass().add("vbox");
         return box;
     }
 
@@ -110,6 +115,8 @@ public class Window extends Application {
         stage.setTitle("Main window");
         stage.setResizable(true);
         stage.setMaximized(true);
+        stage.setMinHeight(MIN_HEIGHT);
+        stage.setMinWidth(MIN_WIDTH);
         stage.setOnCloseRequest(event -> {
             try {
                 Window.loggerFactory.getFileSystem().closeWriter();

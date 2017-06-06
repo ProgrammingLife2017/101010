@@ -19,7 +19,9 @@ public final class InfoScreen extends GridPane {
 
     private FXElementsFactory fxElementsFactory;
 
-    private static double MAX_WIDTH = 200d;
+    private static double MIN_WIDTH = 200d;
+
+    private static double MIN_HEIGHT = 150d;
 
     /**
      * Constructor.
@@ -32,15 +34,13 @@ public final class InfoScreen extends GridPane {
                 (observable, oldValue, newValue) -> textArea.setScrollTop(Double.MAX_VALUE)
         );
         fxElementsFactory = factory;
-        Label label = fxElementsFactory.createLabel("Graph Information");
-        this.add(label, 1, 1);
         screenSettings();
     }
 
     private void screenSettings() {
-        this.setMaxWidth(MAX_WIDTH);
+        this.setMinSize(MIN_WIDTH, MIN_HEIGHT);
         this.toFront();
-        this.setStyle("-fx-border-color: black;");
+        this.getStyleClass().add("grid");
     }
 
     public void displayNodeInfo(DrawNode node) {
@@ -50,7 +50,7 @@ public final class InfoScreen extends GridPane {
         textArea.clear();
         NodeGraph graph = NodeGraph.getCurrentInstance();
         Label label1 = fxElementsFactory.createLabel("Graph Information");
-        Label label2 = fxElementsFactory.createLabel("Node id:" + Integer.toString(node.hashCode()));
+        Label label2 = fxElementsFactory.createLabel("Node id: " + Integer.toString(node.hashCode()));
         textArea.appendText(graph.getSegment(node.getIndex()) + "\n");
         this.add(label1, 1, 1);
         this.add(label2, 1, 2);

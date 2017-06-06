@@ -43,14 +43,16 @@ public class Controller extends GridPane {
         this.add(centerInputField, 2, 2);
         this.add(radius, 1, 3);
         this.add(radiusInputField, 2, 3);
+        this.add(submitButton, 1, 4);
     }
 
     private void controllerSettings() {
-        centerInputField.setMaxWidth(50d);
-        radiusInputField.setMaxWidth(50d);
-        currentCenterField.setMaxWidth(50d);
+        centerInputField.setMaxWidth(75d);
+        radiusInputField.setMaxWidth(75d);
+        currentCenterField.setMaxWidth(75d);
         currentCenterField.setEditable(false);
         submitButton.setOnAction(buttonAction);
+        this.getStyleClass().addAll("grid", "border_bottom");
     }
 
     private void checkTextFields() {

@@ -282,13 +282,16 @@ public class ParserTest {
         try {
             String line = "::1;2;3;4;5";
             String line2 = "::hallo;2;3;4;5";
+            String line3 = "::1;2;3;hallo;5";
             String[] allGenomes = new String[]{"sjors", "hallo", "asdcadca"};
             Method method = Parser.class.getDeclaredMethod("determineBasis", String.class, String[].class);
             method.setAccessible(true);
             boolean result = (boolean) method.invoke(Parser.getInstance(), line, allGenomes);
             boolean result2 = (boolean) method.invoke(Parser.getInstance(), line2, allGenomes);
+            boolean result3 = (boolean) method.invoke(Parser.getInstance(), line3, allGenomes);
             assertTrue(result);
             assertFalse(result2);
+            assertTrue(result3);
         } catch (Exception e) {
             e.printStackTrace();
             fail();

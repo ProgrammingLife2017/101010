@@ -416,11 +416,13 @@ public class Parser {
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
             int nol = getNumberOfLine(new File(path));
-            br.readLine();
+            String line = br.readLine();
+            String[] genomes = line.split("\t");
+            GraphInfo.getInstance().setGenomesNum(Integer.parseInt(genomes[0]));
             int[][] paths = new int[nol - 2][];
             for (int i = 0; i < nol - 2; i++) {
-                String line = br.readLine();
-                String[] genomes = line.split("\t");
+                line = br.readLine();
+                genomes = line.split("\t");
                 int[] genPath = new int[Integer.parseInt(genomes[0])];
                 for (int j = 0; j < Integer.parseInt(genomes[0]); j++) {
                     genPath[j] = Integer.parseInt(genomes[j + 1]);

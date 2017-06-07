@@ -2,24 +2,24 @@ package parsing;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import javafx.application.Platform;
+import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
-
-import org.junit.After;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -84,8 +84,8 @@ public class ParserTest {
             e.printStackTrace();
         }
 
-        assertEquals(2221, data.getSegment(7).length());
-        assertTrue(data.getSegment(7).length() != 0);
+        assertEquals(2221, data2.getSegment(7).length());
+        assertTrue(data2.getSegment(7).length() != 0);
     }
 
     @Test
@@ -246,17 +246,71 @@ public class ParserTest {
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(absoluteFilePath + "/src/main/resources/test2Genomes.txt"))));
-            assertEquals("10\tTKK-01-0015\tTKK-01-0026\tTKK-01-0029\tTKK-01-0058\tTKK-01-0066\tTKK_02_0018\tTKK_02_0068\tTKK_04_0002\tTKK_04_0031\tTKK_REF\t", br.readLine());
-            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("2\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("4\tTKK_02_0068\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
-            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
-            assertEquals("1\tTKK_04_0031\t", br.readLine());
-            assertEquals("5\tTKK_02_0068\tTKK-01-0066\tTKK_REF\tTKK_02_0018\tTKK-01-0026\t", br.readLine());
-            assertEquals("6\tTKK_04_0031\tTKK_02_0018\tTKK-01-0026\tTKK_02_0068\tTKK-01-0066\tTKK_REF\t", br.readLine());
+            assertEquals("10\tTKK-01-0015.fasta\tTKK-01-0026.fasta\tTKK-01-0029.fasta\tTKK-01-0058.fasta\tTKK-01-0066.fasta\tTKK_02_0018.fasta\tTKK_02_0068.fasta\tTKK_04_0002.fasta\tTKK_04_0031.fasta\tTKK_REF.fasta\t", br.readLine());
+            assertEquals("2\t4\t9\t", br.readLine());
+            assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
+            assertEquals("2\t4\t9\t", br.readLine());
+            assertEquals("4\t6\t8\t5\t1\t", br.readLine());
+            assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
+            assertEquals("1\t8\t", br.readLine());
+            assertEquals("5\t6\t4\t9\t5\t1\t", br.readLine());
+            assertEquals("6\t8\t5\t1\t6\t4\t9\t", br.readLine());
             br.close();
         } catch(IOException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void generateGenomes() {
+        String workingDirectory = System.getProperty("user.dir");
+        String absoluteFilePath = workingDirectory + File.separator;
+        File file = new File(absoluteFilePath + "/src/test/resources/testGenerateGenomes.txt");
+        try {
+            file.createNewFile();
+            BufferedWriter gw = new BufferedWriter(new FileWriter(file));
+            String line = "::hallo;sjors";
+
+            Class[] classes = new Class[]{BufferedWriter.class, String.class};
+            Method method = Parser.class.getDeclaredMethod("generateGenomes", BufferedWriter.class, String.class);
+            method.setAccessible(true);
+            String[] result = (String[]) method.invoke(Parser.getInstance(), gw, line);
+            gw.close();
+            assertEquals("hallo", result[0]);
+            assertEquals("sjors", result[1]);
+            BufferedReader gr = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            String[] readLine = gr.readLine().split("\t");
+            assertEquals("2", readLine[0]);
+            assertEquals("hallo", readLine[1]);
+            assertEquals("sjors", readLine[2]);
+            gr.close();
+            file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void determineBasis() {
+        PowerMockito.mockStatic(Platform.class);
+        PowerMockito.doNothing().when(Platform.class);
+        Platform.runLater(any());
+        try {
+            String line = "::1;2;3;4;5";
+            String line2 = "::hallo;2;3;4;5";
+            String line3 = "::1;2;3;hallo;5";
+            String[] allGenomes = new String[]{"sjors", "hallo", "asdcadca"};
+            Method method = Parser.class.getDeclaredMethod("determineBasis", String.class, String[].class);
+            method.setAccessible(true);
+            boolean result = (boolean) method.invoke(Parser.getInstance(), line, allGenomes);
+            boolean result2 = (boolean) method.invoke(Parser.getInstance(), line2, allGenomes);
+            boolean result3 = (boolean) method.invoke(Parser.getInstance(), line3, allGenomes);
+            assertTrue(result);
+            assertFalse(result2);
+            assertTrue(result3);
+        } catch (Exception e) {
             e.printStackTrace();
             fail();
         }

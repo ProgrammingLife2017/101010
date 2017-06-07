@@ -5,7 +5,6 @@ import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;
 import screens.Window;
-import window.FileSelector;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -90,10 +89,10 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line = in.readLine();
-            line = in.readLine();
+            while (!line.startsWith("H\tORI")) {
+                line = in.readLine();
+            }
 
-            final String line1 = line;
-            line = line.substring(line.indexOf('\t') + 1);
             String absoluteFilePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
 
             String sDB = absoluteFilePath + "Segments.txt";
@@ -108,7 +107,16 @@ public class Parser {
             BufferedWriter out = new BufferedWriter(new FileWriter(segments));
             BufferedWriter gw = new BufferedWriter(new FileWriter(genomes));
 
-            noOfGenomes = (double) addGenomes(gw, line);
+            boolean integerBased = true;
+
+            String[] allGenomes = generateGenomes(gw, line);
+
+            line = in.readLine();
+            integerBased = determineBasis(line, allGenomes);
+            final String line1 = line;
+            final boolean threadIntegerBased = integerBased;
+
+
 
             parser = new Thread(() -> {
                 try {
@@ -130,8 +138,12 @@ public class Parser {
                                 out.flush();
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
-                                String nodeGenomes = line2.substring(0, line2.indexOf('\t'));
-                                node.setWeight(addGenomes(gw, nodeGenomes) / noOfGenomes);
+
+                                if (line2.contains("\t")) {
+                                    line2 = line2.substring(0, line2.indexOf("\t"));
+                                }
+                                node.setWeight(addGenomes(gw, line2, threadIntegerBased, allGenomes));
+
                                 line2 = in.readLine();
                                 lineCounter++;
                                 while (line2 != null && line2.startsWith("L")) {
@@ -277,25 +289,33 @@ public class Parser {
     }
 
     /**
-     * Writes alle genomes in the string to the file given by the writer.
+     * Writes all genomes in the string to the file given by the writer.
      * @param gw Writer that writes the string.
      * @param str String with the genomes.
+     * @param hasInt true iff the genomes displayed as integers instead of names.
+     * @param genomeList list of all genomes in the gfa file.
+     * @throws IOException when the writer can't write to the file.
      */
-    private int addGenomes(BufferedWriter gw, String str) {
+
+    private int addGenomes(BufferedWriter gw, String str, boolean hasInt, String[] genomeList) throws IOException {
         str = str.substring(str.indexOf(':') + 1);
         str = str.substring(str.indexOf(':') + 1);
         String[] genomeTemp = str.split(";");
-        try {
-            gw.write(genomeTemp.length + "\t");
-            for (String string : genomeTemp) {
-                gw.write(string.substring(0, string.length() - 6) + "\t");
+        gw.write(genomeTemp.length + "\t");
+        for (String string : genomeTemp) {
+            if (hasInt) {
+                gw.write(string + "\t");
+            } else {
+                for (int i = 0; i < genomeList.length; i++) {
+                    if (string.equals(genomeList[i])) {
+                        gw.write(i + "\t");
+                        break;
+                    }
+                }
             }
-            gw.write("\n");
-            gw.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("adding genomes failed");
         }
+        gw.write("\n");
+        gw.flush();
         return genomeTemp.length;
     }
 
@@ -345,5 +365,51 @@ public class Parser {
             System.out.println("Error when reading in genome cache");
             e.printStackTrace();
         }
+    }
+
+     /** Reads all genomes of the gfa file and caches them.
+     * @param gw the writer used to write to the cache.
+     * @param line the line on which all genomes are listed.
+     * @throws IOException when the writer can't write to the file.
+     * @return the array of all genomes in the gfa file.
+     */
+    private String[] generateGenomes(BufferedWriter gw, String line) throws IOException {
+        String str = line.substring(line.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        if (str.contains("\t")) {
+            str = str.substring(0, str.indexOf("\t"));
+        }
+        String[] allGenomes = str.split(";");
+        gw.write(allGenomes.length + "\t");
+        for (int i = 0; i < allGenomes.length; i++) {
+            gw.write(allGenomes[i] + "\t");
+        }
+        gw.write("\n");
+        gw.flush();
+        return allGenomes;
+    }
+
+    /**
+     * Determines if the gfa file displays genomes as ints or names.
+     * @param line a line of the gfa file that is to be determined.
+     * @param allGenomes all the gemones of the gfa file.
+     * @return true iff the genomes are displayed as integers.
+     */
+    private boolean determineBasis(String line, String[] allGenomes) {
+        boolean result = true;
+        String str = line.substring(line.indexOf(':') + 1);
+        str = str.substring(str.indexOf(':') + 1);
+        if (str.contains("\t")) {
+            str = str.substring(0, str.indexOf("\t"));
+        }
+        str = str.split(";")[0];
+
+        for (int i = 0; i < allGenomes.length; i++) {
+            if (str.equals(allGenomes[i])) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 }

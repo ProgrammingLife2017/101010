@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
  * Created by Michael on 5/26/2017.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Window.class})
+@PrepareForTest(Window.class)
 public class NodeInfoTest {
     private NodeInfo nodeInfo;
     private InfoScreen infoScreen;
@@ -50,7 +50,6 @@ public class NodeInfoTest {
 
     @Before
     public void setup() throws Exception {
-
         infoScreen = mock(InfoScreen.class);
         drawNode = mock(DrawNode.class);
         line = mock(Line.class);

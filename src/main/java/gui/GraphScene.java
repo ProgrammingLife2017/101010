@@ -4,6 +4,7 @@ import datastructure.DrawNode;
 import datastructure.DummyNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
+import gui.interaction.Controller;
 import gui.scenehandler.INodeHandler;
 import gui.scenehandler.NodeCenter;
 import gui.scenehandler.NodeInfo;
@@ -88,6 +89,7 @@ import java.util.Set;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                Controller.setCurrentCenter(id);
                 drawGraphUtil(id, radius);
             }
         };

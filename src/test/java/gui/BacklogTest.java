@@ -29,7 +29,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 /**
  * Test class for the backlog window.
  */
-//@RunWith(PowerMockRunner.class)
 @PrepareForTest({Platform.class, Backlog.class})
 public class BacklogTest {
     private Backlog log;

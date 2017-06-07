@@ -5,10 +5,8 @@ import gui.GraphScene;
 import gui.interaction.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -16,11 +14,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -45,21 +40,21 @@ public class NodeCenterTest {
     List<Node> list2 = new ArrayList<>();
     ObservableList<Node> observableList2 = FXCollections.observableList(list2);
 
-    /**
-     * Initialize the JavaFX toolkit, so its services can be tested.
-     * @throws InterruptedException
-     */
-    @BeforeClass
-    public static void initToolkit() throws InterruptedException
-    {
-        final CountDownLatch latch = new CountDownLatch(1);
-        SwingUtilities.invokeLater(() -> {
-            new JFXPanel();
-            latch.countDown();
-        });
-        if (!latch.await(5L, TimeUnit.SECONDS))
-            throw new ExceptionInInitializerError();
-    }
+//    /**
+//     * Initialize the JavaFX toolkit, so its services can be tested.
+//     * @throws InterruptedException
+//     */
+//    @BeforeClass
+//    public static void initToolkit() throws InterruptedException
+//    {
+//        final CountDownLatch latch = new CountDownLatch(1);
+//        SwingUtilities.invokeLater(() -> {
+//            new JFXPanel();
+//            latch.countDown();
+//        });
+//        if (!latch.await(5L, TimeUnit.SECONDS))
+//            throw new ExceptionInInitializerError();
+//    }
 
     @Before
     public void setup() throws Exception {
@@ -76,7 +71,6 @@ public class NodeCenterTest {
 
     @Test
     public void testHandle() throws Exception {
-
         PowerMockito.mockStatic(Controller.class);
         when(Controller.class, "getRadius").thenReturn(mockedRadius);
         nodeCenter.handleNode(node);

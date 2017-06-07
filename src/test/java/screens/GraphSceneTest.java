@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.collections.ObservableList;
@@ -17,11 +18,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.swing.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 /**
@@ -45,6 +49,8 @@ public class GraphSceneTest {
 
     @Mock
     ObservableList list = mock(ObservableList.class);
+
+    GraphInfo gi = new GraphInfo();
 
     ArrayList<Node> nodes = new ArrayList<>();
 
@@ -74,6 +80,12 @@ public class GraphSceneTest {
         n1.addOutgoingEdge(1);
         Node n2 = new Node();
         n2.addIncomingEdge(0);
+        int[][] paths = new int[2][3];
+        paths[0][0] = 1;
+        paths[0][1] = 2;
+        paths[0][2] = 3;
+        paths[1][0] = 1;
+        paths[1][1] = 3;
         nodes.add(n1);
         nodes.add(n2);
         ngTest = new NodeGraph(nodes, null, null, null);
@@ -83,6 +95,8 @@ public class GraphSceneTest {
         when(group.getChildren()).thenReturn(list);
         when(fact.createScene(group, 150, 100)).thenReturn(scene);
         when(fact.setScene(stage, scene)).thenReturn(stage);
+        gi.setPaths(paths);
+        GraphInfo.setInstance(gi);
         NodeGraph.setCurrentInstance(ngTest);
         gs = new GraphScene(fact);
     }
@@ -108,7 +122,7 @@ public class GraphSceneTest {
     }
 
     @Test
-    public void drawGraphTestInRadius() {
+    public void drawGraphInRadius() {
         gs.drawGraph(0, 20);
         verify(fact, never()).createGroup();
         verify(fact, never()).createLabel(anyString());
@@ -117,5 +131,56 @@ public class GraphSceneTest {
         verify(fact, never()).setScene(stage, scene);
         verify(group, never()).getChildren();
         verify(fact, never()).show(stage);
+    }
+
+    @Test
+    public void getNumberOfDuplicates() {
+        try {
+            Method method = GraphScene.class.getDeclaredMethod("getNumberOfDuplicates", int.class, int.class);
+            method.setAccessible(true);
+            int result = (int) method.invoke(gs, 0, 1);
+            assertEquals(2, result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void determineEdgeWidth() {
+        try {
+            int[] out0 = {1, 2};
+            int[] out1 = {2};
+            int[] in1 = {0};
+            int[] in2 = {0, 1};
+            int[][] paths = new int[3][3];
+            paths[1][0] = 1;
+            paths[1][1] = 3;
+            ArrayList<Node> nodes = new ArrayList<>();
+            nodes.add(new Node(0, out0, new int[0]));
+            nodes.add(new Node(0, out1, in1));
+            nodes.add(new Node(0, new int[0], in2));
+            LinkedList<DrawNode> dNodes = new LinkedList<>();
+            for (int i = 0; i < 3; i++) {
+                DrawNode dNode = new DrawNode(i);
+                dNode.setX(i);
+                dNodes.add(dNode);
+                paths[0][i] = i;
+                paths[2][i] = i;
+            }
+            gi.setPaths(paths);
+            GraphInfo.setInstance(gi);
+            NodeGraph ng = new NodeGraph(nodes, null, dNodes, null);
+            NodeGraph.setCurrentInstance(ng);
+            Method method = GraphScene.class.getDeclaredMethod("determineEdgeWidth", Node.class, int.class);
+            method.setAccessible(true);
+            double[] result = (double[]) method.invoke(gs, nodes.get(0), 0);
+            assertEquals(2, result[0], 0.00001);
+            assertEquals(3, result[1], 0.00001);
+            assertEquals(2, result.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }

@@ -3,7 +3,7 @@ package screens;
 /**
  * Class that can store information about the current state on the drawn graph used for navigation.
  */
-public final class GraphInfo {
+public class GraphInfo {
 
     /**
      * The radius of the currently drawn graph.
@@ -33,7 +33,7 @@ public final class GraphInfo {
     /**
      * Constructor for the information.
      */
-    private GraphInfo() {
+    public GraphInfo() {
         this.currentCenterNode = 0;
         this.currentRadius = 200;
     }
@@ -47,6 +47,14 @@ public final class GraphInfo {
             instance = new GraphInfo();
         }
         return instance;
+    }
+
+    /**
+     * Setter for the instance of the GraphInfo.
+     * @param gi the new GraphInfo.
+     */
+    public static void setInstance(GraphInfo gi) {
+        instance = gi;
     }
 
     /**

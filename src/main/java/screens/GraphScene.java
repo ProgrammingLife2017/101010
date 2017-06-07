@@ -348,12 +348,13 @@ import java.util.Set;
                 maxX = out.getX();
                 maxInt = i;
             }
-            widths[i] = getNumberOfDupes(id, outgoing[i]);
+            widths[i] = getNumberOfDuplicates(id, outgoing[i]);
         }
         if (maxInt == -1) {
             return widths;
         }
         int[] incoming = ng.getNode(outgoing[maxInt]).getIncomingEdges();
+        System.out.println(outgoing.length);
         if (incoming.length < 2 || outgoing.length < 2) {
             return widths;
         }
@@ -361,7 +362,7 @@ import java.util.Set;
         for (int i = 0; i < incoming.length; i++) {
             DrawNode dNode = ng.getDrawNode(incoming[i]);
             if (dNode != null && Math.abs(maxX - dNode.getX()) >= 5) {
-                widths[maxInt] -= getNumberOfDupes(outgoing[maxInt], incoming[i]);
+                widths[maxInt] -= getNumberOfDuplicates(outgoing[maxInt], incoming[i]);
             }
         }
         return widths;
@@ -373,7 +374,7 @@ import java.util.Set;
      * @param outId the id of the node an edge with be drawn to.
      * @return the number of paths going through both nodes.
      */
-    private int getNumberOfDupes(int id, int outId) {
+    private int getNumberOfDuplicates(int id, int outId) {
         int count = 0;
         int[][] paths = GraphInfo.getInstance().getPaths();
         for (int j = 0; j < paths[id].length; j++) {

@@ -82,6 +82,7 @@ import java.util.LinkedList;
                 }
 
                 drawGraphUtil(id, radius);
+                scaleWindow();
             }
         };
         thread.start();
@@ -99,7 +100,7 @@ import java.util.LinkedList;
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
 
         for (DrawNode dNode : drawNodes) {
-            Platform.runLater(() -> drawNode(dNode));
+            drawNode(dNode);
             DrawNode nOut;
             for (int i : nodeGraph.getNode(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
@@ -150,19 +151,53 @@ import java.util.LinkedList;
 
     /**
      * Draws new root nodes.
-     * @param newNodes the new root nodes.
-     * @param newDummies the dummy nodes needed to draw the nodes.
      */
-    private void drawUpdateRoot(LinkedList<DrawNode> newNodes, LinkedList<DummyEdge> newDummies) {
-
+    private void drawUpdateRoot() {
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
+        int oldLayer = drawNodes.getLast().getLayer();
+        LinkedList<DummyEdge> newEdges = nodeGraph.addRootLayer();
+        drawNodes = nodeGraph.getDrawNodes();
+        int newLayer = drawNodes.getLast().getLayer();
+        DrawNode nOut;
+        if (newLayer != oldLayer) {
+            for (DrawNode dNode : drawNodes) {
+                if (dNode.getLayer() == newLayer) {
+                    drawNode(dNode);
+                    for (int i : nodeGraph.getNode(dNode.getIndex()).getOutgoingEdges()) {
+                        nOut = nodeGraph.getDrawNode(i);
+                        if (nOut != null) {
+                            drawLine(dNode, nOut, 2);
+                        }
+                    }
+                }
+            }
+            for (DummyEdge e : newEdges) {
+                if (e.getFirstX() == newLayer) {
+                    nOut = nodeGraph.getDrawNode(e.getChild());
+                    if (nOut != null) {
+                        drawLine(e, nOut, 2);
+                    }
+                } else {
+                    nOut = nodeGraph.getDrawNode(e.getParent());
+                    if (nOut != null) {
+                        drawLine(nOut, e, 2);
+                    }
+                    if (e.getFirstX() == e.getFirstY()) {
+                        nOut = nodeGraph.getDrawNode(e.getChild());
+                        if (nOut != null) {
+                            drawLine(e, nOut, 2);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Draws new leaf nodes.
-     * @param newNodes the new leaf nodes.
-     * @param newDummies the dummy nodes needed to draw the nodes.
      */
-    private void drawUpdateLeaf(LinkedList<DrawNode> newNodes, LinkedList<DummyEdge> newDummies) {
+    private void drawUpdateLeaf() {
 
     }
 
@@ -172,7 +207,12 @@ import java.util.LinkedList;
      * @param transY y-coordinate of cursor
      */
     public void zoomOut(double transX, double transY) {
-
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        if (nodeGraph.getDrawNodes().size() < Math.min(10000, nodeGraph.getSize())) {
+            nodeGraph.retrieveEdgeNodes();
+            drawUpdateRoot();
+            scaleWindow();
+        }
     }
 
     /**
@@ -210,7 +250,8 @@ import java.util.LinkedList;
         node.setHeight(10);
         node.setFill(Color.CRIMSON);
         node.setOnMousePressed(click);
-        this.getChildren().add(node);
+        node.toFront();
+        Platform.runLater(() -> this.getChildren().add(node));
     }
 
     /**
@@ -238,8 +279,7 @@ import java.util.LinkedList;
                 parent.getBoundsInLocal().getMaxX(),
                 parent.getBoundsInLocal().getMinY() + 5,
                 edge.getFirstX(),
-                edge.getFirstY() + 5
-                );
+                edge.getFirstY() + 5);
     }
 
     /**
@@ -252,8 +292,7 @@ import java.util.LinkedList;
         drawLine(edge.getParent() + "-" + child.getIndex(), width,
                 edge.getLastX(), edge.getLastY() + 5,
                 child.getBoundsInLocal().getMinX(),
-                child.getBoundsInLocal().getMinY() + 5
-                );
+                child.getBoundsInLocal().getMinY() + 5);
     }
 
     /**
@@ -273,6 +312,7 @@ import java.util.LinkedList;
         l.setStartY(startY);
         l.setEndX(endX);
         l.setEndY(endY);
+        l.toBack();
         l.setOnMousePressed(click);
         Platform.runLater(() -> this.getChildren().add(l));
     }
@@ -315,4 +355,18 @@ import java.util.LinkedList;
         return this.info;
     }
 
+    /**
+     * Scales the window to the size of the sub graph.
+     */
+    public void scaleWindow() {
+        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+        if (nodeGraph != null) {
+            LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
+            if (drawNodes != null && drawNodes.size() > 0) {
+                Platform.runLater(() -> setTranslateX(-drawNodes.getLast().getBoundsInLocal().getMinX()));
+                Platform.runLater(() -> setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() - drawNodes.getLast().getBoundsInLocal().getMinX())));
+                Platform.runLater(() -> setTranslateX((-drawNodes.getLast().getBoundsInLocal().getMinX() + getWidth() / 2) * getScaleX() - getWidth() / 2));
+            }
+        }
+    }
 }

@@ -199,7 +199,6 @@ public class NodeGraph {
         updateDummyEdges();
         dummyEdgeSpacing();
         verticalSpacing();
-        retrieveEdgeNodes();
     }
 
     /**
@@ -265,7 +264,7 @@ public class NodeGraph {
                 }
             }
             sorted.addLast(current);
-            drawNodes.remove(current);
+            dNodes.remove(current);
         }
     }
 
@@ -437,14 +436,14 @@ public class NodeGraph {
     /**
      * Saves the root and leave nodes to specific lists.
      */
-    private void retrieveEdgeNodes() {
+    public void retrieveEdgeNodes() {
         rootNodes = new LinkedList<>();
         leafNodes = new LinkedList<>();
         int startX = drawNodes.getLast().getLayer();
         int endX = drawNodes.getFirst().getLayer();
 
-        retrieveDrawNodes(startX, endX);
         retrieveDummies(startX, endX);
+        retrieveDrawNodes(startX, endX);
     }
 
     /**
@@ -459,7 +458,7 @@ public class NodeGraph {
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getLayer() == endX) {
-                leafNodes.add(temp.getIndex());
+                leafNodes.addLast(temp.getIndex());
             } else {
                 break;
             }
@@ -470,7 +469,7 @@ public class NodeGraph {
         while (rit.hasNext()) {
             temp = rit.next();
             if (temp.getLayer() == startX) {
-                rootNodes.add(temp.getIndex());
+                rootNodes.addLast(temp.getIndex());
             } else {
                 break;
             }
@@ -488,7 +487,7 @@ public class NodeGraph {
                 rootNodes.addLast(-edge.getParent());
             }
             if (edge.getLastX() == endX) {
-                leafNodes.add(-edge.getChild());
+                leafNodes.addLast(-edge.getChild());
             }
         }
     }
@@ -565,5 +564,107 @@ public class NodeGraph {
      */
     protected LinkedList<Integer> getLeafNodes() {
         return leafNodes;
+    }
+
+    /**
+     * Adds a new layer of DrawNodes and DummyEdges at the root of the sub graph.
+     * @return A List of updated DummyEdges.
+     */
+    public LinkedList<DummyEdge> addRootLayer() {
+        LinkedList<DrawNode> newNodes = nextRootLayer();
+        newNodes = topologicalSort(newNodes);
+        assignLayers(newNodes, drawNodes.getLast().getLayer());
+        int cLayer = newNodes.getLast().getLayer();
+        DummyEdge e;
+        DrawNode parent;
+        DrawNode child;
+        LinkedList<DummyEdge> newEdges = rootDummyUpdate(newNodes);
+        for (DrawNode dNode : newNodes) {
+            if (dNode.getLayer() != cLayer) {
+                for (int i : rootNodes) {
+                    if (i >= 0) {
+                        child = getDrawNode(i);
+                        for (int j : getNode(i).getIncomingEdges()) {
+                            parent = getDrawNode(newNodes, j);
+                            if (parent == null || child.getLayer() - parent.getLayer() > 100) {
+                                e = new DummyEdge(j, i);
+                                e.addFirst(child.getLayer() - 100, (int) child.getY());
+                                if (!dummyEdges.contains(e) && !newEdges.contains(e)) {
+                                    newEdges.addLast(e);
+                                    dummyEdges.addLast(e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        verticalSpacing(newNodes, newEdges);
+
+        for (DrawNode dNode : newNodes) {
+            if (dNode.getLayer() == cLayer) {
+                drawNodes.addLast(dNode);
+            }
+        }
+
+        return newEdges;
+    }
+
+    /**
+     *
+     * @param newRootNodes
+     * @return
+     */
+    public LinkedList<DummyEdge> rootDummyUpdate(LinkedList<DrawNode> newRootNodes) {
+        LinkedList<DummyEdge> updatedEdges = new LinkedList<>();
+        DrawNode parent;
+        int newRoot = newRootNodes.getLast().getLayer();
+        for (DummyEdge e : dummyEdges) {
+            parent = getDrawNode(newRootNodes, e.getParent());
+            if (parent != null && parent.getLayer() != newRoot) {
+                e.addFirst();
+            }
+            updatedEdges.addLast(e);
+        }
+        return updatedEdges;
+    }
+
+    /**
+     * Finds all DrawNodes that could be in the next root layer,
+     * these are all nodes that are parents of a node or edge in the current root layer.
+     * @return A list of DrawNodes that could be in the next root layer.
+     */
+    private LinkedList<DrawNode> nextRootLayer() {
+        LinkedList<DrawNode> res = new LinkedList<>();
+        DrawNode newDrawNode;
+        for (int i : rootNodes) {
+            if (i >= 0) {
+                System.out.println(i + ":");
+                for (int j : getNode(i).getIncomingEdges()) {
+                    newDrawNode = new DrawNode(j);
+                    if (!res.contains(newDrawNode)) {
+                        System.out.println("\t" + j);
+                        res.addLast(newDrawNode);
+                    }
+                }
+            } else {
+                System.out.println(i);
+                newDrawNode = new DrawNode(-i);
+                if (!res.contains(newDrawNode)) {
+                    res.addLast(newDrawNode);
+                }
+            }
+        }
+        System.out.println("-");
+        return res;
+    }
+
+    /**
+     * Adds a new layer of DrawNodes and DummyEdges at the leaf of the sub graph.
+     * @return A List of updated DummyEdges.
+     */
+    public LinkedList<DummyEdge> addLeafLayer() {
+        return new LinkedList<>();
     }
 }

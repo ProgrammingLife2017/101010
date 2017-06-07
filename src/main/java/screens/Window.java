@@ -1,6 +1,5 @@
 package screens;
 
-import datastructure.DrawNode;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
@@ -27,7 +26,6 @@ import window.FileSelector;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 
 
 /**
@@ -216,7 +214,7 @@ public class Window extends Application {
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
 
                         new Thread() {
-                            public void run () {
+                            public void run() {
                                 try {
                                     Parser.getThread().join();
 
@@ -229,7 +227,7 @@ public class Window extends Application {
                             }
                         }.start();
 
-                        Thread drawing = graphScene.drawGraph(0, 200);
+                        Thread drawing = graphScene.drawGraph(0, 500);
 
                         new Thread(() -> {
                             try {
@@ -238,11 +236,7 @@ public class Window extends Application {
                                 e.printStackTrace();
                             }
 
-                            graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
-                            graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-                            LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-                            graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
-
+                            graphScene.scaleWindow();
                             logger.info("file has been selected");
                         }).start();
                     }

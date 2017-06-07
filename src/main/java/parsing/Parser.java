@@ -44,6 +44,11 @@ public class Parser {
     private double noOfGenomes;
 
     /**
+     * All paths of the genomes specified in the file.
+     */
+    private static int[][] paths;
+
+    /**
      * Constructor of the parser.
      */
     private Parser() { }
@@ -215,6 +220,7 @@ public class Parser {
                     path = path.substring(0, path.length() - 4);
                     BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path + "Genomes.txt")));
                     noOfGenomes = Double.parseDouble(br.readLine().split("\t")[0]);
+                    paths = new int[graphSize][];
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());
                         int outLength = Integer.parseInt(in.readLine());
@@ -232,7 +238,7 @@ public class Parser {
                         Node temp = new Node(length, outgoing, incoming);
                         graph.addNodeCache(i, temp);
                         lineCounter = lineCounter + 5;
-                        setWeights(br, temp);
+                        setWeights(br, temp, i);
                         updateProgressBar(lineCounter, nol);
                     }
                     br.close();
@@ -358,9 +364,14 @@ public class Parser {
      * @param br the reader that reads the cached file.
      * @param node the node a weight is being set to.
      */
-    private void setWeights(BufferedReader br, Node node) {
+    private void setWeights(BufferedReader br, Node node, int id) {
         try {
-            node.setWeight(Double.parseDouble(br.readLine().split("\t")[0]) / noOfGenomes);
+            String[] line = br.readLine().split("\\t");
+            node.setWeight(Double.parseDouble(line[0]) / noOfGenomes);
+            paths[id] = new int[Integer.parseInt(line[0])];
+            for (int i = 1; i < line.length; i++) {
+                paths[id][i - 1] = Integer.parseInt(line[i]);
+            }
         } catch (Exception e) {
             System.out.println("Error when reading in genome cache");
             e.printStackTrace();
@@ -411,5 +422,13 @@ public class Parser {
             }
         }
         return result;
+    }
+
+    public static int[][] getPaths() {
+        return paths;
+    }
+
+    public double getNoOfGenomes() {
+        return noOfGenomes;
     }
 }

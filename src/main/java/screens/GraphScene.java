@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import parsing.Parser;
 import javafx.scene.shape.Rectangle;
@@ -105,6 +106,8 @@ import java.util.Set;
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
         LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
         for (DrawNode dNode : drawNodes) {
+            int count = 0;
+            double[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setOnMousePressed(click);
             Platform.runLater(() -> this.getChildren().add(dNode));
@@ -112,11 +115,11 @@ import java.util.Set;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+                    drawLine(dNode.getIndex() + "-" + i, 5 * widths[count] / Parser.getInstance().getNoOfGenomes(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
+                count += 1;
             }
         }
-
         DummyNode current;
         DummyNode current2;
         DrawNode dN;
@@ -282,7 +285,7 @@ import java.util.Set;
     private void drawLine(String id, double width, double startX, double startY, double endX, double endY) {
         Line l = new Line();
         l.setId(id);
-        l.setStrokeWidth(width);
+        l.setStrokeWidth(Math.ceil(width));
         l.setStartX(startX);
         l.setStartY(startY);
         l.setEndX(endX);
@@ -328,11 +331,53 @@ import java.util.Set;
         return this.info;
     }
 
-    private void determineEdgeWidth(Node incNode) {
-        double outgoingWeight = 0;
-        for (Integer i : incNode.getOutgoingEdges()) {
-            NodeGraph.getCurrentInstance().getNode(i);
+    private double[] determineEdgeWidth(Node incNode, int id) {
+        NodeGraph ng = NodeGraph.getCurrentInstance();
+        int[] outgoing = incNode.getOutgoingEdges();
+        double[] widths = new double[outgoing.length];
+        int[][] paths = Parser.getPaths();
+        int maxInt = -1;
+        double maxX = -Double.MAX_VALUE;
+        for (int i = 0; i < outgoing.length; i++) {
+            double outgoingWeight = 0;
+            DrawNode out = ng.getDrawNode(outgoing[i]);
+            if (out != null && out.getX() > maxX) {
+                maxX = out.getX();
+                maxInt = i;
+            }
+            for (int j = 0; j < paths[id].length; j++) {
+                for (int k = 0; k < paths[outgoing[i]].length; k++) {
+                    if (paths[id][j] == paths[outgoing[i]][k]) {
+                        outgoingWeight += 1;
+                    }
+                }
+            }
+            widths[i] = outgoingWeight;
         }
+        if (maxInt == -1) {
+            return widths;
+        }
+        int[] incoming = ng.getNode(outgoing[maxInt]).getIncomingEdges();
+        if (incoming.length < 2 || outgoing.length < 2) {
+            return widths;
+        }
+        maxX = ng.getDrawNode(id).getX();
+        for (int i = 0; i < incoming.length; i++) {
+            DrawNode dNode = ng.getDrawNode(incoming[i]);
+            if (dNode != null && Math.abs(maxX - dNode.getX()) >= 5.00001) {
+                for (int j = 0; j < paths[outgoing[maxInt]].length; j++) {
+                    for (int k = 0; k < paths[incoming[i]].length; k++) {
+                        if (paths[outgoing[maxInt]][j] == paths[incoming[i]][k]) {
+                            widths[maxInt] -= 1;
+                        }
+                    }
+                }
+            }
+        }
+//        for (int i = 0; i < widths.length; i++) {
+//            System.out.println(id + "     " + widths[i] + "    " + incNode.getOutgoingEdges()[i]);
+//        }
+        return widths;
     }
 
 }

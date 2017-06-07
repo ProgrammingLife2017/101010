@@ -156,6 +156,7 @@ public class Parser {
                             e.printStackTrace();
                         }
                     }
+                    readGenomes(genomesName);
                     in.close();
                     out.close();
                     gw.close();
@@ -181,7 +182,6 @@ public class Parser {
             System.out.println("Error while reading file");
             e.printStackTrace();
         }
-
         return graph;
     }
 
@@ -410,5 +410,32 @@ public class Parser {
             }
         }
         return result;
+    }
+
+    private void readGenomes(String path) {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            int nol = getNumberOfLine(new File(path));
+            br.readLine();
+            int[][] paths = new int[nol - 2][];
+            for (int i = 0; i < nol - 2; i++) {
+                String line = br.readLine();
+                String[] genomes = line.split("\t");
+                int[] genPath = new int[Integer.parseInt(genomes[0])];
+                for (int j = 0; j < Integer.parseInt(genomes[0]); j++) {
+                    genPath[j] = Integer.parseInt(genomes[j + 1]);
+                }
+                paths[i] = genPath;
+            }
+//            for (int i = 0; i < paths.length; i++) {
+//                for (int j = 0; j < paths[i].length; j++) {
+//                    System.out.print(paths[i][j] + "   ");
+//                }
+//                System.out.println("");
+//            }
+            GraphInfo.getInstance().setPaths(paths);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

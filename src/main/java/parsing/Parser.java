@@ -4,6 +4,7 @@ import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;
+import screens.GraphInfo;
 import screens.Window;
 
 import java.io.BufferedReader;
@@ -34,21 +35,6 @@ public class Parser {
     private static Thread parser;
 
     /**
-     * The name of the currently selected file.
-     */
-    private String currentFile;
-
-    /**
-     * The number of genome paths contained in the file.
-     */
-    private double noOfGenomes;
-
-    /**
-     * All paths of the genomes specified in the file.
-     */
-    private static int[][] paths;
-
-    /**
      * Constructor of the parser.
      */
     private Parser() { }
@@ -72,7 +58,6 @@ public class Parser {
      */
     public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
-        currentFile = file.getName().substring(0, file.getName().length() - 4);
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
         graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
@@ -219,8 +204,8 @@ public class Parser {
                     String path = cache.getAbsolutePath();
                     path = path.substring(0, path.length() - 4);
                     BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path + "Genomes.txt")));
-                    noOfGenomes = Double.parseDouble(br.readLine().split("\t")[0]);
-                    paths = new int[graphSize][];
+                    GraphInfo.getInstance().setGenomesNum(Double.parseDouble(br.readLine().split("\t")[0]));
+                    int[][] paths = new int[graphSize][];
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());
                         int outLength = Integer.parseInt(in.readLine());
@@ -238,9 +223,10 @@ public class Parser {
                         Node temp = new Node(length, outgoing, incoming);
                         graph.addNodeCache(i, temp);
                         lineCounter = lineCounter + 5;
-                        setWeights(br, temp, i);
+                        setWeights(br, temp, i, paths);
                         updateProgressBar(lineCounter, nol);
                     }
+                    GraphInfo.getInstance().setPaths(paths);
                     br.close();
                     in.close();
                 } catch (IOException e) {
@@ -301,8 +287,8 @@ public class Parser {
      * @param hasInt true iff the genomes displayed as integers instead of names.
      * @param genomeList list of all genomes in the gfa file.
      * @throws IOException when the writer can't write to the file.
+     * @return the number of genome paths going through the node.
      */
-
     private int addGenomes(BufferedWriter gw, String str, boolean hasInt, String[] genomeList) throws IOException {
         str = str.substring(str.indexOf(':') + 1);
         str = str.substring(str.indexOf(':') + 1);
@@ -363,11 +349,13 @@ public class Parser {
      * Sets the weights of nodes when reading in from the cache file.
      * @param br the reader that reads the cached file.
      * @param node the node a weight is being set to.
+     * @param id the id of the node.
+     * @param paths the paths of the genomes per node.
      */
-    private void setWeights(BufferedReader br, Node node, int id) {
+    private void setWeights(BufferedReader br, Node node, int id, int[][] paths) {
         try {
             String[] line = br.readLine().split("\\t");
-            node.setWeight(Double.parseDouble(line[0]) / noOfGenomes);
+            node.setWeight(Double.parseDouble(line[0]) / GraphInfo.getInstance().getGenomesNum());
             paths[id] = new int[Integer.parseInt(line[0])];
             for (int i = 1; i < line.length; i++) {
                 paths[id][i - 1] = Integer.parseInt(line[i]);
@@ -422,13 +410,5 @@ public class Parser {
             }
         }
         return result;
-    }
-
-    public static int[][] getPaths() {
-        return paths;
-    }
-
-    public double getNoOfGenomes() {
-        return noOfGenomes;
     }
 }

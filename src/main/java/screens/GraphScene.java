@@ -8,7 +8,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import parsing.Parser;
 import javafx.scene.shape.Rectangle;
@@ -115,7 +114,7 @@ import java.util.Set;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 5 * widths[count] / Parser.getInstance().getNoOfGenomes(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+                    drawLine(dNode.getIndex() + "-" + i, 5 * widths[count] / GraphInfo.getInstance().getGenomesNum(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
                 count += 1;
             }
@@ -331,28 +330,25 @@ import java.util.Set;
         return this.info;
     }
 
+    /**
+     * Determine the number of genome paths going through an edge.
+     * @param incNode the node edges will be drawn from.
+     * @param id the id of the node.
+     * @return An array with the number of paths going through each outgoing edge of the node.
+     */
     private double[] determineEdgeWidth(Node incNode, int id) {
         NodeGraph ng = NodeGraph.getCurrentInstance();
         int[] outgoing = incNode.getOutgoingEdges();
         double[] widths = new double[outgoing.length];
-        int[][] paths = Parser.getPaths();
         int maxInt = -1;
         double maxX = -Double.MAX_VALUE;
         for (int i = 0; i < outgoing.length; i++) {
-            double outgoingWeight = 0;
             DrawNode out = ng.getDrawNode(outgoing[i]);
             if (out != null && out.getX() > maxX) {
                 maxX = out.getX();
                 maxInt = i;
             }
-            for (int j = 0; j < paths[id].length; j++) {
-                for (int k = 0; k < paths[outgoing[i]].length; k++) {
-                    if (paths[id][j] == paths[outgoing[i]][k]) {
-                        outgoingWeight += 1;
-                    }
-                }
-            }
-            widths[i] = outgoingWeight;
+            widths[i] = getNumberOfDupes(id, outgoing[i]);
         }
         if (maxInt == -1) {
             return widths;
@@ -364,20 +360,30 @@ import java.util.Set;
         maxX = ng.getDrawNode(id).getX();
         for (int i = 0; i < incoming.length; i++) {
             DrawNode dNode = ng.getDrawNode(incoming[i]);
-            if (dNode != null && Math.abs(maxX - dNode.getX()) >= 5.00001) {
-                for (int j = 0; j < paths[outgoing[maxInt]].length; j++) {
-                    for (int k = 0; k < paths[incoming[i]].length; k++) {
-                        if (paths[outgoing[maxInt]][j] == paths[incoming[i]][k]) {
-                            widths[maxInt] -= 1;
-                        }
-                    }
+            if (dNode != null && Math.abs(maxX - dNode.getX()) >= 5) {
+                widths[maxInt] -= getNumberOfDupes(outgoing[maxInt], incoming[i]);
+            }
+        }
+        return widths;
+    }
+
+    /**
+     * Get the number of paths going through node with id that also go through node outId.
+     * @param id the id of the node an edge will be drawn from.
+     * @param outId the id of the node an edge with be drawn to.
+     * @return the number of paths going through both nodes.
+     */
+    private int getNumberOfDupes(int id, int outId) {
+        int count = 0;
+        int[][] paths = GraphInfo.getInstance().getPaths();
+        for (int j = 0; j < paths[id].length; j++) {
+            for (int k = 0; k < paths[outId].length; k++) {
+                if (paths[id][j] == paths[outId][k]) {
+                    count += 1;
                 }
             }
         }
-//        for (int i = 0; i < widths.length; i++) {
-//            System.out.println(id + "     " + widths[i] + "    " + incNode.getOutgoingEdges()[i]);
-//        }
-        return widths;
+        return count;
     }
 
 }

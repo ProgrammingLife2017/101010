@@ -3,7 +3,7 @@ package screens;
 /**
  * Class that can store information about the current state on the drawn graph used for navigation.
  */
-public final class NavigationInfo {
+public final class GraphInfo {
 
     /**
      * The radius of the currently drawn graph.
@@ -15,32 +15,36 @@ public final class NavigationInfo {
      */
     private int currentCenterNode;
 
-    private double xOffset;
-
-    private double yOffset;
+    /**
+     * The number of genomes paths that are specified.
+     */
+    private double genomeNum;
 
     /**
-     * A singleton instance of NavigationInfo.
+     * All specified genome paths per node.
      */
-    private static NavigationInfo instance;
+    private int[][] paths;
+
+    /**
+     * A singleton instance of GraphInfo.
+     */
+    private static GraphInfo instance;
 
     /**
      * Constructor for the information.
      */
-    private NavigationInfo() {
+    private GraphInfo() {
         this.currentCenterNode = 0;
         this.currentRadius = 200;
-        this.xOffset = 0;
-        this.yOffset = 0;
     }
 
     /**
-     * Getter for the instance of the NavigationInfo.
-     * @return the currrent instance of the NavigationInfo.
+     * Getter for the instance of the GraphInfo.
+     * @return the currrent instance of the GraphInfo.
      */
-    public static NavigationInfo getInstance() {
+    public static GraphInfo getInstance() {
         if (instance == null) {
-            instance = new NavigationInfo();
+            instance = new GraphInfo();
         }
         return instance;
     }
@@ -75,5 +79,37 @@ public final class NavigationInfo {
      */
     public void setCurrentCenterNode(int id) {
         this.currentCenterNode = id;
+    }
+
+    /**
+     * Setter for the number of genome paths specified in the file.
+     * @param num the number of genome paths specified in the file.
+     */
+    public void setGenomesNum(double num) {
+        this.genomeNum = num;
+    }
+
+    /**
+     * Getter for the number of genome paths specified in the file.
+     * @return the number of genome paths specified in the file.
+     */
+    public double getGenomesNum() {
+        return this.genomeNum;
+    }
+
+    /**
+     * Setter for the genome paths of the file.
+     * @param newPaths the genome paths to set.
+     */
+    public void setPaths(int[][] newPaths) {
+        this.paths = newPaths;
+    }
+
+    /**
+     * Getter for the genome paths of the file.
+     * @return the genome paths of the file per node.
+     */
+    public int[][] getPaths() {
+        return this.paths;
     }
 }

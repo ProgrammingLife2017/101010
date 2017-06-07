@@ -81,7 +81,10 @@ import java.util.Set;
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    Parser.getThread().join();
+                    Thread parser = Parser.getThread();
+                    if (parser != null) {
+                        parser.join();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

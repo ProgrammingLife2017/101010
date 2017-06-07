@@ -2,6 +2,7 @@ package gui;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
+import gui.interaction.Controller;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -14,7 +15,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -22,12 +26,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the GraphScene class.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Controller.class)
 public class GraphSceneTest {
 
     @Mock
@@ -51,6 +60,8 @@ public class GraphSceneTest {
     NodeGraph ngTest = new NodeGraph();
 
     GraphScene gs;
+
+    Controller controller = mock(Controller.class);
 
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
@@ -108,7 +119,9 @@ public class GraphSceneTest {
     }
 
     @Test
-    public void drawGraphTestInRadius() {
+    public void drawGraphTestInRadius() throws Exception {
+        PowerMockito.spy(Controller.class);
+        PowerMockito.doNothing().when(Controller.class, "setCurrentCenter", Mockito.anyInt());
         gs.drawGraph(0, 20);
         verify(fact, never()).createGroup();
         verify(fact, never()).createLabel(anyString());

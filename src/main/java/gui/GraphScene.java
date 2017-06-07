@@ -78,13 +78,13 @@ import java.util.Set;
      */
     public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-        Controller.setCurrentCenter(id);
         Thread thread = new Thread(() -> {
             try {
                 Parser.getThread().join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            Controller.setCurrentCenter(id);
             drawGraphUtil(id, radius);
         });
         thread.start();

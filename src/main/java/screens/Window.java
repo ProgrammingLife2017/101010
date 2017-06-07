@@ -4,6 +4,7 @@ import datastructure.DrawNode;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -91,14 +92,6 @@ public class Window extends Application {
 
         mainPane.setTop(createMenuBar(stage));
         mainPane.setCenter(graphScene);
-
-        pB = new ProgressBar();
-        pB.setVisible(false);
-        pB.setMaxWidth(1212);
-        pB.setPrefHeight(10.0);
-        pB.setMinHeight(10.0);
-        pB.setProgress(0.0);
-        mainPane.setBottom(pB);
 
         Rectangle indicatorBar = new Rectangle();
         indicator = new Rectangle();
@@ -212,22 +205,9 @@ public class Window extends Application {
                 event -> {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
-                        pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
 
-                        new Thread() {
-                            public void run () {
-                                try {
-                                    Parser.getThread().join();
-
-                                    this.join(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                pB.setVisible(false);
-                                pB.setProgress(0.0);
-                            }
-                        }.start();
+                        createProgressWindow();
 
                         Thread drawing = graphScene.drawGraph(0, 200);
 
@@ -390,6 +370,52 @@ public class Window extends Application {
      */
     public static void setProgress(double progress) {
         pB.setProgress(progress);
+    }
+
+    /**
+     * Creates new window with a progress bar.
+     */
+    private Stage createProgressWindow() {
+        pB = new ProgressBar();
+        pB.setVisible(true);
+        pB.setMaxWidth(500);
+        pB.setMaxHeight(50.0);
+        pB.setPrefHeight(50.0);
+        pB.setMinHeight(50.0);
+        pB.setProgress(0.0);
+
+        Stage stage = new Stage();
+        BorderPane pain = new BorderPane();
+        pain.setPrefWidth(500);
+        pain.setPrefHeight(50);
+        pain.setCenter(pB);
+        Scene scene = new Scene(pain);
+        stage.setScene(scene);
+        stage.setTitle("Parsing gfa file");
+        stage.setResizable(false);
+
+        stage.show();
+
+        new Thread() {
+            public void run () {
+                try {
+                    Parser.getThread().join();
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            stage.close();
+                        }
+                    });
+                    this.join(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+
+        return stage;
     }
 
     /**

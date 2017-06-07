@@ -574,7 +574,10 @@ public class NodeGraph {
         LinkedList<DrawNode> newNodes = nextRootLayer();
         newNodes = topologicalSort(newNodes);
         assignLayers(newNodes, drawNodes.getLast().getLayer());
-        int cLayer = newNodes.getLast().getLayer();
+        if (newNodes.isEmpty()) {
+            return new LinkedList<>();
+        }
+        int cLayer = newNodes.getFirst().getLayer();
         DummyEdge e;
         DrawNode parent;
         DrawNode child;

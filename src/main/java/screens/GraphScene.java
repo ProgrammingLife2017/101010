@@ -354,7 +354,6 @@ import java.util.Set;
             return widths;
         }
         int[] incoming = ng.getNode(outgoing[maxInt]).getIncomingEdges();
-        System.out.println(outgoing.length);
         if (incoming.length < 2 || outgoing.length < 2) {
             return widths;
         }

@@ -312,7 +312,7 @@ public class NodeGraph {
             currentNode = getNode(currentDrawNode.getIndex());
             for (int i : currentNode.getOutgoingEdges()) {
                 otherDrawNode = getDrawNode(i);
-                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
+                if (otherDrawNode == null && currentDrawNode.getLayer() < drawNodes.getFirst().getLayer() || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
                     edge = new DummyEdge(currentDrawNode.getIndex(), i);
                     if (!dummyEdges.contains(edge)) {
                         edge.addLast(currentDrawNode.getLayer() + 100, 0);
@@ -322,7 +322,7 @@ public class NodeGraph {
             }
             for (int i : currentNode.getIncomingEdges()) {
                 otherDrawNode = getDrawNode(i);
-                if (otherDrawNode == null || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
+                if (otherDrawNode == null && currentDrawNode.getLayer() > drawNodes.getLast().getLayer() || (otherDrawNode != null && Math.abs(currentDrawNode.getLayer() - otherDrawNode.getLayer()) > 100)) {
                     edge = new DummyEdge(i, currentDrawNode.getIndex());
                     if (!dummyEdges.contains(edge)) {
                         edge.addLast(currentDrawNode.getLayer() - 100, 0);

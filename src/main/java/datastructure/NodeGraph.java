@@ -7,6 +7,9 @@ import java.util.Queue;
 import java.util.Iterator;
 import java.util.ListIterator;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.util.Pair;
 
 
@@ -196,7 +199,6 @@ public class NodeGraph {
             addEdges(current, q, visited);
             drawNode = new DrawNode(current);
             drawNode.setWidth(nodes.get(current).getLength());
-            colorDrawNode(drawNode);
             drawNode.setHeight(10);
             drawNodes.addLast(drawNode);
         }
@@ -205,6 +207,9 @@ public class NodeGraph {
         computeDummyNodes();
         verticalSpacing();
         retrieveEdgeNodes();
+        for (DrawNode drawNode1 : drawNodes) {
+            colorDrawNode(drawNode1, new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.CYAN});
+        }
     }
 
     /**
@@ -259,7 +264,7 @@ public class NodeGraph {
     }
 
     /**
-     * Recursive method for topological sorting
+     * Recursive method for topological sorting.
      * @param current current node.
      * @param sorted current list of sorted nodes.
      * @param dNodes current list of nodes to be sorted.
@@ -314,7 +319,6 @@ public class NodeGraph {
              for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
                  for (int j = 0; j < size; j++) {
                      DrawNode temp = drawNodes.get(j);
-                     int ind2 = temp.getIndex();
                      if (temp.getIndex() == i && temp.getX() < layer) {
                          layer = temp.getX();
                      }
@@ -622,7 +626,7 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                colorDrawNode(newNodes.get(i));
+                colorDrawNode(newNodes.get(i), new Color[]{Color.RED, Color.GREEN});
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyIn = nodes.get(newNodes.get(i).getIndex());
@@ -688,7 +692,7 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                colorDrawNode(newNodes.get(i));
+                colorDrawNode(newNodes.get(i), new Color[]{Color.RED, Color.GREEN});
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyOut = nodes.get(newNodes.get(i).getIndex());
@@ -756,7 +760,7 @@ public class NodeGraph {
      * @return the x-coordinate of the leaf nodes to be deleted.
      */
     public double removeAtLeaf() {
-        ArrayList<Integer> visited = new ArrayList<Integer>();;
+        ArrayList<Integer> visited = new ArrayList<Integer>();
         for (Double id : leafNodes) {
             if (id >= 0) {
                 for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {
@@ -815,21 +819,21 @@ public class NodeGraph {
         return leafNodes;
     }
 
-    private void colorDrawNode(DrawNode drawNode) {
-        String segment = getSegment(drawNode.getIndex()).substring(0,1);
-        switch (segment) {
-            case "A":   drawNode.setStroke(Color.CRIMSON);
-                break;
-            case "T":   drawNode.setStroke(Color.BLUE);
-                break;
-            case "C":   drawNode.setStroke(Color.CYAN);
-                break;
-            case "G":   drawNode.setStroke(Color.YELLOW);
-                break;
-            default:    drawNode.setStroke(Color.PURPLE);
-                break;
-        }
+    /**
+     * Colors the node in even strokes.
+     * @param drawNode the node to be colored.
+     * @param colors the colors of the strokes.
+     */
+    private void colorDrawNode(DrawNode drawNode, Color[] colors) {
         drawNode.setFill(Color.BLACK);
-        drawNode.setStrokeWidth(2.0);
+        Stop[] stops = new Stop[colors.length * 2];
+        double offset = 1 / (double) colors.length;
+
+        for (int i = 0; i < colors.length; i++) {
+            stops[2 * i] = new Stop((i * offset), colors[i]);
+            stops[(2 * i) + 1] = new Stop(((i + 1) * offset), colors[i]);
+        }
+        LinearGradient lg1 = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
+        drawNode.setFill(lg1);
     }
 }

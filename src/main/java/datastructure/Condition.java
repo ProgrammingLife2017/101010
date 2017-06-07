@@ -10,12 +10,14 @@ public abstract class Condition {
     /**
      * The color to be painted when condition holds.
      */
-    private Color color;
+    private final Color color;
 
     /**
      * Default constructor.
      */
-    public Condition(){}
+    public Condition(){
+        color = Color.BLACK;
+    }
 
     /**
      *Constructor of the condition
@@ -30,6 +32,14 @@ public abstract class Condition {
      * @return true iff the condition holds.
      */
     public abstract boolean addColor(DrawNode drawNode);
+
+    /**
+     * Gets the color of the condition.
+     * @return the color of the condition.
+     */
+    public Color getColor() {
+        return color;
+    }
 
 
 }

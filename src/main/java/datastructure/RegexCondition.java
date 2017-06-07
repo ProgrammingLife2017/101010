@@ -1,5 +1,7 @@
 package datastructure;
 
+import javafx.scene.paint.Color;
+
 /**
  * Created by 101010.
  */
@@ -13,8 +15,10 @@ public class RegexCondition extends Condition {
     /**
      * The constructor of the RegexCondition.
      * @param regex the regex of the condition.
+     * @param color the color of the condition.
      */
-    public RegexCondition(String regex) {
+    public RegexCondition(String regex, Color color) {
+        super(color);
         this.regex = regex;
     }
 

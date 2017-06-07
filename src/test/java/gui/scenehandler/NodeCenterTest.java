@@ -1,17 +1,19 @@
-package gui;
+package gui.scenehandler;
 
-import javafx.application.Platform;
+import datastructure.DrawNode;
+import gui.GraphScene;
+import gui.interaction.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import javax.swing.*;
@@ -21,24 +23,27 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * Test class for the backlog window.
+ * Test class for the NodeCenter class.
  */
-//@RunWith(PowerMockRunner.class)
-@PrepareForTest({Platform.class, Backlog.class})
-public class BacklogTest {
-    private Backlog log;
-    private TextArea area;
-    private Stage stage;
-    private Group group;
-    private FXElementsFactory factory;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Controller.class})
+public class NodeCenterTest {
+    private NodeCenter nodeCenter;
+    private GraphScene graphScene;
+    private DrawNode node;
+    private int mockedNodeId = 1;
+    private int mockedRadius = 300;
+
     List<Node> list = new ArrayList<>();
     ObservableList<Node> observableList = FXCollections.observableList(list);
+    List<Node> list2 = new ArrayList<>();
+    ObservableList<Node> observableList2 = FXCollections.observableList(list2);
 
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
@@ -58,35 +63,25 @@ public class BacklogTest {
 
     @Before
     public void setup() throws Exception {
-        area = mock(TextArea.class);
-        factory = mock(FXElementsFactory.class);
-        stage = mock(Stage.class);
-        group = mock(Group.class);
-        when(factory.createStage()).thenReturn(stage);
-        when(factory.createGroup()).thenReturn(group);
-        when(group.getChildren()).thenReturn(observableList);
-        log = Whitebox.invokeConstructor(Backlog.class, factory);
-
-        Whitebox.setInternalState(log, "textArea", area);
+        graphScene = mock(GraphScene.class);
+        node = mock(DrawNode.class);
+        when(node.getIndex()).thenReturn(mockedNodeId);
+        nodeCenter = new NodeCenter(graphScene);
     }
 
     @Test
     public void testConstructor() {
-        TextArea expected = Whitebox.getInternalState(log, "textArea");
-        assertEquals(area, expected);
+        assertEquals(graphScene, Whitebox.getInternalState(nodeCenter, "graphScene"));
     }
 
     @Test
-    public void testPrintContent() {
-        String testString = "hello world";
-        log.printContent(testString);
-        verify(area, times(1)).appendText(testString + "\n");
+    public void testHandle() throws Exception {
+
+        PowerMockito.mockStatic(Controller.class);
+        when(Controller.class, "getRadius").thenReturn(mockedRadius);
+        nodeCenter.handleNode(node);
+        verify(graphScene, times(1)).drawGraph(mockedNodeId, mockedRadius);
     }
 
-    @Test
-    public void testShow() {
-        log.show();
-        verify(factory, times(1)).show(stage);
-    }
 }
 

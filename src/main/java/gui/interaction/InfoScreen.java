@@ -11,7 +11,7 @@ import javafx.scene.shape.Line;
 /**
  * Implementation of the window that handles showing information of the graph.
  */
-public final class InfoScreen extends GridPane {
+public class InfoScreen extends GridPane {
 
     /**
      * Text area for printing information.

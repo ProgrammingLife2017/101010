@@ -61,8 +61,6 @@ public class GraphSceneTest {
 
     GraphScene gs;
 
-    Controller controller = mock(Controller.class);
-
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
      * @throws InterruptedException that triggers when the drawing is interrupted.

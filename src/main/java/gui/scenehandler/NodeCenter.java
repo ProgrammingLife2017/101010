@@ -28,11 +28,7 @@ public class NodeCenter implements INodeHandler {
      */
     @Override
     public void handleNode(DrawNode node) {
-        handleNodeWithRadius(node.getIndex(), Controller.getRadius());
-    }
-
-    private void handleNodeWithRadius(int center, int radius) {
-        graphScene.drawGraph(center, radius);
+        graphScene.drawGraph(node.getIndex(), Controller.getRadius());
     }
 
     @Override

@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Implementation of the window that handles graph visualization.
  */
- public final class GraphScene extends Pane {
+ public class GraphScene extends Pane {
 
     /**
      * State for handling center queries.

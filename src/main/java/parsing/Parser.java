@@ -412,6 +412,10 @@ public class Parser {
         return result;
     }
 
+    /**
+     * Reads the genome paths from the cache and puts these in an accessible array.
+     * @param path the path of the genome cache file.
+     */
     private void readGenomes(String path) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
@@ -429,12 +433,6 @@ public class Parser {
                 }
                 paths[i] = genPath;
             }
-//            for (int i = 0; i < paths.length; i++) {
-//                for (int j = 0; j < paths[i].length; j++) {
-//                    System.out.print(paths[i][j] + "   ");
-//                }
-//                System.out.println("");
-//            }
             GraphInfo.getInstance().setPaths(paths);
         } catch (Exception e) {
             e.printStackTrace();

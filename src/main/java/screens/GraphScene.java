@@ -116,7 +116,6 @@ import java.util.Set;
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
                     drawLine(dNode.getIndex() + "-" + i, 5 * widths[count] / GraphInfo.getInstance().getGenomesNum(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
-                System.out.println(dNode.getIndex() + "   " + 5 * widths[count] / GraphInfo.getInstance().getGenomesNum());
                 count += 1;
             }
         }

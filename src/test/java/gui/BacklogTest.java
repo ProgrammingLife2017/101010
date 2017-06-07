@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -10,6 +11,9 @@ import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import javax.swing.*;
@@ -27,6 +31,8 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 /**
  * Test class for the backlog window.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Platform.class, Backlog.class})
 public class BacklogTest {
     private Backlog log;
     private TextArea area;
@@ -53,7 +59,7 @@ public class BacklogTest {
     }
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         area = mock(TextArea.class);
         factory = mock(FXElementsFactory.class);
         stage = mock(Stage.class);
@@ -61,7 +67,7 @@ public class BacklogTest {
         when(factory.createStage()).thenReturn(stage);
         when(factory.createGroup()).thenReturn(group);
         when(group.getChildren()).thenReturn(observableList);
-        log = Whitebox.invokeConstructor(Backlog.class);
+        log = Whitebox.invokeConstructor(Backlog.class, factory);
 
         Whitebox.setInternalState(log, "textArea", area);
     }

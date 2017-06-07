@@ -68,11 +68,11 @@ public final class InfoScreen extends GridPane {
         textArea.clear();
         NodeGraph graph = NodeGraph.getCurrentInstance();
         Label label1 = fxElementsFactory.createLabel("Graph Information");
-        Label label2 = fxElementsFactory.createLabel("Node id: " + Integer.toString(node.hashCode()));
-        textArea.appendText(graph.getSegment(node.getIndex()) + "\n");
+        Label label2 = fxElementsFactory.createLabel("Node id: " + Integer.toString(node.getIndex()));
+        textArea.appendText(graph.getSegment(node.getIndex()));
         this.add(label1, 1, 1);
         this.add(label2, 1, 2);
-        this.add(textArea, 1, 3, 3, 1);
+        this.add(textArea, 1, 3);
     }
 
     /**

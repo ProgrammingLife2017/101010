@@ -4,18 +4,17 @@ import datastructure.DrawNode;
 import datastructure.DummyNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
-import gui.interaction.Controller;
+import gui.scenehandler.INodeHandler;
+import gui.scenehandler.NodeCenter;
+import gui.scenehandler.NodeInfo;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import parsing.Parser;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
-import gui.scenehandler.INodeHandler;
-import gui.scenehandler.NodeCenter;
-import gui.scenehandler.NodeInfo;
+import parsing.Parser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,15 +77,20 @@ import java.util.Set;
      */
     public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-        Thread thread = new Thread(() -> {
-            try {
-                Parser.getThread().join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    Thread parser = Parser.getThread();
+                    if (parser != null) {
+                        parser.join();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                drawGraphUtil(id, radius);
             }
-            Controller.setCurrentCenter(id);
-            drawGraphUtil(id, radius);
-        });
+        };
         thread.start();
         return thread;
     }

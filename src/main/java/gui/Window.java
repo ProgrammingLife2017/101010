@@ -103,13 +103,13 @@ public class Window extends Application {
      * Sets up the necessary services.
      */
     private void setupService() {
-        backLog = new Backlog();
-        loggerFactory = new LoggerFactory(new FileSystem());
-        logger = loggerFactory.createLogger(this.getClass());
         fxElementsFactory = new FXElementsFactory();
         graphScene = new GraphScene(fxElementsFactory);
         graphScene.toBack();
         interactionScene = new InteractionScene(fxElementsFactory, graphScene);
+        backLog = new Backlog(fxElementsFactory);
+        loggerFactory = new LoggerFactory(new FileSystem());
+        logger = loggerFactory.createLogger(this.getClass());
     }
 
     /**
@@ -172,9 +172,6 @@ public class Window extends Application {
      * @return BackLog object.
      */
     public static Backlog getBackLog() {
-        if (backLog == null) {
-            return new Backlog();
-        }
         return backLog;
     }
 

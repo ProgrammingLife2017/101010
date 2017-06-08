@@ -214,9 +214,8 @@ public class Window extends Application {
                     if (file != null && file.exists()) {
                         pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-
                         new Thread() {
-                            public void run () {
+                            public void run() {
                                 try {
                                     Parser.getThread().join();
 

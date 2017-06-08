@@ -1,12 +1,8 @@
 package screens.nodehandlers;
 
 import datastructure.DrawNode;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.shape.Line;
+import screens.scenes.Controller;
 import screens.scenes.GraphScene;
 
 /**
@@ -25,31 +21,19 @@ public class NodeCenter implements INodeHandler {
      */
     public NodeCenter(GraphScene sc) {
         this.graphScene = sc;
-
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handle(DrawNode node) {
-        Stage stage = new Stage();
-        VBox box = new VBox();
-        Label label = new Label("Enter radius:");
-        TextField textField = new TextField();
-        Button btn = new Button("Submit");
-        btn.setOnAction(
-                event -> {
-                    graphScene.drawGraph(node.getIndex(), Integer.parseInt(textField.getText()));
-                    graphScene.switchToInfo();
-                    stage.close();
-                }
-        );
-        box.getChildren().addAll(label, textField, btn);
-        Scene scene = new Scene(box, 100.0, 100.0);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+    public void handleNode(DrawNode node) {
+        graphScene.drawGraph(node.getIndex(), Controller.getRadius());
+    }
+
+    @Override
+    public void handleLine(Line line) {
+
     }
 
 }

@@ -9,11 +9,10 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import parsing.Parser;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import parsing.Parser;
 import screens.FXElementsFactory;
-import screens.Window;
 import screens.nodehandlers.INodeHandler;
 import screens.nodehandlers.NodeCenter;
 import screens.nodehandlers.NodeInfo;
@@ -54,12 +53,9 @@ import java.util.Set;
      private EventHandler<MouseEvent> click = event -> {
 
         if (event.getSource() instanceof DrawNode) {
-            DrawNode rect = (DrawNode) (event.getSource());
-            state.handle(rect);
+            state.handleNode((DrawNode) (event.getSource()));
         } else if (event.getSource() instanceof Line) {
-            Line l = (Line) (event.getSource());
-            String edgeNodes = l.getId();
-            Window.getInfoScreen().getTextArea().appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
+            state.handleLine((Line) (event.getSource()));
         }
      };
 
@@ -86,7 +82,10 @@ import java.util.Set;
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    Parser.getThread().join();
+                    Thread parser = Parser.getThread();
+                    if (parser != null) {
+                        parser.join();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

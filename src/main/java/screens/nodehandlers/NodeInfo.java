@@ -1,7 +1,7 @@
 package screens.nodehandlers;
 
 import datastructure.DrawNode;
-import datastructure.NodeGraph;
+import javafx.scene.shape.Line;
 import screens.Window;
 
 /**
@@ -20,7 +20,12 @@ public class NodeInfo implements INodeHandler {
      * {@inheritDoc}
      */
     @Override
-    public void handle(DrawNode node) {
-        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
+    public void handleNode(DrawNode node) {
+        Window.getInfoScreen().displayNodeInfo(node);
+    }
+
+    @Override
+    public void handleLine(Line line) {
+        Window.getInfoScreen().displayLineInfo(line);
     }
 }

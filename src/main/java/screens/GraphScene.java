@@ -106,7 +106,7 @@ import java.util.Set;
         LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
         for (DrawNode dNode : drawNodes) {
             int outgoingNum = 0;
-            double[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
+            int[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setOnMousePressed(click);
             Platform.runLater(() -> this.getChildren().add(dNode));
@@ -336,10 +336,10 @@ import java.util.Set;
      * @param id the id of the node.
      * @return An array with the number of paths going through each outgoing edge of the node.
      */
-    private double[] determineEdgeWidth(Node incNode, int id) {
+    private int[] determineEdgeWidth(Node incNode, int id) {
         NodeGraph ng = NodeGraph.getCurrentInstance();
         int[] outgoing = incNode.getOutgoingEdges();
-        double[] widths = new double[outgoing.length];
+        int[] widths = new int[outgoing.length];
         int maxInt = -1;
         double maxX = -Double.MAX_VALUE;
         for (int i = 0; i < outgoing.length; i++) {

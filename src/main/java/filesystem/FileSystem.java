@@ -41,8 +41,12 @@ public final class FileSystem {
         }
     }
 
+    /**
+     * Registers the file system object.
+     * @param sL service locator that holds this object.
+     */
     public static void register(ServiceLocator sL) {
-        if(sL == null) {
+        if (sL == null) {
             throw new IllegalArgumentException("The service locator can not be null");
         }
         sL.setFileSystem(new FileSystem());

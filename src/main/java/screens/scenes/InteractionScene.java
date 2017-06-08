@@ -32,8 +32,12 @@ public class InteractionScene extends VBox {
         setSettings();
     }
 
+    /**
+     * Register a reference of this object in the service locator.
+     * @param sL container of references to other services
+     */
     public static void register(ServiceLocator sL) {
-        if(sL == null) {
+        if (sL == null) {
             throw new IllegalArgumentException("The service locator can not be null");
         }
         sL.setInteractionScene(new InteractionScene(sL));
@@ -46,14 +50,6 @@ public class InteractionScene extends VBox {
         this.setMaxWidth(MAXIMUM_WIDTH);
         this.getChildren().addAll(controller, infoScreen);
         this.getStyleClass().add("vbox");
-    }
-
-    /**
-     * Information screen getter.
-     * @return InfoScreen object.
-     */
-    public InfoScreen getInfoScreen() {
-        return  infoScreen;
     }
 
 }

@@ -31,6 +31,9 @@ public class NodeCenter implements INodeHandler {
         serviceLocator.getGraphScene().switchToInfo();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleLine(Line line) {
 

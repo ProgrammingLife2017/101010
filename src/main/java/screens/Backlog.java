@@ -15,6 +15,9 @@ public final class Backlog extends Stage {
      */
     private final TextArea textArea;
 
+    /**
+     * Contains references to other services.
+     */
     private static ServiceLocator serviceLocator;
 
     /**
@@ -39,8 +42,12 @@ public final class Backlog extends Stage {
         this.setScene(scene);
     }
 
+    /**
+     * Register a reference of this object in the service locator.
+     * @param sL container of references to other services
+     */
     public static void register(ServiceLocator sL) {
-        if(sL == null) {
+        if (sL == null) {
             throw new IllegalArgumentException("The service locator can not be null");
         }
         serviceLocator = sL;

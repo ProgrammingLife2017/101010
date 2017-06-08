@@ -24,6 +24,9 @@ public final class Logger {
      */
     private final FileSystem fileSystem;
 
+    /**
+     * Container of references to other services
+     */
     private ServiceLocator serviceLocator;
 
     /**
@@ -37,6 +40,7 @@ public final class Logger {
      * Constructor.
      * @param targetClass The class that this logger is serving.
      * @param fs FileSystem object to write with.
+     * @param sL ServiceLocator object that contains a reference to all services.
      */
     /* package */ Logger(final Class targetClass, FileSystem fs, ServiceLocator sL) {
         this.cl = targetClass;

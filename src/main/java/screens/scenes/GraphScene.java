@@ -48,6 +48,9 @@ import java.util.Set;
      */
     private FXElementsFactory fxElementsFactory;
 
+    /**
+     * Contains references to other services.
+     */
     private ServiceLocator serviceLocator;
 
     /**
@@ -74,6 +77,10 @@ import java.util.Set;
          this.serviceLocator = sL;
      }
 
+    /**
+     * Register a reference of this object in the service locator.
+     * @param sL container of references to other services
+     */
      public static void register(ServiceLocator sL) {
          if (sL == null) {
              throw new IllegalArgumentException("The service locator cannot be null");

@@ -18,7 +18,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logging.Logger;
-import logging.LoggerFactory;
 import parsing.Parser;
 import screens.scenes.GraphScene;
 import screens.scenes.InteractionScene;
@@ -39,11 +38,6 @@ public class Window extends Application {
      * Logger that keeps track of actions executed by this class.
      */
     private static Logger logger;
-
-    /**
-     * Factory that creates all loggers.
-     */
-    private static LoggerFactory loggerFactory;
 
     /**
      * Backlog window to print all actions.
@@ -90,6 +84,9 @@ public class Window extends Application {
      */
     private static final double MINIMUM_HEIGHT = 700d;
 
+    /**
+     * Contains references to other services.
+     */
     private ServiceLocator serviceLocator;
 
     /**
@@ -125,8 +122,7 @@ public class Window extends Application {
         graphScene.toBack();
         interactionScene = serviceLocator.getInteractionScene();
         backLog = serviceLocator.getBacklog();
-        loggerFactory = serviceLocator.getLoggerFactory();
-        logger = loggerFactory.createLogger(this.getClass());
+        logger = serviceLocator.getLoggerFactory().createLogger(this.getClass());
     }
 
     /**
@@ -177,7 +173,7 @@ public class Window extends Application {
         stage.setMinWidth(MINIMUM_WIDTH);
         stage.setOnCloseRequest(event -> {
             try {
-                Window.loggerFactory.getFileSystem().closeWriter();
+                serviceLocator.getLoggerFactory().getFileSystem().closeWriter();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -225,7 +221,7 @@ public class Window extends Application {
         MenuItem item = new MenuItem("New file");
         item.setOnAction(
                 event -> {
-                    File file = FileSelector.showOpenDialog(stage);
+                    File file = serviceLocator.getFileSelector().showOpenDialog(stage);
                     if (file != null && file.exists()) {
                         pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));

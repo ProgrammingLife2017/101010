@@ -48,6 +48,8 @@ import java.util.Set;
      */
     private FXElementsFactory fxElementsFactory;
 
+    private ServiceLocator serviceLocator;
+
     /**
      * Event handler for when a node or edge is clicked.
      */
@@ -62,13 +64,14 @@ import java.util.Set;
 
     /**
      * GraphScene pane constructor.
-     * @param serviceLocator ServiceLocator for locating services registered in that object.
+     * @param sL ServiceLocator for locating services registered in that object.
      */
-     public GraphScene(ServiceLocator serviceLocator) {
-         center = new NodeCenter(serviceLocator);
-         info = new NodeInfo(serviceLocator);
+     public GraphScene(ServiceLocator sL) {
+         center = new NodeCenter(sL);
+         info = new NodeInfo(sL);
          state = info;
-         this.fxElementsFactory = serviceLocator.getFxElementsFactory();
+         this.fxElementsFactory = sL.getFxElementsFactory();
+         this.serviceLocator = sL;
      }
 
      public static void register(ServiceLocator sL) {
@@ -97,7 +100,7 @@ import java.util.Set;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
+                serviceLocator.getController().setCurrentCenter(id);
                 drawGraphUtil(id, radius);
             }
         };

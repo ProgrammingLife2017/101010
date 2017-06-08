@@ -1,11 +1,9 @@
 package screens;
 
 
-import filesystem.FileSystem;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import logging.Logger;
-import logging.LoggerFactory;
 import services.ServiceLocator;
 
 import java.io.BufferedReader;
@@ -64,8 +62,7 @@ public final class FileSelector {
      * @return The file we want to parse.
      */
     public static File showOpenDialog(Window ownerWindow) {
-        FileSystem fileSystem = new FileSystem();
-        logger = new LoggerFactory(fileSystem).createLogger(FileSelector.class);
+        logger = serviceLocator.getLoggerFactory().createLogger(FileSelector.class);
         String currentDir = getDirectory();
         if (!currentDir.equals("")) {
             File file = new File(currentDir);

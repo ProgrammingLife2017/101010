@@ -1,6 +1,5 @@
 package datastructure;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,7 +13,7 @@ public class NodeGraph {
     /**
      * List of nodes.
      */
-    private ArrayList<Integer> nodes;
+    private int[] nodes;
 
     /**
      * List of drawNodes;
@@ -40,7 +39,7 @@ public class NodeGraph {
      * Empty constructor for NodeGraph.
      */
     public NodeGraph() {
-        this.nodes = new ArrayList<>();
+        this.nodes = new int[0];
         this.edges = new HashSet<>();
         this.segmentDB = new SegmentDB();
         this.drawNodes = new LinkedList<>();
@@ -52,7 +51,7 @@ public class NodeGraph {
      * @param edges The set of edges.
      * @param segmentDB The database containing all segments of the nodes.
      */
-    public NodeGraph(ArrayList<Integer> nodes, HashSet<Edge> edges, SegmentDB segmentDB) {
+    public NodeGraph(int[] nodes, HashSet<Edge> edges, SegmentDB segmentDB) {
         this.nodes = nodes;
         this.edges = edges;
         this.segmentDB = segmentDB;
@@ -64,7 +63,13 @@ public class NodeGraph {
      * @return The length of the node.
      */
     public Integer getNodeLength(int id) {
-        return nodes.get(id);
+        try {
+            return nodes[id];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Tried getting the length of non existent node: " + id);
+        } finally {
+            return -1;
+        }
     }
 
     /**
@@ -74,8 +79,8 @@ public class NodeGraph {
      */
     public void setNodeLength(int id, int length) {
         try {
-            nodes.set(id, length);
-        } catch (IndexOutOfBoundsException e) {
+            nodes[id] = length;
+        } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Tried setting the length of non existent node: " + id);
         }
     }
@@ -102,7 +107,7 @@ public class NodeGraph {
      * @return The amount of nodes in the NodeGraph.
      */
     public int getNodesSize() {
-        return nodes.size();
+        return nodes.length;
     }
 
     /**
@@ -119,8 +124,12 @@ public class NodeGraph {
      * @param id The id of the node.
      */
     public void addNode(int id) {
-        while (id >= nodes.size()) {
-            nodes.add(0);
+        if (id >= nodes.length) {
+            int[] newNodes = new int[id + 1];
+            for (int i = 0; i < nodes.length; i++) {
+                newNodes[i] = nodes[i];
+            }
+            nodes = newNodes;
         }
     }
 

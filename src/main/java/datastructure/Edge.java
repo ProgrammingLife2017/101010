@@ -27,7 +27,6 @@ public class Edge {
      */
     public Edge(int parent, int child) {
         this.parent = parent;
-
         this.child = child;
         this.weight = 2;
     }

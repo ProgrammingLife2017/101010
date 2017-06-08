@@ -1,6 +1,5 @@
 package gui;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -11,7 +10,6 @@ import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
 
 import javax.swing.*;
@@ -29,7 +27,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 /**
  * Test class for the backlog window.
  */
-@PrepareForTest({Platform.class, Backlog.class})
 public class BacklogTest {
     private Backlog log;
     private TextArea area;

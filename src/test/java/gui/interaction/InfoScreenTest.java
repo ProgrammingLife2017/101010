@@ -62,6 +62,7 @@ public class InfoScreenTest {
     Label label;
     String segment = "AAAAA";
     String edgeNodes = "1 - 2";
+
     /**
      * Initialize the JavaFX toolkit, so its services can be tested.
      * @throws InterruptedException

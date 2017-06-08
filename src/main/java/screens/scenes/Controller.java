@@ -329,5 +329,13 @@ public class Controller extends GridPane {
         }
         return false;
     }
+
+    /**
+     * Resets the legend.
+     */
+    public void reset() {
+        conditionals = FXCollections.observableArrayList();
+        legendElements.setItems(conditionals);
+    }
 }
 

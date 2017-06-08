@@ -235,7 +235,8 @@ public class Window extends Application {
                                 pB.setProgress(0.0);
                             }
                         }.start();
-
+                        this.interactionScene.resetController();
+                        GraphInfo.setInstance(new GraphInfo());
                         Thread drawing = graphScene.drawGraph(0, 200);
 
                         new Thread(() -> {

@@ -9,7 +9,7 @@ import services.ServiceLocator;
 /**
  * Factory for JavaFX constructors.
  */
-public final class FXElementsFactory {
+public class FXElementsFactory {
 
     /**
      * Constructor.

@@ -360,7 +360,7 @@ import java.util.Set;
         }
         for (int i = 0; i < incoming.length; i++) {
             DrawNode dNode = ng.getDrawNode(incoming[i]);
-            if (dNode != null) {
+            if (dNode != null && dNode.getIndex() != id) {
                 widths[maxInt] -= getNumberOfDuplicates(outgoing[maxInt], incoming[i]);
             }
         }
@@ -384,8 +384,8 @@ import java.util.Set;
             }
         }
         if (outId < genomes.length) {
-            for (int j = 0; j < genomes[id].length; j++) {
-                for (int k = 0; k < genomes[outId].length; k++) {
+            for (int j = 1; j < genomes[id].length; j++) {
+                for (int k = 1; k < genomes[outId].length; k++) {
                     if (genomes[id][j] == genomes[outId][k]) {
                         count += 1;
                         break;

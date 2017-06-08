@@ -85,12 +85,16 @@ public class GraphSceneTest {
         n1.addOutgoingEdge(1);
         Node n2 = new Node();
         n2.addIncomingEdge(0);
-        int[][] paths = new int[2][3];
-        paths[0][0] = 1;
-        paths[0][1] = 2;
-        paths[0][2] = 3;
+        int[][] paths = new int[2][];
+        paths[0] = new int[4];
+        paths[1] = new int[3];
+        paths[0][0] = 0;
+        paths[0][1] = 1;
+        paths[0][2] = 2;
+        paths[0][3] = 3;
         paths[1][0] = 1;
-        paths[1][1] = 3;
+        paths[1][1] = 1;
+        paths[1][2] = 3;
         nodes.add(n1);
         nodes.add(n2);
         ngTest = new NodeGraph(nodes, null, null, null);
@@ -158,20 +162,32 @@ public class GraphSceneTest {
             int[] out1 = {2};
             int[] in1 = {0};
             int[] in2 = {0, 1};
-            int[][] paths = new int[3][3];
+            int[][] paths = new int[3][];
+            paths[1] = new int[3];
             paths[1][0] = 1;
-            paths[1][1] = 3;
+            paths[1][1] = 0;
+            paths[1][2] = 2;
+            paths[0] = new int[4];
+            paths[2] = new int[4];
+            paths[2][0] = 2;
             ArrayList<Node> nodes = new ArrayList<>();
             nodes.add(new Node(0, out0, new int[0]));
             nodes.add(new Node(0, out1, in1));
             nodes.add(new Node(0, new int[0], in2));
             LinkedList<DrawNode> dNodes = new LinkedList<>();
-            for (int i = 0; i < 3; i++) {
-                DrawNode dNode = new DrawNode(i);
+
+            for (int i = 1; i < 4; i++) {
+                DrawNode dNode = new DrawNode(i - 1);
                 dNode.setX(i);
                 dNodes.add(dNode);
-                paths[0][i] = i;
-                paths[2][i] = i;
+                paths[0][i] = i - 1;
+                paths[2][i] = i - 1;
+            }
+            for (int i = 0; i < paths.length; i++) {
+                for (int j = 0; j < paths[i].length; j++) {
+                    System.out.print(paths[i][j] + "   ");
+                }
+                System.out.println();
             }
             gi.setGenomes(paths);
             GraphInfo.setInstance(gi);
@@ -179,9 +195,9 @@ public class GraphSceneTest {
             NodeGraph.setCurrentInstance(ng);
             Method method = GraphScene.class.getDeclaredMethod("determineEdgeWidth", Node.class, int.class);
             method.setAccessible(true);
-            double[] result = (double[]) method.invoke(gs, nodes.get(0), 0);
-            assertEquals(2, result[0], 0.00001);
-            assertEquals(3, result[1], 0.00001);
+            int[] result = (int[]) method.invoke(gs, nodes.get(0), 0);
+            assertEquals(2, result[0]);
+            assertEquals(1, result[1]);
             assertEquals(2, result.length);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,8 +1,10 @@
 package parsing;
 
+import datastructure.DrawNode;
 import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
+import java.util.LinkedList;
 import javafx.application.Platform;
 import screens.GraphInfo;
 import screens.Window;
@@ -35,6 +37,11 @@ public class Parser {
     private static Thread parser;
 
     /**
+     * The file path to the cache files.
+     */
+    private String path;
+
+    /**
      * Constructor of the parser.
      */
     private Parser() { }
@@ -59,6 +66,7 @@ public class Parser {
     public NodeGraph parse(File file) {
         NodeGraph graph = new NodeGraph();
         String cacheName = file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - 4);
+        path = cacheName;
         graph.setSegmentDB(new SegmentDB(cacheName + "Segments.txt"));
         File cache = new File(cacheName + ".txt");
 
@@ -156,7 +164,7 @@ public class Parser {
                             e.printStackTrace();
                         }
                     }
-                    readGenomes(genomesName);
+                    //readGenomes(genomesName);
                     in.close();
                     out.close();
                     gw.close();
@@ -202,10 +210,6 @@ public class Parser {
                 try {
                     int nol = getNumberOfLine(cache);
                     String path = cache.getAbsolutePath();
-                    path = path.substring(0, path.length() - 4);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path + "Genomes.txt")));
-                    GraphInfo.getInstance().setGenomesNum(Double.parseDouble(br.readLine().split("\t")[0]));
-                    int[][] genomes = new int[graphSize][];
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());
                         int outLength = Integer.parseInt(in.readLine());
@@ -223,11 +227,8 @@ public class Parser {
                         Node temp = new Node(length, outgoing, incoming);
                         graph.addNodeCache(i, temp);
                         lineCounter = lineCounter + 5;
-                        setWeights(br, i, genomes);
                         updateProgressBar(lineCounter, nol);
                     }
-                    GraphInfo.getInstance().setGenomes(genomes);
-                    br.close();
                     in.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -345,25 +346,6 @@ public class Parser {
         return parser;
     }
 
-    /**
-     * Sets the weights of nodes when reading in from the cache file.
-     * @param br the reader that reads the cached file.
-     * @param id the id of the node.
-     * @param genomes the genomes going through each node.
-     */
-    private void setWeights(BufferedReader br, int id, int[][] genomes) {
-        try {
-            String[] line = br.readLine().split("\\t");
-            genomes[id] = new int[Integer.parseInt(line[0])];
-            for (int i = 1; i < line.length; i++) {
-                genomes[id][i - 1] = Integer.parseInt(line[i]);
-            }
-        } catch (Exception e) {
-            System.out.println("Error when reading in genome cache");
-            e.printStackTrace();
-        }
-    }
-
      /** Reads all genomes of the gfa file and caches them.
      * @param gw the writer used to write to the cache.
      * @param line the line on which all genomes are listed.
@@ -412,24 +394,29 @@ public class Parser {
 
     /**
      * Reads the genomes going through each node from the cache and puts these in an accessible array.
-     * @param path the path of the genome cache file.
+     * @param drawNodes the path of the genome cache file.
      */
-    private void readGenomes(String path) {
+    public void readGenomes(LinkedList<DrawNode> drawNodes) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(path));
-            int nol = getNumberOfLine(new File(path));
+            BufferedReader br = new BufferedReader(new FileReader(path + "Genomes.txt"));
+            int nol = getNumberOfLine(new File(path + "Genomes.txt"));
             String line = br.readLine();
             String[] nodeGenomes = line.split("\t");
             GraphInfo.getInstance().setGenomesNum(Integer.parseInt(nodeGenomes[0]));
-            int[][] genomes = new int[nol - 2][];
+            int[][] genomes = new int[drawNodes.size()][];
+            int index = 0;
             for (int i = 0; i < nol - 2; i++) {
-                line = br.readLine();
-                nodeGenomes = line.split("\t");
-                int[] genPath = new int[Integer.parseInt(nodeGenomes[0])];
-                for (int j = 0; j < Integer.parseInt(nodeGenomes[0]); j++) {
-                    genPath[j] = Integer.parseInt(nodeGenomes[j + 1]);
+                if (NodeGraph.getCurrentInstance().getDrawNode(i) != null) {
+                    line = br.readLine();
+                    nodeGenomes = line.split("\t");
+                    int[] genPath = new int[Integer.parseInt(nodeGenomes[0]) + 1];
+                    genPath[0] = i;
+                    for (int j = 1; j < genPath.length; j++) {
+                        genPath[j] = Integer.parseInt(nodeGenomes[j]);
+                    }
+                    genomes[index] = genPath;
+                    index++;
                 }
-                genomes[i] = genPath;
             }
             GraphInfo.getInstance().setGenomes(genomes);
         } catch (Exception e) {

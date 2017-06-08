@@ -104,6 +104,7 @@ import java.util.Set;
         ArrayList<Node> nodes = nodeGraph.getNodes();
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
         LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
+        Parser.getInstance().readGenomes(drawNodes);
         for (DrawNode dNode : drawNodes) {
             int outgoingNum = 0;
             int[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
@@ -374,12 +375,21 @@ import java.util.Set;
      */
     private int getNumberOfDuplicates(int id, int outId) {
         int count = 0;
-        int[][] paths = GraphInfo.getInstance().getPaths();
-        for (int j = 0; j < paths[id].length; j++) {
-            for (int k = 0; k < paths[outId].length; k++) {
-                if (paths[id][j] == paths[outId][k]) {
-                    count += 1;
-                    break;
+        int[][] genomes = GraphInfo.getInstance().getPaths();
+        for (int i = 0; i < genomes.length; i++) {
+            if (genomes[i][0] == id) {
+                id = i;
+            } else if (genomes[i][0] == outId) {
+                outId = i;
+            }
+        }
+        if (outId < genomes.length) {
+            for (int j = 0; j < genomes[id].length; j++) {
+                for (int k = 0; k < genomes[outId].length; k++) {
+                    if (genomes[id][j] == genomes[outId][k]) {
+                        count += 1;
+                        break;
+                    }
                 }
             }
         }

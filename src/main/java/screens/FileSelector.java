@@ -67,7 +67,7 @@ public final class FileSelector {
      * @param ownerWindow The stage from which this method is called.
      * @return The file we want to parse.
      */
-    public static File showOpenDialog(Window ownerWindow) {
+    public File showOpenDialog(Window ownerWindow) {
         logger = serviceLocator.getLoggerFactory().createLogger(FileSelector.class);
         String currentDir = getDirectory();
         if (!currentDir.equals("")) {
@@ -79,7 +79,7 @@ public final class FileSelector {
         File chosenFile = getInstance().showOpenDialog(ownerWindow);
         if (chosenFile != null && chosenFile.exists()) {
             logger.info("Selected file: " + chosenFile.getName());
-        } else if (chosenFile != null){
+        } else if (chosenFile != null) {
             logger.info("The selected file does not exist.");
         } else {
             logger.info("No file was selected.");

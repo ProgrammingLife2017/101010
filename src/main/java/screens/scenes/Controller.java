@@ -17,6 +17,7 @@ public class Controller extends GridPane {
     /**
      * Labels.
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private Label currentCenter, centerInput, radius;
 
     /**

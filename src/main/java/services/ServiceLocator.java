@@ -163,7 +163,7 @@ public class ServiceLocator {
     }
 
     /**
-     * Gets the backlog
+     * Gets the backlog.
      * @return Backlog object.
      */
     public Backlog getBacklog() {
@@ -171,7 +171,7 @@ public class ServiceLocator {
     }
 
     /**
-     * Gets the file selector
+     * Gets the file selector.
      * @return FileSelector object.
      */
     public FileSelector getFileSelector() {
@@ -179,7 +179,7 @@ public class ServiceLocator {
     }
 
     /**
-     * Gets the controller
+     * Gets the controller.
      * @return Controller for interacting with graphs.
      */
     public Controller getController() {

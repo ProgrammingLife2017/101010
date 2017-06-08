@@ -46,6 +46,7 @@ import java.util.Set;
     /**
      * The factory the GraphScene uses to create JavaFX elements.
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private FXElementsFactory fxElementsFactory;
 
     /**

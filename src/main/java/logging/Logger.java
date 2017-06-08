@@ -25,7 +25,7 @@ public final class Logger {
     private final FileSystem fileSystem;
 
     /**
-     * Container of references to other services
+     * Container of references to other services.
      */
     private ServiceLocator serviceLocator;
 

@@ -104,7 +104,10 @@ import java.util.Set;
         ArrayList<Node> nodes = nodeGraph.getNodes();
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
         LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
+        Parser.getInstance().readGenomes(drawNodes);
         for (DrawNode dNode : drawNodes) {
+            int outgoingNum = 0;
+            int[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setOnMousePressed(click);
             Platform.runLater(() -> this.getChildren().add(dNode));
@@ -112,11 +115,11 @@ import java.util.Set;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+                    drawLine(dNode.getIndex() + "-" + i, 5 * widths[outgoingNum] / GraphInfo.getInstance().getGenomesNum(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
+                outgoingNum += 1;
             }
         }
-
         DummyNode current;
         DummyNode current2;
         DrawNode dN;
@@ -282,7 +285,7 @@ import java.util.Set;
     private void drawLine(String id, double width, double startX, double startY, double endX, double endY) {
         Line l = new Line();
         l.setId(id);
-        l.setStrokeWidth(width);
+        l.setStrokeWidth(Math.ceil(width));
         l.setStartX(startX);
         l.setStartY(startY);
         l.setEndX(endX);
@@ -326,6 +329,71 @@ import java.util.Set;
      */
     public INodeHandler getInfo() {
         return this.info;
+    }
+
+    /**
+     * Determine the number of genome paths going through an edge.
+     * @param incNode the node edges will be drawn from.
+     * @param id the id of the node.
+     * @return An array with the number of paths going through each outgoing edge of the node.
+     */
+    private int[] determineEdgeWidth(Node incNode, int id) {
+        NodeGraph ng = NodeGraph.getCurrentInstance();
+        int[] outgoing = incNode.getOutgoingEdges();
+        int[] widths = new int[outgoing.length];
+        int maxInt = -1;
+        double maxX = -Double.MAX_VALUE;
+        for (int i = 0; i < outgoing.length; i++) {
+            DrawNode out = ng.getDrawNode(outgoing[i]);
+            if (out != null && out.getX() > maxX) {
+                maxX = out.getX();
+                maxInt = i;
+            }
+            widths[i] = getNumberOfDuplicates(id, outgoing[i]);
+        }
+        if (maxInt == -1) {
+            return widths;
+        }
+        int[] incoming = ng.getNode(outgoing[maxInt]).getIncomingEdges();
+        if (incoming.length < 2 || outgoing.length < 2) {
+            return widths;
+        }
+        for (int i = 0; i < incoming.length; i++) {
+            DrawNode dNode = ng.getDrawNode(incoming[i]);
+            if (dNode != null && dNode.getIndex() != id) {
+                widths[maxInt] -= getNumberOfDuplicates(outgoing[maxInt], incoming[i]);
+            }
+        }
+        return widths;
+    }
+
+    /**
+     * Get the number of paths going through node with id that also go through node outId.
+     * @param id the id of the node an edge will be drawn from.
+     * @param outId the id of the node an edge with be drawn to.
+     * @return the number of paths going through both nodes.
+     */
+    private int getNumberOfDuplicates(int id, int outId) {
+        int count = 0;
+        int[][] genomes = GraphInfo.getInstance().getPaths();
+        for (int i = 0; i < genomes.length; i++) {
+            if (genomes[i][0] == id) {
+                id = i;
+            } else if (genomes[i][0] == outId) {
+                outId = i;
+            }
+        }
+        if (outId < genomes.length) {
+            for (int j = 1; j < genomes[id].length; j++) {
+                for (int k = 1; k < genomes[outId].length; k++) {
+                    if (genomes[id][j] == genomes[outId][k]) {
+                        count += 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return count;
     }
 
 }

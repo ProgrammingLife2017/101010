@@ -183,12 +183,6 @@ public class GraphSceneTest {
                 paths[0][i] = i - 1;
                 paths[2][i] = i - 1;
             }
-            for (int i = 0; i < paths.length; i++) {
-                for (int j = 0; j < paths[i].length; j++) {
-                    System.out.print(paths[i][j] + "   ");
-                }
-                System.out.println();
-            }
             gi.setGenomes(paths);
             GraphInfo.setInstance(gi);
             NodeGraph ng = new NodeGraph(nodes, null, dNodes, null);

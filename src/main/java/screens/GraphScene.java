@@ -1,5 +1,6 @@
 package screens;
 
+import datastructure.Condition;
 import datastructure.DrawNode;
 import datastructure.DummyNode;
 import datastructure.Node;
@@ -8,6 +9,8 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
 import parsing.Parser;
 import javafx.scene.shape.Rectangle;
@@ -109,6 +112,7 @@ import java.util.Set;
             int outgoingNum = 0;
             int[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+            dNode.setFill(Color.CRIMSON);
             dNode.setOnMousePressed(click);
             Platform.runLater(() -> this.getChildren().add(dNode));
             DrawNode nOut;
@@ -375,7 +379,7 @@ import java.util.Set;
      */
     private int getNumberOfDuplicates(int id, int outId) {
         int count = 0;
-        int[][] genomes = GraphInfo.getInstance().getPaths();
+        int[][] genomes = GraphInfo.getInstance().getGenomes();
         for (int i = 0; i < genomes.length; i++) {
             if (genomes[i][0] == id) {
                 id = i;
@@ -394,6 +398,21 @@ import java.util.Set;
             }
         }
         return count;
+    }
+
+    public void drawConditions() {
+        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+        ArrayList<Color> colors = new ArrayList<>();
+        for (DrawNode dNode: drawNodes) {
+            colors = new ArrayList<>();
+            for (Condition cond : GraphInfo.getInstance().getConditions()) {
+                if (cond.addColor(dNode)) {
+                    colors.add(cond.getColor());
+                    System.out.println("rip");
+                }
+            }
+            NodeGraph.getCurrentInstance().colorDrawNode(dNode, colors);
+        }
     }
 
 }

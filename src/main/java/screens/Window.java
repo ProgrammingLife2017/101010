@@ -351,29 +351,34 @@ public class Window extends Application {
                                         errorPopup("Please enter a number as number of genomes.");
                                     } else {
                                         int number = Integer.parseInt(textField.getText());
-//                                        || number >= GraphInfo.getNoGenomes()
-                                        if (number < 0) {
-                                            errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
+                                        if (number < 0 || number >= GraphInfo.getInstance().getGenomesNum()) {
+                                            errorPopup("Input number is out of bounds, \nplease provide a different input between 0 and : " + GraphInfo.getInstance().getGenomesNum() + ".");
                                         } else {
                                             int index = choices.getSelectionModel().getSelectedIndex();
                                             GenomeCountCondition gcc;
+                                            Color color = GraphInfo.getInstance().determineColor();
                                             switch (index) {
                                                 case 0:
-                                                    //gcc = new GenomeCountCondition(number, true, false, ?getColor()?);
+                                                    gcc = new GenomeCountCondition(number, true, false, color);
+                                                    GraphInfo.getInstance().addCondition(gcc);
                                                     break;
                                                 case 1:
-                                                    //gcc = new GenomeCountCondition(number, false, false, ?getColor()?);
+                                                    gcc = new GenomeCountCondition(number, false, false, color);
+                                                    GraphInfo.getInstance().addCondition(gcc);
                                                     break;
                                                 case 2:
-                                                    //gcc = new GenomeCountCondition(number, true, true, ?getColor()?);
+                                                    gcc = new GenomeCountCondition(number, true, true, color);
+                                                    GraphInfo.getInstance().addCondition(gcc);
                                                     break;
                                                 case 3:
-                                                    //gcc = new GenomeCountCondition(number, false, true, ?getColor()?);
+                                                    gcc = new GenomeCountCondition(number, false, true, color);
+                                                    GraphInfo.getInstance().addCondition(gcc);
                                                     break;
                                                 default:
                                                     errorPopup("Please select a constraint.");
                                                     break;
                                             }
+                                            graphScene.drawConditions();
                                             newstage.close();
                                         }
                                     }
@@ -405,8 +410,9 @@ public class Window extends Application {
                         btn.setOnAction(
                                 event2 -> {
                                     String regex = textField.getText();
-                                    Color color = newColor();
-                                    RegexCondition regCond = new RegexCondition(regex, color);
+                                    RegexCondition regCond = new RegexCondition(regex, GraphInfo.getInstance().determineColor());
+                                    GraphInfo.getInstance().addCondition(regCond);
+                                    graphScene.drawConditions();
                                     newstage.close();
                                 }
                         );

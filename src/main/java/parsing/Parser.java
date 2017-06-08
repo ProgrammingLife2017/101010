@@ -403,6 +403,11 @@ public class Parser {
             String line = br.readLine();
             String[] nodeGenomes = line.split("\t");
             GraphInfo.getInstance().setGenomesNum(Integer.parseInt(nodeGenomes[0]));
+            String[] genomeNames = new String[Integer.parseInt(nodeGenomes[0])];
+            for (int i = 1; i < nodeGenomes.length; i++) {
+                genomeNames[i - 1] = nodeGenomes[i];
+            }
+            GraphInfo.getInstance().setGenomeNames(genomeNames);
             int[][] genomes = new int[drawNodes.size()][];
             int index = 0;
             for (int i = 0; i < nol - 2; i++) {

@@ -207,9 +207,6 @@ public class NodeGraph {
         computeDummyNodes();
         verticalSpacing();
         retrieveEdgeNodes();
-        for (DrawNode drawNode1 : drawNodes) {
-            colorDrawNode(drawNode1, new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.CYAN});
-        }
     }
 
     /**
@@ -626,7 +623,6 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                colorDrawNode(newNodes.get(i), new Color[]{Color.RED, Color.GREEN});
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyIn = nodes.get(newNodes.get(i).getIndex());
@@ -692,7 +688,6 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                colorDrawNode(newNodes.get(i), new Color[]{Color.RED, Color.GREEN});
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyOut = nodes.get(newNodes.get(i).getIndex());
@@ -824,14 +819,17 @@ public class NodeGraph {
      * @param drawNode the node to be colored.
      * @param colors the colors of the strokes.
      */
-    private void colorDrawNode(DrawNode drawNode, Color[] colors) {
-        drawNode.setFill(Color.BLACK);
-        Stop[] stops = new Stop[colors.length * 2];
-        double offset = 1 / (double) colors.length;
+    public void colorDrawNode(DrawNode drawNode, ArrayList<Color> colors) {
+        drawNode.setFill(Color.CRIMSON);
+        Stop[] stops = new Stop[colors.size() * 2];
+        if (stops.length == 0) {
+            return;
+        }
+        double offset = 1 / (double) colors.size();
 
-        for (int i = 0; i < colors.length; i++) {
-            stops[2 * i] = new Stop((i * offset), colors[i]);
-            stops[(2 * i) + 1] = new Stop(((i + 1) * offset), colors[i]);
+        for (int i = 0; i < colors.size(); i++) {
+            stops[2 * i] = new Stop((i * offset), colors.get(i));
+            stops[(2 * i) + 1] = new Stop(((i + 1) * offset), colors.get(i));
         }
         LinearGradient lg1 = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
         drawNode.setFill(lg1);

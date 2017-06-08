@@ -1,6 +1,7 @@
 package datastructure;
 
 import javafx.scene.shape.Rectangle;
+import screens.GraphInfo;
 
 /**
  * Created by 101010.
@@ -54,11 +55,21 @@ public class DrawNode extends Rectangle {
      * @return all genomes that cross this DrawNode.
      */
     public String[] getGenomes() {
-//        int[] genomes = GraphInfo.getPaths()[this.id];
-//        String[] strGenomes = new String[genomes.length];
-//        for (int i = 0; i < genomes.length; i++) {
-//            strGenomes = GraphInfo.getGenomes()[genomes[i]];
-//        }
-        return null;
+        System.out.println(this.getIndex());
+        int[][] allGenomes = GraphInfo.getInstance().getGenomes();
+        int index = -1;
+        for (int i = 0; i < allGenomes.length; i++) {
+            if (allGenomes[i][0] == this.getIndex()) {
+                index = i;
+                break;
+            }
+        }
+        int[] genomes = GraphInfo.getInstance().getGenomes()[index];
+        String[] strGenomes = new String[genomes.length - 1];
+        for (int i = 1; i < genomes.length; i++) {
+            String name = GraphInfo.getInstance().getGenomeNames()[genomes[i]];
+            strGenomes[i - 1] = name.substring(0, name.length() - 6);
+        }
+        return strGenomes;
     }
 }

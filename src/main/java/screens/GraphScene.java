@@ -86,7 +86,6 @@ import java.util.LinkedList;
                     e.printStackTrace();
                 }
 
-                System.out.println(graph == null);
                 graph.createSubgraph(0, 52);
 //                drawGraphUtil(id, radius);
             }

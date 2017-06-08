@@ -204,7 +204,6 @@ public class NodeGraph {
         createSubgraphUtil(q, visited, 0, 2 * radius);
 
         for (int i : visited) {
-            System.out.println(i);
             drawNodes.addLast(new DrawNode(i));
         }
     }

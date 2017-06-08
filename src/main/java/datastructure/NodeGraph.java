@@ -62,7 +62,7 @@ public class NodeGraph {
      * @return The segment of the node.
      */
     public String getNodeSegment(int id) {
-        segmentDB.getSegment(id);
+        return segmentDB.getSegment(id);
     }
 
     /**

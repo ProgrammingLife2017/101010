@@ -1,5 +1,7 @@
 package parsing;
 
+import datastructure.Edge;
+import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;
@@ -238,27 +240,15 @@ public class Parser {
     private void createCache(String filename, NodeGraph graph) {
         try {
             File file = new File(filename + ".txt");
-            int graphSize = graph.getSize();
+            int graphSize = graph.getEdgesSize();
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);
             writer.write(Integer.toString(graphSize) + "\n");
             int size;
-            for (int i = 0; i < graphSize; i++) {
-                Node temp = graph.getNode(i);
-                writer.write(Integer.toString(temp.getLength()) + "\n");
-                int[] tempList = temp.getOutgoingEdges();
-                size = tempList.length;
-                writer.write(Integer.toString(size) + "\n");
-                for (int j = 0; j < size; j++) {
-                    writer.write(Integer.toString(tempList[j]) + "\t");
-                }
-                writer.newLine();
-                tempList = temp.getIncomingEdges();
-                size = tempList.length;
-                writer.write(Integer.toString(size) + "\n");
-                for (int j = 0; j < size; j++) {
-                    writer.write(Integer.toString(tempList[j]) + "\t");
-                }
+
+            for (Edge e : graph.getEdges()) {
+                writer.write(Integer.toString(e.getParent()) + "\t");
+                writer.write(Integer.toString(e.getChild()));
                 writer.newLine();
             }
             writer.close();

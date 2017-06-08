@@ -240,7 +240,7 @@ public class Parser {
     private void createCache(String filename, NodeGraph graph) {
         try {
             File file = new File(filename + ".txt");
-            int graphSize = graph.getEdges().length;
+            int graphSize = graph.getEdgesSize();
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
             BufferedWriter writer = new BufferedWriter(ow);
             writer.write(Integer.toString(graphSize) + "\n");

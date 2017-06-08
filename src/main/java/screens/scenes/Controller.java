@@ -14,7 +14,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import screens.GraphInfo;
@@ -41,16 +40,34 @@ public class Controller extends GridPane {
      */
     private Button submitButton;
 
+    /**
+     * Submit button to add conditional regarding number of genomes.
+     */
     private Button submitButtonNoGen;
 
+    /**
+     * Submit button to add conditional regarding genome regex.
+     */
     private Button submitRegex;
 
+    /**
+     * Button to initiate clearing a selected condition.
+     */
     private Button condClear;
 
+    /**
+     * List of choices for operations on selecting nodes on numbers of genomes.
+     */
     private ChoiceBox choices;
 
+    /**
+     * ListView where condition are shown.
+     */
     private ListView<Label> legendElements;
 
+    /**
+     * The conditions that are shown in the ListView.
+     */
     private ObservableList<Label> conditionals = FXCollections.observableArrayList();
 
     /**
@@ -67,81 +84,25 @@ public class Controller extends GridPane {
         }
     };
 
+    /**
+     * Event handler that executes the clear function.
+     */
     private EventHandler<ActionEvent> clearCondition = event -> {
-        Label remove = legendElements.getSelectionModel().getSelectedItem();
-        conditionals.remove(remove);
-        Color c = (Color) remove.getTextFill();
-        GraphInfo.getInstance().addColor(c);
-        ArrayList<Condition> conditions = GraphInfo.getInstance().getConditions();
-        for (int i = 0; i < conditions.size(); i++) {
-            if (conditions.get(i).getColor().equals(c)) {
-                conditions.remove(i);
-            }
-        }
-        legendElements.setItems(conditionals);
-        graphScene.drawConditions();
+        clearColorCondition();
     };
 
+    /**
+     * Event handler that adds a regex conditional to the graph.
+     */
     private EventHandler<ActionEvent> regexAction = event -> {
-        String regex = regexGenomesField.getText();
-        Color color = GraphInfo.getInstance().determineColor();
-        RegexCondition regCond = new RegexCondition(regex, color);
-        GraphInfo.getInstance().addCondition(regCond);
-        Label cond = new Label("Regex: " + regex);
-        cond.setTextFill(color);
-        conditionals.add(cond);
-        legendElements.setItems(conditionals);
-        graphScene.drawConditions();
+        setRegexCondition();
     };
 
     private EventHandler<ActionEvent> numGenomeAction = event -> {
         if (numGenomesField.getText().length() == 0 || numGenomesField.getText().contains("\\D")) {
             Window.errorPopup("Please enter a number as number of genomes.");
         } else {
-            int number = Integer.parseInt(numGenomesField.getText());
-            if (number < 0 || number >= GraphInfo.getInstance().getGenomesNum()) {
-                Window.errorPopup("Input number is out of bounds, \nplease provide a different input between 0 and : " + GraphInfo.getInstance().getGenomesNum() + ".");
-            } else {
-                int index = choices.getSelectionModel().getSelectedIndex();
-                GenomeCountCondition gcc;
-                Label cond;
-                Color color = GraphInfo.getInstance().determineColor();
-                switch (index) {
-                    case 0:
-                        gcc = new GenomeCountCondition(number, true, false, color);
-                        GraphInfo.getInstance().addCondition(gcc);
-                        cond = new Label(">" + number);
-                        cond.setTextFill(color);
-                        conditionals.add(cond);
-                        break;
-                    case 1:
-                        gcc = new GenomeCountCondition(number, false, false, color);
-                        GraphInfo.getInstance().addCondition(gcc);
-                        cond = new Label("<" + number);
-                        cond.setTextFill(color);
-                        conditionals.add(cond);
-                        break;
-                    case 2:
-                        gcc = new GenomeCountCondition(number, true, true, color);
-                        GraphInfo.getInstance().addCondition(gcc);
-                        cond = new Label(">=" + number);
-                        cond.setTextFill(color);
-                        conditionals.add(cond);
-                        break;
-                    case 3:
-                        gcc = new GenomeCountCondition(number, false, true, color);
-                        GraphInfo.getInstance().addCondition(gcc);
-                        cond = new Label("Num <=" + number);
-                        cond.setTextFill(color);
-                        conditionals.add(cond);
-                        break;
-                    default:
-                        Window.errorPopup("Please select a constraint.");
-                        break;
-                }
-                legendElements.setItems(conditionals);
-                graphScene.drawConditions();
-            }
+            setGenomeNumberCondition();
         }
     };
 
@@ -227,6 +188,80 @@ public class Controller extends GridPane {
             graphScene.drawGraph(Integer.parseInt(centerInputField.getText()), Integer.parseInt(radiusInputField.getText()));
             graphScene.switchToInfo();
         }
+    }
+
+    private void setGenomeNumberCondition() {
+        int number = Integer.parseInt(numGenomesField.getText());
+        if (number < 0 || number >= GraphInfo.getInstance().getGenomesNum()) {
+            Window.errorPopup("Input number is out of bounds, \nplease provide a different input between 0 and : " + GraphInfo.getInstance().getGenomesNum() + ".");
+        } else {
+            int index = choices.getSelectionModel().getSelectedIndex();
+            GenomeCountCondition gcc;
+            Label cond;
+            Color color = GraphInfo.getInstance().determineColor();
+            switch (index) {
+                case 0:
+                    gcc = new GenomeCountCondition(number, true, false, color);
+                    GraphInfo.getInstance().addCondition(gcc);
+                    cond = new Label(">" + number);
+                    cond.setTextFill(color);
+                    conditionals.add(cond);
+                    break;
+                case 1:
+                    gcc = new GenomeCountCondition(number, false, false, color);
+                    GraphInfo.getInstance().addCondition(gcc);
+                    cond = new Label("<" + number);
+                    cond.setTextFill(color);
+                    conditionals.add(cond);
+                    break;
+                case 2:
+                    gcc = new GenomeCountCondition(number, true, true, color);
+                    GraphInfo.getInstance().addCondition(gcc);
+                    cond = new Label(">=" + number);
+                    cond.setTextFill(color);
+                    conditionals.add(cond);
+                    break;
+                case 3:
+                    gcc = new GenomeCountCondition(number, false, true, color);
+                    GraphInfo.getInstance().addCondition(gcc);
+                    cond = new Label("Num <=" + number);
+                    cond.setTextFill(color);
+                    conditionals.add(cond);
+                    break;
+                default:
+                    Window.errorPopup("Please select a constraint.");
+                    break;
+            }
+            legendElements.setItems(conditionals);
+            graphScene.drawConditions();
+        }
+    }
+
+    private void setRegexCondition() {
+        String regex = regexGenomesField.getText();
+        Color color = GraphInfo.getInstance().determineColor();
+        RegexCondition regCond = new RegexCondition(regex, color);
+        GraphInfo.getInstance().addCondition(regCond);
+        Label cond = new Label("Regex: " + regex);
+        cond.setTextFill(color);
+        conditionals.add(cond);
+        legendElements.setItems(conditionals);
+        graphScene.drawConditions();
+    }
+
+    private void clearColorCondition() {
+        Label remove = legendElements.getSelectionModel().getSelectedItem();
+        conditionals.remove(remove);
+        Color c = (Color) remove.getTextFill();
+        GraphInfo.getInstance().addColor(c);
+        ArrayList<Condition> conditions = GraphInfo.getInstance().getConditions();
+        for (int i = 0; i < conditions.size(); i++) {
+            if (conditions.get(i).getColor().equals(c)) {
+                conditions.remove(i);
+            }
+        }
+        legendElements.setItems(conditionals);
+        graphScene.drawConditions();
     }
 
     /**

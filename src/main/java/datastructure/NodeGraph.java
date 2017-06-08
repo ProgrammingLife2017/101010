@@ -210,6 +210,13 @@ public class NodeGraph {
         for (int i : visited) {
             drawNodes.addLast(new DrawNode(i));
         }
+
+        topologicalSorting();
+
+        for (DrawNode d : drawNodes) {
+            System.out.println(d.getIndex());
+        }
+
     }
 
     /**
@@ -220,17 +227,19 @@ public class NodeGraph {
      * @param maxDepth the maximum depth we want to go.
      */
     private void createSubgraphUtil(Queue<Integer> q, TreeSet<Integer> visited, int depth, int maxDepth) {
-        if (depth < maxDepth && !q.isEmpty()) {
+        if (!q.isEmpty() && depth < maxDepth) {
             int current = q.poll();
             if (!visited.contains(current)) {
                 visited.add(current);
                 for (Edge e : this.getOutgoingEdges(current)) {
                     q.add(e.getChild());
-                    createSubgraphUtil(q, visited, depth + 1, maxDepth);
                 }
+
             }
+            createSubgraphUtil(q, visited, depth + 1, maxDepth);
         }
     }
+
 
     /**
      * Recursively finds a leftmost node within a radius.
@@ -248,19 +257,48 @@ public class NodeGraph {
         }
     }
 
-//    /**
-//     * Gets the current NodeGraph instance.
-//     * @return the current NodeGraph instance.
-//     */
-//    public static NodeGraph getCurrentInstance() {
-//        return currentNodeGraph;
-//    }
-//
-//    /**
-//     *
-//     * @param newInstance
-//     */
-//    public static void setCurrentInstance(NodeGraph newInstance) {
-//        currentNodeGraph = newInstance;
-//    }
+    /**
+     * Topologically sorts the drawNodes in the sub graph.
+     */
+    private void topologicalSorting() {
+        LinkedList<DrawNode> sorted = new LinkedList<>();
+        LinkedList<DrawNode> unvisited = drawNodes;
+
+        while (!unvisited.isEmpty()) {
+            visit(unvisited.getFirst(), unvisited, sorted);
+        }
+
+        drawNodes = sorted;
+    }
+
+    /**
+     * Visit a node after visiting all nodes that come after it.
+     * @param dNode The current node that is being considered.
+     * @param unvisited List of DrawNodes that are not visited yet.
+     * @param sorted List of nodes that are sorted.
+     */
+    private void visit(DrawNode dNode, LinkedList<DrawNode> unvisited, LinkedList<DrawNode> sorted) {
+        if (unvisited.contains(dNode)) {
+            for (Edge e : this.getOutgoingEdges(dNode.getIndex())) {
+                visit(getDrawNode(drawNodes, e.getChild()), unvisited, sorted);
+            }
+            unvisited.remove(dNode);
+            sorted.addFirst(dNode);
+        }
+    }
+
+    /**
+     * Return a DrawNode from a given list if the given id corresponds.
+     * @param list The list we think our DrawNode is in.
+     * @param id The id of the DrawNode.
+     * @return The DrawNode if is in the list.
+     */
+    public DrawNode getDrawNode(LinkedList<DrawNode> list, int id) {
+        for (DrawNode dNode : list) {
+            if (dNode.getIndex() == id) {
+                return dNode;
+            }
+        }
+        return null;
+    }
 }

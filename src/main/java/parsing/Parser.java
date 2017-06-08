@@ -122,7 +122,7 @@ public class Parser {
                                 id = Integer.parseInt(line2.substring(0, line2.indexOf('\t'))) - 1;
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 segment = line2.substring(0, line2.indexOf('\t'));
-                                graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
+                                graph.addNode(id, segment.length());
                                 out.write(segment + "\n");
                                 out.flush();
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
@@ -198,23 +198,8 @@ public class Parser {
                 try {
                     int nol = getNumberOfLine(cache);
                     for (int i = 0; i < graphSize; i++) {
-                        int length = Integer.parseInt(in.readLine());
-                        int outLength = Integer.parseInt(in.readLine());
-                        int[] outgoing = new int[outLength];
-                        String[] tempLine = in.readLine().split("\t");
-                        for (int j = 0; j < outLength; j++) {
-                            outgoing[j] = Integer.parseInt(tempLine[j]);
-                        }
-                        int inLength = Integer.parseInt(in.readLine());
-                        int[] incoming = new int[inLength];
-                        tempLine = in.readLine().split("\t");
-                        for (int j = 0; j < inLength; j++) {
-                            incoming[j] = Integer.parseInt(tempLine[j]);
-                        }
-                        Node temp = new Node(length, outgoing, incoming);
-                        graph.addNodeCache(i, temp);
-                        lineCounter = lineCounter + 5;
-
+                        graph.addNode(i, graph.getNodeSegment(i).length());
+                        lineCounter = lineCounter + 1;
                         updateProgressBar(lineCounter, nol);
                     }
                     in.close();

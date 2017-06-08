@@ -1,6 +1,5 @@
 package parsing;
 
-import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;

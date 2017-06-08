@@ -1,6 +1,5 @@
 package parsing;
 
-import datastructure.Node;
 import datastructure.NodeGraph;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

@@ -70,7 +70,7 @@ public class NodeGraph {
      * @param newDB The new SegmentDB.
      */
     public void setSegmentDB(SegmentDB newDB) {
-        segmentDB = newDB;
+        return segmentDB = newDB;
     }
 
     /**

@@ -28,6 +28,7 @@ public class NodeCenter implements INodeHandler {
     @Override
     public void handleNode(DrawNode node) {
         serviceLocator.getGraphScene().drawGraph(node.getIndex(), serviceLocator.getController().getRadius());
+        serviceLocator.getGraphScene().switchToInfo();
     }
 
     @Override

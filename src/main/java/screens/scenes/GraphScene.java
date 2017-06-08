@@ -89,7 +89,7 @@ import java.util.Set;
      */
     public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-
+        serviceLocator.getController().setCurrentCenter(id);
         Thread thread = new Thread() {
             public void run() {
                 try {
@@ -100,7 +100,6 @@ import java.util.Set;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                serviceLocator.getController().setCurrentCenter(id);
                 drawGraphUtil(id, radius);
             }
         };

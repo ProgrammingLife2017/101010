@@ -2,6 +2,10 @@ package datastructure;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.TreeSet;
 
 /**
  * Created by 101010.
@@ -13,6 +17,11 @@ public class NodeGraph {
     private ArrayList<Integer> nodes;
 
     /**
+     * List of drawNodes;
+     */
+    private LinkedList<DrawNode> drawNodes;
+
+    /**
      * Set of edges.
      */
     private HashSet<Edge> edges;
@@ -21,6 +30,11 @@ public class NodeGraph {
      * Database containing the segments of the nodes.
      */
     private SegmentDB segmentDB;
+
+//    /**
+//     * Instance of the current graph.
+//     */
+//    private static NodeGraph currentNodeGraph;
 
     /**
      * Empty constructor for NodeGraph.
@@ -173,4 +187,76 @@ public class NodeGraph {
         }
         return res;
     }
+
+    /**
+     * Create a subgraph with given center and radius.
+     * @param center the node that the sub graph is centered upon.
+     * @param radius a indication for how much nodes should be in the sub graph.
+     */
+    public void createSubgraph(int center, int radius) {
+        TreeSet<Integer> visited = new TreeSet<>();
+        Queue<Integer> q = new LinkedList<>();
+
+        int leftmost = getLeftmost(center, 0, radius);
+
+        q.add(leftmost);
+        createSubgraphUtil(q, visited, 0, 2 * radius);
+
+        for (int i : visited) {
+            System.out.println(i);
+            drawNodes.addLast(new DrawNode(i));
+        }
+    }
+
+    /**
+     * Recursive method that will visit all nodes until a certain depth is reached.
+     * @param q the queue with nodes to consider.
+     * @param visited the already visited nodes.
+     * @param depth the depth of the current node.
+     * @param maxDepth the maximum depth we want to go.
+     */
+    private void createSubgraphUtil(Queue<Integer> q, TreeSet<Integer> visited, int depth, int maxDepth) {
+        if (depth < maxDepth && !q.isEmpty()) {
+            int current = q.poll();
+            if (!visited.contains(current)) {
+                visited.add(current);
+                for (Edge e : this.getOutgoingEdges(current)) {
+                    q.add(e.getChild());
+                    createSubgraphUtil(q, visited, depth + 1, maxDepth);
+                }
+            }
+        }
+    }
+
+    /**
+     * Recursively finds a leftmost node within a radius.
+     * @param current the current node.
+     * @param depth the depth the current node is on.
+     * @param maxDepth the maximum depth we want to go.
+     * @return a leftmost node within the given maxDepth.
+     */
+    private int getLeftmost(int current, int depth, int maxDepth) {
+        Iterator<Edge> it = this.getIncomingEdges(current).iterator();
+        if (depth < maxDepth && it.hasNext()) {
+            return getLeftmost(it.next().getParent(), depth + 1, maxDepth);
+        } else {
+            return current;
+        }
+    }
+
+//    /**
+//     * Gets the current NodeGraph instance.
+//     * @return the current NodeGraph instance.
+//     */
+//    public static NodeGraph getCurrentInstance() {
+//        return currentNodeGraph;
+//    }
+//
+//    /**
+//     *
+//     * @param newInstance
+//     */
+//    public static void setCurrentInstance(NodeGraph newInstance) {
+//        currentNodeGraph = newInstance;
+//    }
 }

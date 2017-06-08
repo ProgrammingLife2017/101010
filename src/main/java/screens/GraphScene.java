@@ -9,13 +9,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import parsing.Parser;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 /**
  * Implementation of the window that handles graph visualization.
@@ -43,6 +38,11 @@ import java.util.Set;
     private FXElementsFactory fxElementsFactory;
 
     /**
+     * The graph.
+     */
+    private NodeGraph graph;
+
+    /**
      * Event handler for when a node or edge is clicked.
      */
      private EventHandler<MouseEvent> click = event -> {
@@ -66,6 +66,7 @@ import java.util.Set;
          info = new NodeInfo();
          state = info;
          this.fxElementsFactory = fact;
+         this.graph = null;
      }
 
     /**
@@ -85,7 +86,9 @@ import java.util.Set;
                     e.printStackTrace();
                 }
 
-                drawGraphUtil(id, radius);
+                System.out.println(graph == null);
+                graph.createSubgraph(0, 52);
+//                drawGraphUtil(id, radius);
             }
         };
         thread.start();
@@ -98,52 +101,52 @@ import java.util.Set;
      * @param radius The maximum depth we want to go.
      */
     private void drawGraphUtil(int center, int radius) {
-        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
-        nodeGraph.generateDrawNodes(center, radius);
-        ArrayList<Node> nodes = nodeGraph.getNodes();
-        LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
-        LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
-        for (DrawNode dNode : drawNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            Platform.runLater(() -> this.getChildren().add(dNode));
-            DrawNode nOut;
-            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
-                nOut = nodeGraph.getDrawNode(i);
-                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
-                }
-            }
-        }
-
-        DummyNode current;
-        DummyNode current2;
-        DrawNode dN;
-        Set<DummyNode> visited = new HashSet<>();
-        for (int i = dummyNodes.size() - 1; i >= 0; i--) {
-            current = dummyNodes.get(i);
-            if (!visited.contains(current)) {
-                visited.add(current);
-                if (!visited.contains(current.prevInEdge())) {
-                    dN = nodeGraph.getDrawNode(current.getFrom());
-                    if (dN != null) {
-                        drawLine(current.getFrom() + "-" + current.getTo(), 2, dN.getBoundsInLocal().getMaxX(), dN.getBoundsInLocal().getMinY() + 5, current.getX(), current.getY() + 5);
-                    }
-                }
-                for (int j = i; j >= 0; j--) {
-                    current2 = dummyNodes.get(j);
-                    if (current.nextInEdge(current2)) {
-                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, current2.getX(), current2.getY() + 5);
-                    }
-                }
-                if (current.getId() == -1) {
-                    dN = nodeGraph.getDrawNode(current.getTo());
-                    if (dN != null) {
-                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, dN.getBoundsInLocal().getMinX(), dN.getBoundsInLocal().getMinY() + 5);
-                    }
-                }
-            }
-        }
+//        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+//        nodeGraph.generateDrawNodes(center, radius);
+//        ArrayList<Node> nodes = nodeGraph.getNodes();
+//        LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
+//        LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
+//        for (DrawNode dNode : drawNodes) {
+//            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+//            dNode.setOnMousePressed(click);
+//            Platform.runLater(() -> this.getChildren().add(dNode));
+//            DrawNode nOut;
+//            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
+//                nOut = nodeGraph.getDrawNode(i);
+//                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+//                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+//                }
+//            }
+//        }
+//
+//        DummyNode current;
+//        DummyNode current2;
+//        DrawNode dN;
+//        Set<DummyNode> visited = new HashSet<>();
+//        for (int i = dummyNodes.size() - 1; i >= 0; i--) {
+//            current = dummyNodes.get(i);
+//            if (!visited.contains(current)) {
+//                visited.add(current);
+//                if (!visited.contains(current.prevInEdge())) {
+//                    dN = nodeGraph.getDrawNode(current.getFrom());
+//                    if (dN != null) {
+//                        drawLine(current.getFrom() + "-" + current.getTo(), 2, dN.getBoundsInLocal().getMaxX(), dN.getBoundsInLocal().getMinY() + 5, current.getX(), current.getY() + 5);
+//                    }
+//                }
+//                for (int j = i; j >= 0; j--) {
+//                    current2 = dummyNodes.get(j);
+//                    if (current.nextInEdge(current2)) {
+//                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, current2.getX(), current2.getY() + 5);
+//                    }
+//                }
+//                if (current.getId() == -1) {
+//                    dN = nodeGraph.getDrawNode(current.getTo());
+//                    if (dN != null) {
+//                        drawLine(current.getFrom() + "-" + current.getTo(), 2, current.getX(), current.getY() + 5, dN.getBoundsInLocal().getMinX(), dN.getBoundsInLocal().getMinY() + 5);
+//                    }
+//                }
+//            }
+//        }
     }
     /**
      * Draws new root nodes.
@@ -151,20 +154,20 @@ import java.util.Set;
      * @param newDummies the dummy nodes needed to draw the nodes.
      */
     private void drawUpdateRoot(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummies) {
-        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
-        ArrayList<Node> nodes = nodeGraph.getNodes();
-        for (DrawNode dNode : newNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
-            DrawNode nOut;
-            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
-                nOut = nodeGraph.getDrawNode(i);
-                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
-                }
-            }
-        }
+//        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+//        ArrayList<Node> nodes = nodeGraph.getNodes();
+//        for (DrawNode dNode : newNodes) {
+//            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+//            dNode.setOnMousePressed(click);
+//            this.getChildren().add(dNode);
+//            DrawNode nOut;
+//            for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
+//                nOut = nodeGraph.getDrawNode(i);
+//                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+//                    drawLine(dNode.getIndex() + "-" + i, 2, dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+//                }
+//            }
+//        }
     }
 
     /**
@@ -173,20 +176,20 @@ import java.util.Set;
      * @param newDummies the dummy nodes needed to draw the nodes.
      */
     private void drawUpdateLeaf(LinkedList<DrawNode> newNodes, LinkedList<DummyNode> newDummies) {
-        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
-        ArrayList<Node> nodes = nodeGraph.getNodes();
-        for (DrawNode dNode : newNodes) {
-            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
-            dNode.setOnMousePressed(click);
-            this.getChildren().add(dNode);
-            DrawNode nOut;
-            for (int i : nodes.get(dNode.getIndex()).getIncomingEdges()) {
-                nOut = nodeGraph.getDrawNode(i);
-                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(i + "-" + dNode.getIndex(), 2, dNode.getBoundsInLocal().getMinX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMaxX(), nOut.getBoundsInLocal().getMinY() + 5);
-                }
-            }
-        }
+//        NodeGraph nodeGraph = NodeGraph.getCurrentInstance();
+//        ArrayList<Node> nodes = nodeGraph.getNodes();
+//        for (DrawNode dNode : newNodes) {
+//            dNode.setX(dNode.getX() - dNode.getWidth() / 2);
+//            dNode.setOnMousePressed(click);
+//            this.getChildren().add(dNode);
+//            DrawNode nOut;
+//            for (int i : nodes.get(dNode.getIndex()).getIncomingEdges()) {
+//                nOut = nodeGraph.getDrawNode(i);
+//                if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
+//                    drawLine(i + "-" + dNode.getIndex(), 2, dNode.getBoundsInLocal().getMinX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMaxX(), nOut.getBoundsInLocal().getMinY() + 5);
+//                }
+//            }
+//        }
     }
 
     /**
@@ -195,16 +198,16 @@ import java.util.Set;
      * @param transY y-coordinate of cursor
      */
     public void zoomOut(double transX, double transY) {
-        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        if (drawNodes.size() < NodeGraph.getCurrentInstance().getNodes().size()) {
-            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
-            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
-            drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
-            drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
-            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-            setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
-        }
+//        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+//        if (drawNodes.size() < NodeGraph.getCurrentInstance().getNodes().size()) {
+//            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pLeafOut = NodeGraph.getCurrentInstance().addAtLeaf();
+//            Pair<LinkedList<DrawNode>, LinkedList<DummyNode>> pRootOut = NodeGraph.getCurrentInstance().addAtRoot();
+//            drawUpdateLeaf(pLeafOut.getKey(), pLeafOut.getValue());
+//            drawUpdateRoot(pRootOut.getKey(), pRootOut.getValue());
+//            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+//            setScaleX(getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+//            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+//        }
     }
 
     /**
@@ -213,16 +216,16 @@ import java.util.Set;
      * @param transY y-coordinate of cursor
      */
     public void zoomIn(double transX, double transY) {
-        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        if (drawNodes.size() > 3) {
-            double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
-            removeNodesLeaf(maxX);
-            double minX = NodeGraph.getCurrentInstance().removeAtRoot();
-            removeNodesRoot(minX);
-            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-            setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
-            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
-        }
+//        LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+//        if (drawNodes.size() > 3) {
+//            double maxX = NodeGraph.getCurrentInstance().removeAtLeaf();
+//            removeNodesLeaf(maxX);
+//            double minX = NodeGraph.getCurrentInstance().removeAtRoot();
+//            removeNodesRoot(minX);
+//            drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
+//            setScaleX(getWidth() / (drawNodes.getFirst().getBoundsInLocal().getMaxX() + 200 - drawNodes.getLast().getX()));
+//            setTranslateX((-drawNodes.getLast().getX() + getWidth() / 2) * getScaleX() - getWidth() / 2);
+//        }
     }
 
     /**
@@ -230,21 +233,21 @@ import java.util.Set;
      * @param minX x-coordinate of nodes to remove.
      */
     private void removeNodesRoot(double minX) {
-        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
-        for (javafx.scene.Node drawElement: this.getChildren()) {
-            if (drawElement instanceof Rectangle) {
-                Rectangle rect = (Rectangle) drawElement;
-                if (rect.getX() < minX) {
-                    remove.add(rect);
-                }
-            } else if (drawElement instanceof Line) {
-                Line line = (Line) drawElement;
-                if (line.getStartX() < minX) {
-                    remove.add(line);
-                }
-            }
-        }
-        this.getChildren().removeAll(remove);
+//        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
+//        for (javafx.scene.Node drawElement: this.getChildren()) {
+//            if (drawElement instanceof Rectangle) {
+//                Rectangle rect = (Rectangle) drawElement;
+//                if (rect.getX() < minX) {
+//                    remove.add(rect);
+//                }
+//            } else if (drawElement instanceof Line) {
+//                Line line = (Line) drawElement;
+//                if (line.getStartX() < minX) {
+//                    remove.add(line);
+//                }
+//            }
+//        }
+//        this.getChildren().removeAll(remove);
     }
 
     /**
@@ -252,21 +255,21 @@ import java.util.Set;
      * @param maxX x-coordinate of nodes to remove.
      */
     private void removeNodesLeaf(double maxX) {
-        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
-        for (javafx.scene.Node drawElement: this.getChildren()) {
-            if (drawElement instanceof Rectangle) {
-                Rectangle rect = (Rectangle) drawElement;
-                if (rect.getX() > maxX) {
-                    remove.add(rect);
-                }
-            } else if (drawElement instanceof Line) {
-                Line line = (Line) drawElement;
-                if (line.getStartX() > maxX) {
-                    remove.add(line);
-                }
-            }
-        }
-        this.getChildren().removeAll(remove);
+//        ArrayList<javafx.scene.Node> remove = new ArrayList<>();
+//        for (javafx.scene.Node drawElement: this.getChildren()) {
+//            if (drawElement instanceof Rectangle) {
+//                Rectangle rect = (Rectangle) drawElement;
+//                if (rect.getX() > maxX) {
+//                    remove.add(rect);
+//                }
+//            } else if (drawElement instanceof Line) {
+//                Line line = (Line) drawElement;
+//                if (line.getStartX() > maxX) {
+//                    remove.add(line);
+//                }
+//            }
+//        }
+//        this.getChildren().removeAll(remove);
     }
 
     /**
@@ -327,4 +330,19 @@ import java.util.Set;
         return this.info;
     }
 
+    /**
+     * Sets the NodeGraph of this scene.
+     * @param graph the new graph to be used.
+     */
+    public void setGraph(NodeGraph graph) {
+        this.graph = graph;
+    }
+
+    /**
+     * Gets the NodeGraph of this scene.
+     * @return the NodeGraph currently being used.
+     */
+    public NodeGraph getGraph() {
+        return this.graph;
+    }
 }

@@ -1,6 +1,5 @@
 package screens;
 
-import datastructure.DrawNode;
 import datastructure.NodeGraph;
 import filesystem.FileSystem;
 import javafx.application.Application;
@@ -27,7 +26,6 @@ import window.FileSelector;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 
 
 /**
@@ -188,7 +186,7 @@ public class Window extends Application {
      */
     private void setScrolling() {
         mainPane.setOnScroll((ScrollEvent event) -> {
-            if (NodeGraph.getCurrentInstance() != null) {
+            if (graphScene.getGraph() != null) {
                 double deltaY = event.getDeltaY();
                 if (deltaY < 0) {
                     graphScene.zoomOut(event.getX(), event.getY());
@@ -213,10 +211,10 @@ public class Window extends Application {
                     File file = FileSelector.showOpenDialog(stage);
                     if (file != null && file.exists()) {
                         pB.setVisible(true);
-                        NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
+                        graphScene.setGraph(Parser.getInstance().parse(file));
 
                         new Thread() {
-                            public void run () {
+                            public void run() {
                                 try {
                                     Parser.getThread().join();
 
@@ -238,10 +236,10 @@ public class Window extends Application {
                                 e.printStackTrace();
                             }
 
-                            graphScene.setTranslateX(-NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX());
-                            graphScene.setScaleX(graphScene.getWidth() / (NodeGraph.getCurrentInstance().getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
-                            LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-                            graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
+//                            graphScene.setTranslateX(-graph.getDrawNodes().getLast().getX());
+//                            graphScene.setScaleX(graphScene.getWidth() / (graph.getDrawNodes().getFirst().getBoundsInLocal().getMaxX() - NodeGraph.getCurrentInstance().getDrawNodes().getLast().getX()));
+//                            LinkedList<DrawNode> drawNodes = graph.getDrawNodes();
+//                            graphScene.setTranslateX((-drawNodes.getLast().getX() + graphScene.getWidth() / 2) * graphScene.getScaleX() - graphScene.getWidth() / 2);
 
                             logger.info("file has been selected");
                         }).start();
@@ -275,7 +273,7 @@ public class Window extends Application {
         MenuItem item3 = new MenuItem("Center from click");
         item3.setOnAction(
                 event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
+                    if (graphScene.getGraph() != null) {
                         graphScene.switchToCenter();
                         logger.info("state has been switched to center");
                     } else {
@@ -286,7 +284,7 @@ public class Window extends Application {
         MenuItem item4 = new MenuItem("Center from text");
         item4.setOnAction(
                 event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
+                    if (graphScene.getGraph() != null) {
                         Stage newstage = new Stage();
                         newstage.setTitle("Select the radius");
                         GridPane box = new GridPane();
@@ -303,7 +301,7 @@ public class Window extends Application {
                                         int center = Integer.parseInt(textField.getText());
                                         int radius = Integer.parseInt(textField2.getText());
 
-                                        if (center < 0 || center >= NodeGraph.getCurrentInstance().getSize()) {
+                                        if (center < 0 || center >= graphScene.getGraph().getEdgesSize()) {
                                             errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
                                         } else if (radius < 5 || radius > 500) {
                                             errorPopup("Input radius is out of bounds, \nplease provide a different radius.");
@@ -352,7 +350,7 @@ public class Window extends Application {
         MenuItem item2 = new MenuItem("Graph");
         item2.setOnAction(
                 event -> {
-                    if (NodeGraph.getCurrentInstance() != null) {
+                    if (graphScene.getGraph() != null) {
                         graphScene.drawGraph(0, 200);
                         logger.info("drawing returned to original");
                     } else {

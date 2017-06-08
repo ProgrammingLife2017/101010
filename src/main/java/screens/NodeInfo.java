@@ -20,6 +20,6 @@ public class NodeInfo implements INodeHandler {
      */
     @Override
     public void handle(DrawNode node) {
-        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
+//        Window.getInfoScreen().getTextArea().appendText(NodeGraph.getCurrentInstance().getSegment(node.getIndex()) + "\n");
     }
 }

@@ -45,7 +45,7 @@ public class GraphSceneTest {
     @Mock
     ObservableList list = mock(ObservableList.class);
 
-    ArrayList<Node> nodes = new ArrayList<>();
+    ArrayList<Integer> nodes = new ArrayList<>();
 
     NodeGraph ngTest = new NodeGraph();
 
@@ -69,21 +69,21 @@ public class GraphSceneTest {
 
     @Before
     public void setUp() {
-        Node n1 = new Node();
-        n1.addOutgoingEdge(1);
-        Node n2 = new Node();
-        n2.addIncomingEdge(0);
-        nodes.add(n1);
-        nodes.add(n2);
-        ngTest = new NodeGraph(nodes, null, null, null);
-        when(fact.createStage()).thenReturn(stage);
-        when(fact.createLabel(anyString())).thenReturn(label);
-        when(fact.createGroup()).thenReturn(group);
-        when(group.getChildren()).thenReturn(list);
-        when(fact.createScene(group, 150, 100)).thenReturn(scene);
-        when(fact.setScene(stage, scene)).thenReturn(stage);
-        NodeGraph.setCurrentInstance(ngTest);
-        gs = new GraphScene(fact);
+//        Node n1 = new Node();
+//        n1.addOutgoingEdge(1);
+//        Node n2 = new Node();
+//        n2.addIncomingEdge(0);
+//        nodes.add(n1);
+//        nodes.add(n2);
+//        ngTest = new NodeGraph(nodes, null, null, null);
+//        when(fact.createStage()).thenReturn(stage);
+//        when(fact.createLabel(anyString())).thenReturn(label);
+//        when(fact.createGroup()).thenReturn(group);
+//        when(group.getChildren()).thenReturn(list);
+//        when(fact.createScene(group, 150, 100)).thenReturn(scene);
+//        when(fact.setScene(stage, scene)).thenReturn(stage);
+//        NodeGraph.setCurrentInstance(ngTest);
+//        gs = new GraphScene(fact);
     }
 
     @After

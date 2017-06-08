@@ -1,7 +1,6 @@
 package parsing;
 
 import datastructure.Edge;
-import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;
@@ -193,7 +192,6 @@ public class Parser {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(cache)));
             int graphSize = Integer.parseInt(in.readLine());
-            graph.getNodes().ensureCapacity(graphSize);
 
             parser = new Thread(() -> {
                 int lineCounter = 0;

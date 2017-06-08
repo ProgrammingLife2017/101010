@@ -23,6 +23,15 @@ public class NodeGraph {
     private SegmentDB segmentDB;
 
     /**
+     * Empty constructor for NodeGraph.
+     */
+    public NodeGraph() {
+        this.nodes = new ArrayList<>();
+        this.edges = new HashSet<>();
+        this.segmentDB = new SegmentDB();
+    }
+
+    /**
      * Standard constructor for NodeGraph.
      * @param nodes The set of nodes.
      * @param edges The set of edges.

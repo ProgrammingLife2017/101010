@@ -34,10 +34,19 @@ public class GraphInfo {
      */
     private static GraphInfo instance;
 
+    /**
+     * List of colors that can still be assigned to new conditions.
+     */
     private ArrayList<Color> colors;
 
+    /**
+     * List of all conditions that are currently checked for.
+     */
     private ArrayList<Condition> conditions;
 
+    /**
+     * List of all genome names specified in the file.
+     */
     private String[] genomeNames;
 
     /**
@@ -138,6 +147,10 @@ public class GraphInfo {
         return this.genomes;
     }
 
+    /**
+     * Determines the color of the next condition.
+     * @return the color the next condition should get.
+     */
     public Color determineColor() {
         if (colors.size() != 0) {
             return colors.remove(0);
@@ -145,22 +158,42 @@ public class GraphInfo {
         return Color.GRAY;
     }
 
+    /**
+     * Add a color to the list of colors to assign to conditions.
+     * @param color the color that will get added to the list.
+     */
     public void addColor(Color color) {
         colors.add(color);
     }
 
+    /**
+     * Add a new condition to the list of conditions.
+     * @param cond the condition that will get added.
+     */
     public void addCondition(Condition cond) {
         this.conditions.add(cond);
     }
 
+    /**
+     * Getter for the list of condition that are checked for.
+     * @return a list of all current conditionals.
+     */
     public ArrayList<Condition> getConditions() {
         return this.conditions;
     }
 
+    /**
+     * Setter for the list of all genome names in the current file.
+     * @param names all names of the genomes in the file.
+     */
     public void setGenomeNames(String[] names) {
         this.genomeNames = names;
     }
 
+    /**
+     * Getter for the genome names.
+     * @return the genome names.
+     */
     public String[] getGenomeNames() {
         return this.genomeNames;
     }

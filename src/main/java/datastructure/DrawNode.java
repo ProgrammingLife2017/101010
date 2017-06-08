@@ -55,7 +55,6 @@ public class DrawNode extends Rectangle {
      * @return all genomes that cross this DrawNode.
      */
     public String[] getGenomes() {
-        System.out.println(this.getIndex());
         int[][] allGenomes = GraphInfo.getInstance().getGenomes();
         int index = -1;
         for (int i = 0; i < allGenomes.length; i++) {

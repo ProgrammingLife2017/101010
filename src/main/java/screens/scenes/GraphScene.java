@@ -422,15 +422,18 @@ import java.util.Set;
         return count;
     }
 
+    /**
+     * Determines and sets the colors every draw node should have according to the
+     * current conditions.
+     */
     public void drawConditions() {
         LinkedList<DrawNode> drawNodes = NodeGraph.getCurrentInstance().getDrawNodes();
-        ArrayList<Color> colors = new ArrayList<>();
+        ArrayList<Color> colors;
         for (DrawNode dNode: drawNodes) {
             colors = new ArrayList<>();
             for (Condition cond : GraphInfo.getInstance().getConditions()) {
                 if (cond.addColor(dNode)) {
                     colors.add(cond.getColor());
-                    System.out.println("rip");
                 }
             }
             NodeGraph.getCurrentInstance().colorDrawNode(dNode, colors);

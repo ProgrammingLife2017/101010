@@ -98,6 +98,9 @@ public class Controller extends GridPane {
         setRegexCondition();
     };
 
+    /**
+     * Event handler that adds a conditional on number of genomes.
+     */
     private EventHandler<ActionEvent> numGenomeAction = event -> {
         if (numGenomesField.getText().length() == 0 || numGenomesField.getText().contains("\\D")) {
             Window.errorPopup("Please enter a number as number of genomes.");
@@ -190,6 +193,9 @@ public class Controller extends GridPane {
         }
     }
 
+    /**
+     * Creates a new condition from the inputs for selection on number of genomes.
+     */
     private void setGenomeNumberCondition() {
         int number = Integer.parseInt(numGenomesField.getText());
         if (number < 0 || number >= GraphInfo.getInstance().getGenomesNum()) {
@@ -198,34 +204,49 @@ public class Controller extends GridPane {
             int index = choices.getSelectionModel().getSelectedIndex();
             GenomeCountCondition gcc;
             Label cond;
-            Color color = GraphInfo.getInstance().determineColor();
             switch (index) {
                 case 0:
+                    cond = new Label("Num >" + number);
+                    if (checkDuplicateCondition("Num >" + number)) {
+                        return;
+                    }
+                    Color color = GraphInfo.getInstance().determineColor();
+                    cond.setTextFill(color);
                     gcc = new GenomeCountCondition(number, true, false, color);
                     GraphInfo.getInstance().addCondition(gcc);
-                    cond = new Label(">" + number);
-                    cond.setTextFill(color);
                     conditionals.add(cond);
                     break;
                 case 1:
-                    gcc = new GenomeCountCondition(number, false, false, color);
+                    cond = new Label("Num <" + number);
+                    if (checkDuplicateCondition("Num <" + number)) {
+                        return;
+                    }
+                    Color color1 = GraphInfo.getInstance().determineColor();
+                    cond.setTextFill(color1);
+                    gcc = new GenomeCountCondition(number, false, false, color1);
                     GraphInfo.getInstance().addCondition(gcc);
-                    cond = new Label("<" + number);
-                    cond.setTextFill(color);
                     conditionals.add(cond);
                     break;
                 case 2:
-                    gcc = new GenomeCountCondition(number, true, true, color);
+                    cond = new Label("Num >=" + number);
+                    if (checkDuplicateCondition("Num >=" + number)) {
+                        return;
+                    }
+                    Color color2 = GraphInfo.getInstance().determineColor();
+                    cond.setTextFill(color2);
+                    gcc = new GenomeCountCondition(number, true, true, color2);
                     GraphInfo.getInstance().addCondition(gcc);
-                    cond = new Label(">=" + number);
-                    cond.setTextFill(color);
                     conditionals.add(cond);
                     break;
                 case 3:
-                    gcc = new GenomeCountCondition(number, false, true, color);
-                    GraphInfo.getInstance().addCondition(gcc);
                     cond = new Label("Num <=" + number);
-                    cond.setTextFill(color);
+                    if (checkDuplicateCondition("Num <=" + number)) {
+                        return;
+                    }
+                    Color color3 = GraphInfo.getInstance().determineColor();
+                    cond.setTextFill(color3);
+                    gcc = new GenomeCountCondition(number, false, true, color3);
+                    GraphInfo.getInstance().addCondition(gcc);
                     conditionals.add(cond);
                     break;
                 default:
@@ -237,18 +258,27 @@ public class Controller extends GridPane {
         }
     }
 
+    /**
+     * Creates a new condition from the inputs for regex on genome names.
+     */
     private void setRegexCondition() {
         String regex = regexGenomesField.getText();
+        Label cond = new Label("Regex: " + regex);
+        if (checkDuplicateCondition("Regex: " + regex)) {
+            return;
+        }
         Color color = GraphInfo.getInstance().determineColor();
         RegexCondition regCond = new RegexCondition(regex, color);
         GraphInfo.getInstance().addCondition(regCond);
-        Label cond = new Label("Regex: " + regex);
         cond.setTextFill(color);
         conditionals.add(cond);
         legendElements.setItems(conditionals);
         graphScene.drawConditions();
     }
 
+    /**
+     * Removes the currently selected condition in the legend.
+     */
     private void clearColorCondition() {
         Label remove = legendElements.getSelectionModel().getSelectedItem();
         conditionals.remove(remove);
@@ -285,5 +315,19 @@ public class Controller extends GridPane {
         currentCenterField.setText(Integer.toString(center));
     }
 
+    /**
+     * Checks whether the condition that will be added was already added before.
+     * @param label the String label the condition will get in the legend.
+     * @return whether the condition already is checked for.
+     */
+    private boolean checkDuplicateCondition(String label) {
+        for (int i = 0; i < conditionals.size(); i++) {
+            if (conditionals.get(i).getText().equals(label)) {
+                Window.errorPopup("This conditional is already checked.");
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

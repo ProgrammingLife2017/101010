@@ -24,7 +24,7 @@ public class GenomeCountCondition extends Condition {
 
 
     /**
-     * Constructor of the condition
+     * Constructor of the condition.
      * @param decisionNumber the number that decides the condition.
      * @param greater true iff condition is greater than the decisionNumber.
      * @param equal true iff condition is equal to the decisionNumber.

@@ -15,12 +15,12 @@ public abstract class Condition {
     /**
      * Default constructor.
      */
-    public Condition(){
+    public Condition() {
         color = Color.BLACK;
     }
 
     /**
-     *Constructor of the condition
+     * Constructor of the condition.
      * @param color the color of this condition.
      */
     public Condition(Color color) {

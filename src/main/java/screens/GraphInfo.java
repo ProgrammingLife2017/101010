@@ -145,6 +145,10 @@ public class GraphInfo {
         return Color.GRAY;
     }
 
+    public void addColor(Color color) {
+        colors.add(color);
+    }
+
     public void addCondition(Condition cond) {
         this.conditions.add(cond);
     }

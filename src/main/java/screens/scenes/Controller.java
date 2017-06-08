@@ -1,15 +1,20 @@
 package screens.scenes;
 
+import datastructure.Condition;
 import datastructure.GenomeCountCondition;
 import datastructure.NodeGraph;
 import datastructure.RegexCondition;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import screens.GraphInfo;
@@ -24,7 +29,7 @@ public class Controller extends GridPane {
      * Labels.
      */
     @SuppressWarnings("FieldCanBeLocal")
-    private Label currentCenter, centerInput, radius, genomeNum, genomeRegex;
+    private Label currentCenter, centerInput, radius, genomeNum, genomeRegex, legend;
 
     /**
      * Input fields.
@@ -40,7 +45,13 @@ public class Controller extends GridPane {
 
     private Button submitRegex;
 
+    private Button condClear;
+
     private ChoiceBox choices;
+
+    private ListView<Label> legendElements;
+
+    private ObservableList<Label> conditionals = FXCollections.observableArrayList();
 
     /**
      * Scene where the graph is drawn.
@@ -56,10 +67,30 @@ public class Controller extends GridPane {
         }
     };
 
+    private EventHandler<ActionEvent> clearCondition = event -> {
+        Label remove = legendElements.getSelectionModel().getSelectedItem();
+        conditionals.remove(remove);
+        Color c = (Color) remove.getTextFill();
+        GraphInfo.getInstance().addColor(c);
+        ArrayList<Condition> conditions = GraphInfo.getInstance().getConditions();
+        for (int i = 0; i < conditions.size(); i++) {
+            if (conditions.get(i).getColor().equals(c)) {
+                conditions.remove(i);
+            }
+        }
+        legendElements.setItems(conditionals);
+        graphScene.drawConditions();
+    };
+
     private EventHandler<ActionEvent> regexAction = event -> {
         String regex = regexGenomesField.getText();
-        RegexCondition regCond = new RegexCondition(regex, GraphInfo.getInstance().determineColor());
+        Color color = GraphInfo.getInstance().determineColor();
+        RegexCondition regCond = new RegexCondition(regex, color);
         GraphInfo.getInstance().addCondition(regCond);
+        Label cond = new Label("Regex: " + regex);
+        cond.setTextFill(color);
+        conditionals.add(cond);
+        legendElements.setItems(conditionals);
         graphScene.drawConditions();
     };
 
@@ -73,35 +104,46 @@ public class Controller extends GridPane {
             } else {
                 int index = choices.getSelectionModel().getSelectedIndex();
                 GenomeCountCondition gcc;
+                Label cond;
                 Color color = GraphInfo.getInstance().determineColor();
                 switch (index) {
                     case 0:
                         gcc = new GenomeCountCondition(number, true, false, color);
                         GraphInfo.getInstance().addCondition(gcc);
+                        cond = new Label(">" + number);
+                        cond.setTextFill(color);
+                        conditionals.add(cond);
                         break;
                     case 1:
                         gcc = new GenomeCountCondition(number, false, false, color);
                         GraphInfo.getInstance().addCondition(gcc);
+                        cond = new Label("<" + number);
+                        cond.setTextFill(color);
+                        conditionals.add(cond);
                         break;
                     case 2:
                         gcc = new GenomeCountCondition(number, true, true, color);
                         GraphInfo.getInstance().addCondition(gcc);
+                        cond = new Label(">=" + number);
+                        cond.setTextFill(color);
+                        conditionals.add(cond);
                         break;
                     case 3:
                         gcc = new GenomeCountCondition(number, false, true, color);
                         GraphInfo.getInstance().addCondition(gcc);
+                        cond = new Label("Num <=" + number);
+                        cond.setTextFill(color);
+                        conditionals.add(cond);
                         break;
                     default:
                         Window.errorPopup("Please select a constraint.");
                         break;
                 }
+                legendElements.setItems(conditionals);
                 graphScene.drawConditions();
             }
         }
     };
-
-
-
 
     /**
      * Constructor.
@@ -114,6 +156,7 @@ public class Controller extends GridPane {
         radius = serviceLocator.getFxElementsFactory().createLabel("Radius:");
         genomeNum = serviceLocator.getFxElementsFactory().createLabel("No. of\ngenomes:");
         genomeRegex = serviceLocator.getFxElementsFactory().createLabel("Genome\nregex:");
+        legend = serviceLocator.getFxElementsFactory().createLabel("Legend:");
         currentCenterField = new TextField();
         centerInputField = new TextField();
         radiusInputField = new TextField();
@@ -123,7 +166,10 @@ public class Controller extends GridPane {
         submitButton = new Button("Submit");
         submitButtonNoGen = new Button("Submit");
         submitRegex = new Button("Submit");
+        condClear = new Button("Clear");
         choices = new ChoiceBox(FXCollections.observableArrayList(">", "<", ">=", "<="));
+        legendElements = new ListView();
+        legendElements.setItems(null);
         controllerSettings();
         this.add(currentCenter, 1, 1);
         this.add(currentCenterField, 2, 1);
@@ -139,6 +185,9 @@ public class Controller extends GridPane {
         this.add(genomeRegex, 1, 9);
         this.add(regexGenomesField, 2, 9);
         this.add(submitRegex, 1, 10);
+        this.add(legend, 1, 12);
+        this.add(legendElements, 1, 13);
+        this.add(condClear, 1, 14);
         serviceLocator.setController(this);
     }
 
@@ -152,8 +201,11 @@ public class Controller extends GridPane {
         numGenomesField.setMaxWidth(75d);
         regexGenomesField.setMaxWidth(75d);
         currentCenterField.setEditable(false);
+        legendElements.setMaxWidth(90d);
+        legendElements.setMaxHeight(200d);
         submitButton.setOnAction(buttonAction);
         submitButtonNoGen.setOnAction(numGenomeAction);
+        condClear.setOnAction(clearCondition);
         submitRegex.setOnAction(regexAction);
         this.getStyleClass().addAll("grid", "border_bottom");
     }

@@ -198,7 +198,9 @@ public class Parser {
                 try {
                     int nol = getNumberOfLine(cache);
                     for (int i = 0; i < graphSize; i++) {
-                        graph.addNode(i, graph.getNodeSegment(i).length());
+                        String line = in.readLine();
+                        String[] things = line.split("\t");
+                        graph.addEdge(Integer.parseInt(things[0]), Integer.parseInt(things[1]));
                         lineCounter = lineCounter + 1;
                         updateProgressBar(lineCounter, nol);
                     }

@@ -43,6 +43,7 @@ public class NodeGraph {
         this.nodes = new ArrayList<>();
         this.edges = new HashSet<>();
         this.segmentDB = new SegmentDB();
+        this.drawNodes = new LinkedList<>();
     }
 
     /**

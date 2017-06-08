@@ -88,12 +88,7 @@ public class Window extends Application {
      * Contains references to other services.
      */
     private ServiceLocator serviceLocator;
-
-    /**
-     * Starts the frame.
-     * @param stage Main stage where the content is placed.
-     * @throws Exception Thrown when application can't be started.
-     */
+    
     /**
      * Starts the frame.
      * @param stage Main stage where the content is placed.

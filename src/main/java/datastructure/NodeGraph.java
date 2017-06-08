@@ -30,11 +30,6 @@ public class NodeGraph {
      */
     private SegmentDB segmentDB;
 
-//    /**
-//     * Instance of the current graph.
-//     */
-//    private static NodeGraph currentNodeGraph;
-
     /**
      * Empty constructor for NodeGraph.
      */

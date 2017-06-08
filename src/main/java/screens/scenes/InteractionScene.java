@@ -1,8 +1,8 @@
 package screens.scenes;
 
-import screens.FXElementsFactory;
-import screens.scenes.GraphScene;
 import javafx.scene.layout.VBox;
+import services.ServiceLocator;
+
 /**
  * Created by Michael on 6/8/2017.
  */
@@ -24,13 +24,19 @@ public class InteractionScene extends VBox {
 
     /**
      * Constructor.
-     * @param factory Factory to create javaFX components.
-     * @param graphScene Scene where the graph is drawn in.
+     * @param serviceLocator ServiceLocator for locating services registered in that object.
      */
-    public InteractionScene(FXElementsFactory factory, GraphScene graphScene) {
-        infoScreen = new InfoScreen(factory);
-        controller = new Controller(factory, graphScene);
+    public InteractionScene(ServiceLocator serviceLocator) {
+        infoScreen = new InfoScreen(serviceLocator);
+        controller = new Controller(serviceLocator);
         setSettings();
+    }
+
+    public static void register(ServiceLocator sL) {
+        if(sL == null) {
+            throw new IllegalArgumentException("The service locator can not be null");
+        }
+        sL.setInteractionScene(new InteractionScene(sL));
     }
 
     /**

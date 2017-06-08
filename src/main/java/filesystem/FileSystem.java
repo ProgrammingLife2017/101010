@@ -1,5 +1,7 @@
 package filesystem;
 
+import services.ServiceLocator;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +39,13 @@ public final class FileSystem {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void register(ServiceLocator sL) {
+        if(sL == null) {
+            throw new IllegalArgumentException("The service locator can not be null");
+        }
+        sL.setFileSystem(new FileSystem());
     }
 
     /**

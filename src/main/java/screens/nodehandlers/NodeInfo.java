@@ -2,18 +2,19 @@ package screens.nodehandlers;
 
 import datastructure.DrawNode;
 import javafx.scene.shape.Line;
-import screens.Window;
+import services.ServiceLocator;
 
 /**
  * Implementation of the state that handles click events regarding the information of selected node.
  */
 public class NodeInfo implements INodeHandler {
 
+    private ServiceLocator serviceLocator;
     /**
      * NodeInfo state handler constructor.
      */
-    public NodeInfo() {
-
+    public NodeInfo(ServiceLocator sL) {
+        serviceLocator = sL;
     }
 
     /**
@@ -21,11 +22,11 @@ public class NodeInfo implements INodeHandler {
      */
     @Override
     public void handleNode(DrawNode node) {
-        Window.getInfoScreen().displayNodeInfo(node);
+        serviceLocator.getInfoScreen().displayNodeInfo(node);
     }
 
     @Override
     public void handleLine(Line line) {
-        Window.getInfoScreen().displayLineInfo(line);
+        serviceLocator.getInfoScreen().displayLineInfo(line);
     }
 }

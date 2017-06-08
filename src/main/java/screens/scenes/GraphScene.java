@@ -16,6 +16,7 @@ import screens.FXElementsFactory;
 import screens.nodehandlers.INodeHandler;
 import screens.nodehandlers.NodeCenter;
 import screens.nodehandlers.NodeInfo;
+import services.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,13 +62,20 @@ import java.util.Set;
 
     /**
      * GraphScene pane constructor.
-     * @param fact the Factory used to create JavaFX elements.
+     * @param serviceLocator ServiceLocator for locating services registered in that object.
      */
-     public GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this);
-         info = new NodeInfo();
+     public GraphScene(ServiceLocator serviceLocator) {
+         center = new NodeCenter(serviceLocator);
+         info = new NodeInfo(serviceLocator);
          state = info;
-         this.fxElementsFactory = fact;
+         this.fxElementsFactory = serviceLocator.getFxElementsFactory();
+     }
+
+     public static void register(ServiceLocator sL) {
+         if (sL == null) {
+             throw new IllegalArgumentException("The service locator cannot be null");
+         }
+         sL.setGraphScene(new GraphScene(sL));
      }
 
     /**

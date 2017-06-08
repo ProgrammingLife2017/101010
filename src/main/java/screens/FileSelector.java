@@ -6,6 +6,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import logging.Logger;
 import logging.LoggerFactory;
+import services.ServiceLocator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,10 +31,20 @@ public final class FileSelector {
      */
     private static Logger logger;
 
+    private static ServiceLocator serviceLocator;
+
     /**
      * Private constructor.
      */
     private FileSelector() { }
+
+    public static void register(ServiceLocator sL) {
+        if(sL == null) {
+            throw new IllegalArgumentException("The service locator can not be null");
+        }
+        serviceLocator = sL;
+        FileSelector.serviceLocator.setFileSelector(new FileSelector());
+    }
 
     /**
      * Getter for the instance of this singleton class.

@@ -7,8 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import screens.FXElementsFactory;
 import screens.Window;
+import services.ServiceLocator;
 
 /**
  * Controller class to allow input that will be used for interacting with the graph.
@@ -20,14 +20,9 @@ public class Controller extends GridPane {
     private Label currentCenter, centerInput, radius;
 
     /**
-     * Input field.
-     */
-    private TextField centerInputField;
-
-    /**
      * Input fields.
      */
-    private static TextField radiusInputField, currentCenterField;
+    private static TextField centerInputField, radiusInputField, currentCenterField;
 
     /**
      * Submit button to initiate center queries.
@@ -50,14 +45,13 @@ public class Controller extends GridPane {
 
     /**
      * Constructor.
-     * @param fxElementsFactory factory to create testable javaFX components.
-     * @param graphScene scene where the graph is drawn.
+     * @param serviceLocator ServiceLocator for locating services registered in that object.
      */
-    /*package*/ Controller(FXElementsFactory fxElementsFactory, GraphScene graphScene) {
-        this.graphScene = graphScene;
-        currentCenter = fxElementsFactory.createLabel("Current center:");
-        centerInput = fxElementsFactory.createLabel("Search center:");
-        radius = fxElementsFactory.createLabel("Radius:");
+    /*package*/ Controller(ServiceLocator serviceLocator) {
+        this.graphScene = serviceLocator.getGraphScene();
+        currentCenter = serviceLocator.getFxElementsFactory().createLabel("Current center:");
+        centerInput = serviceLocator.getFxElementsFactory().createLabel("Search center:");
+        radius = serviceLocator.getFxElementsFactory().createLabel("Radius:");
         currentCenterField = new TextField();
         centerInputField = new TextField();
         radiusInputField = new TextField();
@@ -70,6 +64,7 @@ public class Controller extends GridPane {
         this.add(radius, 1, 3);
         this.add(radiusInputField, 2, 3);
         this.add(submitButton, 1, 4);
+        serviceLocator.setController(this);
     }
 
     /**
@@ -107,7 +102,7 @@ public class Controller extends GridPane {
      * Returns the radius in its text field.
      * @return Radius.
      */
-    public static int getRadius() {
+    public int getRadius() {
         if (radiusInputField.getText().length() == 0 || !radiusInputField.getText().contains("\\D")
                 || Integer.parseInt(radiusInputField.getText()) < 5
                 || Integer.parseInt(radiusInputField.getText()) > 500) {
@@ -120,7 +115,7 @@ public class Controller extends GridPane {
      * Enters the index of the current center node in its corresponding text field.
      * @param center Index of the center node.
      */
-    public static void setCurrentCenter(int center) {
+    public void setCurrentCenter(int center) {
         currentCenterField.setText(Integer.toString(center));
     }
 

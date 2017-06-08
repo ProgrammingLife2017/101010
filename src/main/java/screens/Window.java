@@ -2,7 +2,6 @@ package screens;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
-import filesystem.FileSystem;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -22,8 +21,8 @@ import logging.Logger;
 import logging.LoggerFactory;
 import parsing.Parser;
 import screens.scenes.GraphScene;
-import screens.scenes.InfoScreen;
 import screens.scenes.InteractionScene;
+import services.ServiceLocator;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,6 +90,8 @@ public class Window extends Application {
      */
     private static final double MINIMUM_HEIGHT = 700d;
 
+    private ServiceLocator serviceLocator;
+
     /**
      * Starts the frame.
      * @param stage Main stage where the content is placed.
@@ -118,12 +119,13 @@ public class Window extends Application {
      * Sets up the necessary services.
      */
     private void setupService() {
-        fxElementsFactory = new FXElementsFactory();
-        graphScene = new GraphScene(fxElementsFactory);
+        serviceLocator = new ServiceLocator();
+        fxElementsFactory = serviceLocator.getFxElementsFactory();
+        graphScene = serviceLocator.getGraphScene();
         graphScene.toBack();
-        interactionScene = new InteractionScene(fxElementsFactory, graphScene);
-        backLog = new Backlog();
-        loggerFactory = new LoggerFactory(new FileSystem());
+        interactionScene = serviceLocator.getInteractionScene();
+        backLog = serviceLocator.getBacklog();
+        loggerFactory = serviceLocator.getLoggerFactory();
         logger = loggerFactory.createLogger(this.getClass());
     }
 
@@ -181,23 +183,6 @@ public class Window extends Application {
             }
         });
     }
-
-    /**
-     * Gets the backlog of this class.
-     * @return BackLog object.
-     */
-    public static Backlog getBackLog() {
-        return backLog;
-    }
-
-    /**
-     * Creates instance of InfoScreen.
-     * @return InfoScreen object.
-     */
-    public static InfoScreen getInfoScreen() {
-        return interactionScene.getInfoScreen();
-    }
-
 
     /**
      * Creates the menu bar with its items.

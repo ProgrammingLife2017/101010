@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
+import services.ServiceLocator;
 
 /**
  * Implementation of the window that handles showing information of the graph.
@@ -35,17 +36,18 @@ public class InfoScreen extends GridPane {
 
     /**
      * Constructor.
-     * @param factory Factory for creating javaFX components.
+     * @param serviceLocator ServiceLocator for locating services registered in that object.
      */
-    /*package*/ InfoScreen(FXElementsFactory factory) {
+    /*package*/ InfoScreen(ServiceLocator serviceLocator) {
         textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setVisible(true);
         textArea.textProperty().addListener(
                 (observable, oldValue, newValue) -> textArea.setScrollTop(Double.MAX_VALUE)
         );
-        fxElementsFactory = factory;
+        fxElementsFactory = serviceLocator.getFxElementsFactory();
         screenSettings();
+        serviceLocator.setInfoScreen(this);
     }
 
     /**

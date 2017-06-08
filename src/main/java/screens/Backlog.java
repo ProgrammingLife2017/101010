@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import services.ServiceLocator;
 
 /**
  * Implementation of the backlog screen to keep track of actions that are performed by the application.
@@ -13,6 +14,8 @@ public final class Backlog extends Stage {
      * Area to write content of the logger.
      */
     private final TextArea textArea;
+
+    private static ServiceLocator serviceLocator;
 
     /**
      * Backlog window constructor.
@@ -34,6 +37,14 @@ public final class Backlog extends Stage {
         root.getChildren().add(textArea);
         Scene scene = new Scene(root);
         this.setScene(scene);
+    }
+
+    public static void register(ServiceLocator sL) {
+        if(sL == null) {
+            throw new IllegalArgumentException("The service locator can not be null");
+        }
+        serviceLocator = sL;
+        Backlog.serviceLocator.setBacklog(new Backlog());
     }
 
     /**

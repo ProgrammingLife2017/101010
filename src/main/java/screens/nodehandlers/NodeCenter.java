@@ -2,8 +2,7 @@ package screens.nodehandlers;
 
 import datastructure.DrawNode;
 import javafx.scene.shape.Line;
-import screens.scenes.Controller;
-import screens.scenes.GraphScene;
+import services.ServiceLocator;
 
 /**
  * Implementation of the state that handles click events regarding the center query of selected node.
@@ -13,14 +12,14 @@ public class NodeCenter implements INodeHandler {
     /**
      * Screen that displays the graph.
      */
-    private GraphScene graphScene;
+    private ServiceLocator serviceLocator;
 
     /**
      * Constructor.
-     * @param sc Scene for displaying graphs.
+     * @param sL ServiceLocator for locating services registered in that object.
      */
-    public NodeCenter(GraphScene sc) {
-        this.graphScene = sc;
+    public NodeCenter(ServiceLocator sL) {
+        this.serviceLocator = sL;
     }
 
     /**
@@ -28,7 +27,7 @@ public class NodeCenter implements INodeHandler {
      */
     @Override
     public void handleNode(DrawNode node) {
-        graphScene.drawGraph(node.getIndex(), Controller.getRadius());
+        serviceLocator.getGraphScene().drawGraph(node.getIndex(), serviceLocator.getController().getRadius());
     }
 
     @Override

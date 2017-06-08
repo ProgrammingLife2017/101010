@@ -4,11 +4,23 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import services.ServiceLocator;
 
 /**
  * Factory for JavaFX constructors.
  */
 public class FXElementsFactory {
+
+    private FXElementsFactory() {
+
+    }
+
+    public static void register(ServiceLocator sL) {
+        if(sL == null) {
+            throw new IllegalArgumentException("The service locator can not be null");
+        }
+        sL.setFxElementsFactory(new FXElementsFactory());
+    }
 
     /**
      * Creates a JavaFX stage.

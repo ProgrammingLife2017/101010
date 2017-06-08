@@ -205,7 +205,7 @@ public class Parser {
                     path = path.substring(0, path.length() - 4);
                     BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path + "Genomes.txt")));
                     GraphInfo.getInstance().setGenomesNum(Double.parseDouble(br.readLine().split("\t")[0]));
-                    int[][] paths = new int[graphSize][];
+                    int[][] genomes = new int[graphSize][];
                     for (int i = 0; i < graphSize; i++) {
                         int length = Integer.parseInt(in.readLine());
                         int outLength = Integer.parseInt(in.readLine());
@@ -223,10 +223,10 @@ public class Parser {
                         Node temp = new Node(length, outgoing, incoming);
                         graph.addNodeCache(i, temp);
                         lineCounter = lineCounter + 5;
-                        setWeights(br, temp, i, paths);
+                        setWeights(br, temp, i, genomes);
                         updateProgressBar(lineCounter, nol);
                     }
-                    GraphInfo.getInstance().setPaths(paths);
+                    GraphInfo.getInstance().setGenomes(genomes);
                     br.close();
                     in.close();
                 } catch (IOException e) {
@@ -355,7 +355,6 @@ public class Parser {
     private void setWeights(BufferedReader br, Node node, int id, int[][] paths) {
         try {
             String[] line = br.readLine().split("\\t");
-            node.setWeight(Double.parseDouble(line[0]) / GraphInfo.getInstance().getGenomesNum());
             paths[id] = new int[Integer.parseInt(line[0])];
             for (int i = 1; i < line.length; i++) {
                 paths[id][i - 1] = Integer.parseInt(line[i]);
@@ -433,7 +432,7 @@ public class Parser {
                 }
                 paths[i] = genPath;
             }
-            GraphInfo.getInstance().setPaths(paths);
+            GraphInfo.getInstance().setGenomes(paths);
         } catch (Exception e) {
             e.printStackTrace();
         }

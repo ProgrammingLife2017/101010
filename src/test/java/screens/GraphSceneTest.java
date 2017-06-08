@@ -100,7 +100,7 @@ public class GraphSceneTest {
         when(group.getChildren()).thenReturn(list);
         when(fact.createScene(group, 150, 100)).thenReturn(scene);
         when(fact.setScene(stage, scene)).thenReturn(stage);
-        gi.setPaths(paths);
+        gi.setGenomes(paths);
         GraphInfo.setInstance(gi);
         NodeGraph.setCurrentInstance(ngTest);
         gs = new GraphScene(fact);
@@ -173,7 +173,7 @@ public class GraphSceneTest {
                 paths[0][i] = i;
                 paths[2][i] = i;
             }
-            gi.setPaths(paths);
+            gi.setGenomes(paths);
             GraphInfo.setInstance(gi);
             NodeGraph ng = new NodeGraph(nodes, null, dNodes, null);
             NodeGraph.setCurrentInstance(ng);

@@ -105,7 +105,7 @@ import java.util.Set;
         LinkedList<DrawNode> drawNodes = nodeGraph.getDrawNodes();
         LinkedList<DummyNode> dummyNodes = nodeGraph.getDummyNodes();
         for (DrawNode dNode : drawNodes) {
-            int count = 0;
+            int outgoingNum = 0;
             double[] widths = determineEdgeWidth(NodeGraph.getCurrentInstance().getNode(dNode.getIndex()), dNode.getIndex());
             dNode.setX(dNode.getX() - dNode.getWidth() / 2);
             dNode.setOnMousePressed(click);
@@ -114,9 +114,9 @@ import java.util.Set;
             for (int i : nodes.get(dNode.getIndex()).getOutgoingEdges()) {
                 nOut = nodeGraph.getDrawNode(i);
                 if (nOut != null && nOut.getBoundsInLocal().getMinX() - dNode.getBoundsInLocal().getMaxX() <= 100) {
-                    drawLine(dNode.getIndex() + "-" + i, 5 * widths[count] / GraphInfo.getInstance().getGenomesNum(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
+                    drawLine(dNode.getIndex() + "-" + i, 5 * widths[outgoingNum] / GraphInfo.getInstance().getGenomesNum(), dNode.getBoundsInLocal().getMaxX(), dNode.getBoundsInLocal().getMinY() + 5, nOut.getBoundsInLocal().getMinX(), nOut.getBoundsInLocal().getMinY() + 5);
                 }
-                count += 1;
+                outgoingNum += 1;
             }
         }
         DummyNode current;
@@ -357,10 +357,9 @@ import java.util.Set;
         if (incoming.length < 2 || outgoing.length < 2) {
             return widths;
         }
-        maxX = ng.getDrawNode(id).getX();
         for (int i = 0; i < incoming.length; i++) {
             DrawNode dNode = ng.getDrawNode(incoming[i]);
-            if (dNode != null && Math.abs(maxX - dNode.getX()) >= 5) {
+            if (dNode != null) {
                 widths[maxInt] -= getNumberOfDuplicates(outgoing[maxInt], incoming[i]);
             }
         }
@@ -380,6 +379,7 @@ import java.util.Set;
             for (int k = 0; k < paths[outId].length; k++) {
                 if (paths[id][j] == paths[outId][k]) {
                     count += 1;
+                    break;
                 }
             }
         }

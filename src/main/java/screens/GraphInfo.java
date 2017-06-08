@@ -23,7 +23,7 @@ public class GraphInfo {
     /**
      * All specified genome paths per node.
      */
-    private int[][] paths;
+    private int[][] genomes;
 
     /**
      * A singleton instance of GraphInfo.
@@ -107,10 +107,10 @@ public class GraphInfo {
 
     /**
      * Setter for the genome paths of the file.
-     * @param newPaths the genome paths to set.
+     * @param newGenomes the genome paths to set.
      */
-    public void setPaths(int[][] newPaths) {
-        this.paths = newPaths;
+    public void setGenomes(int[][] newGenomes) {
+        this.genomes = newGenomes;
     }
 
     /**
@@ -118,6 +118,6 @@ public class GraphInfo {
      * @return the genome paths of the file per node.
      */
     public int[][] getPaths() {
-        return this.paths;
+        return this.genomes;
     }
 }

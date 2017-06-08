@@ -65,7 +65,7 @@ public final class FileSelector {
         File chosenFile = getInstance().showOpenDialog(ownerWindow);
         if (chosenFile != null && chosenFile.exists()) {
             logger.info("Selected file: " + chosenFile.getName());
-        } else if (chosenFile != null){
+        } else if (chosenFile != null) {
             logger.info("The selected file does not exist.");
         } else {
             logger.info("No file was selected.");
@@ -81,7 +81,7 @@ public final class FileSelector {
      * Finds the last used directory from which a file was chosen.
      * @return the path of the directory.
      */
-    public static String getDirectory() {
+    private static String getDirectory() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("directory.txt")));
             String dir = br.readLine();

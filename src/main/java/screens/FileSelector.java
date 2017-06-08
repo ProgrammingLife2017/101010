@@ -7,7 +7,6 @@ import logging.Logger;
 import services.ServiceLocator;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -116,7 +115,6 @@ public final class FileSelector {
         try {
             File file = new File("directory.txt");
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-            BufferedWriter writer = new BufferedWriter(ow);
             ow.write(directory);
             logger.info("Directory saved as: " + directory);
             ow.close();

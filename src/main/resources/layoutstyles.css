@@ -21,7 +21,3 @@
     -fx-hgap: 10;
     -fx-vgap: 10;
 }
-
-#title {
-    -fx-alignment: top-left;
-}

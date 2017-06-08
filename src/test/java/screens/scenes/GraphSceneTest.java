@@ -18,7 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import screens.FXElementsFactory;
 import services.ServiceLocator;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;

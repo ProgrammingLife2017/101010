@@ -315,7 +315,6 @@ public class NodeGraph {
              for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
                  for (int j = 0; j < size; j++) {
                      DrawNode temp = drawNodes.get(j);
-                     int ind2 = temp.getIndex();
                      if (temp.getIndex() == i && temp.getX() < layer) {
                          layer = temp.getX();
                      }

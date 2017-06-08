@@ -4,7 +4,7 @@ import javafx.scene.layout.VBox;
 import services.ServiceLocator;
 
 /**
- * Created by Michael on 6/8/2017.
+ * Implementation of container that holds other scenes on the sides of the main pane.
  */
 public class InteractionScene extends VBox {
     /**

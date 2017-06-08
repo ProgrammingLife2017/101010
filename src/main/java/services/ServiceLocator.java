@@ -11,7 +11,7 @@ import screens.scenes.InfoScreen;
 import screens.scenes.InteractionScene;
 
 /**
- * Created by Michael on 6/8/2017.
+ * Implementation of container class that contains references to other services.
  */
 public class ServiceLocator {
     // Screens

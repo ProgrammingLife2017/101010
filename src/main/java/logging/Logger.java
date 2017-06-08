@@ -1,7 +1,7 @@
 package logging;
 
 import filesystem.FileSystem;
-import screens.Window;
+import services.ServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -25,6 +25,11 @@ public final class Logger {
     private final FileSystem fileSystem;
 
     /**
+     * Container of references to other services.
+     */
+    private ServiceLocator serviceLocator;
+
+    /**
      * The ThreadPoolExecutor is responsible for executing all logging code on a separate thread to prevent stalling.
      */
     private static final ThreadPoolExecutor LOGGING_THREAD_EXECUTOR = new ThreadPoolExecutor(
@@ -35,10 +40,12 @@ public final class Logger {
      * Constructor.
      * @param targetClass The class that this logger is serving.
      * @param fs FileSystem object to write with.
+     * @param sL ServiceLocator object that contains a reference to all services.
      */
-    public Logger(final Class targetClass, FileSystem fs) {
+    /* package */ Logger(final Class targetClass, FileSystem fs, ServiceLocator sL) {
         this.cl = targetClass;
         this.fileSystem = fs;
+        this.serviceLocator = sL;
     }
 
     /**
@@ -73,7 +80,7 @@ public final class Logger {
      * @param str message to write.
      */
     private void appendStringToTextFile(final String str) {
-        Window.getBackLog().printContent(str);
+        serviceLocator.getBacklog().printContent(str);
         Runnable runnable = () -> this.fileSystem.log(str);
         Logger.LOGGING_THREAD_EXECUTOR.execute(runnable);
 

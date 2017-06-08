@@ -1,14 +1,12 @@
-package window;
+package screens;
 
 
-import filesystem.FileSystem;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import logging.Logger;
-import logging.LoggerFactory;
+import services.ServiceLocator;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,9 +29,26 @@ public final class FileSelector {
     private static Logger logger;
 
     /**
+     * Contains references to other services.
+     */
+    private static ServiceLocator serviceLocator;
+
+    /**
      * Private constructor.
      */
     private FileSelector() { }
+
+    /**
+     * Register a reference of this object in the service locator.
+     * @param sL container of references to other services
+     */
+    public static void register(ServiceLocator sL) {
+        if (sL == null) {
+            throw new IllegalArgumentException("The service locator can not be null");
+        }
+        serviceLocator = sL;
+        FileSelector.serviceLocator.setFileSelector(new FileSelector());
+    }
 
     /**
      * Getter for the instance of this singleton class.
@@ -52,9 +67,8 @@ public final class FileSelector {
      * @param ownerWindow The stage from which this method is called.
      * @return The file we want to parse.
      */
-    public static File showOpenDialog(Window ownerWindow) {
-        FileSystem fileSystem = new FileSystem();
-        logger = new LoggerFactory(fileSystem).createLogger(FileSelector.class);
+    public File showOpenDialog(Window ownerWindow) {
+        logger = serviceLocator.getLoggerFactory().createLogger(FileSelector.class);
         String currentDir = getDirectory();
         if (!currentDir.equals("")) {
             File file = new File(currentDir);
@@ -101,7 +115,6 @@ public final class FileSelector {
         try {
             File file = new File("directory.txt");
             OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-            BufferedWriter writer = new BufferedWriter(ow);
             ow.write(directory);
             logger.info("Directory saved as: " + directory);
             ow.close();

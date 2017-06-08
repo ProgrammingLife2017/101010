@@ -1,6 +1,7 @@
 package logging;
 
 import filesystem.FileSystem;
+import services.ServiceLocator;
 
 /**
  * Implementation of the factory that creates loggers for other classes.
@@ -18,14 +19,31 @@ public final class LoggerFactory {
     private final FileSystem fileSystem;
 
     /**
+     * Object that contains references to other services.
+     */
+    private static ServiceLocator serviceLocator;
+
+    /**
      * Constructor.
      * @param fs FileSystem for writing to file.
      */
-   public LoggerFactory(FileSystem fs) {
+   private LoggerFactory(FileSystem fs) {
         fileSystem = fs;
         fileSystem.clearFile();
-        logger = new Logger(this.getClass(), fileSystem);
+        logger = new Logger(this.getClass(), fileSystem, serviceLocator);
         logger.info("a new logger factory has been created");
+   }
+
+    /**
+     * Register a reference of this object in the service locator.
+     * @param sL container of references to other services
+     */
+   public static void register(ServiceLocator sL) {
+       if (sL == null) {
+           throw new IllegalArgumentException("The service locator can not be null");
+       }
+       serviceLocator = sL;
+       LoggerFactory.serviceLocator.setLoggerFactory(new LoggerFactory(serviceLocator.getFileSystem()));
    }
 
     /**
@@ -35,7 +53,7 @@ public final class LoggerFactory {
      */
     public Logger createLogger(final Class<?> cl) {
         logger.info("a new logger has been created");
-        return new Logger(cl, fileSystem);
+        return new Logger(cl, fileSystem, serviceLocator);
     }
 
     /**

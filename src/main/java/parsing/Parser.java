@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter;
 /**
  * Created by 101010.
  */
-public class Parser {
+public final class Parser {
     /**
      * Initial Parser.
      */

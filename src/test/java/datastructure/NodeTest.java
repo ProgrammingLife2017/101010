@@ -5,12 +5,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-
-import java.util.Random;
 
 
 /**
@@ -36,54 +35,6 @@ public class NodeTest {
     @After
     public void tearDown() {
         node = null;
-    }
-
-    /**
-     * Check if a new node has length 0.
-     */
-    @Test
-    public void getLength() {
-        assertEquals(0, node.getLength());
-    }
-
-    /**
-     * Check if a new node has no outgoing edges.
-     */
-    @Test
-    public void getOutgoingEdges() {
-        assertEquals(0, node.getOutgoingEdges().length);
-    }
-
-    /**
-     * Check if a new node has no incoming edges.
-     */
-    @Test
-    public void getIncomingEdges() {
-        assertEquals(0, node.getIncomingEdges().length);
-    }
-
-    /**
-     * Test the addIncomingEdgeMethod of Node.
-     */
-    @Test
-    public void addIncomingEdgeTest() {
-        assertEquals(0, node.getIncomingEdges().length);
-        node.addIncomingEdge(5);
-        node.addIncomingEdge(2);
-        assertEquals(5, node.getIncomingEdges()[0]);
-        assertEquals(2, node.getIncomingEdges()[1]);
-    }
-
-    /**
-     * Test the addOutgoingEdgeMethod of Node.
-     */
-    @Test
-    public void addOutgoingEdgeTest() {
-        assertEquals(0, node.getOutgoingEdges().length);
-        node.addOutgoingEdge(5);
-        node.addOutgoingEdge(2);
-        assertEquals(5, node.getOutgoingEdges()[0]);
-        assertEquals(2, node.getOutgoingEdges()[1]);
     }
 
     /**

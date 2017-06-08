@@ -56,7 +56,7 @@ public class InteractionScene extends VBox {
      * Resets the legend of the controller.
      */
     public void resetController() {
-        this.controller.reset();;
+        this.controller.reset();
     }
 
 }

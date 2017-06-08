@@ -122,7 +122,7 @@ public class Parser {
                                 id = Integer.parseInt(line2.substring(0, line2.indexOf('\t'))) - 1;
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
                                 segment = line2.substring(0, line2.indexOf('\t'));
-                                graph.addNode(id, segment.length());
+                                graph.addNode(id, new Node(segment.length(), new int[0], new int[0]));
                                 out.write(segment + "\n");
                                 out.flush();
                                 line2 = line2.substring(line2.indexOf('\t') + 1);
@@ -197,12 +197,23 @@ public class Parser {
                 int lineCounter = 0;
                 try {
                     int nol = getNumberOfLine(cache);
-                    String[] tempEdge;
                     for (int i = 0; i < graphSize; i++) {
-                        tempEdge = in.readLine().split("\t");
-                        graph.addNode(i, graph.getNodeSegment(i).length());
-                        graph.addEdge(Integer.parseInt(tempEdge[0]), Integer.parseInt(tempEdge[1]));
-                        lineCounter = lineCounter + 1;
+                        int length = Integer.parseInt(in.readLine());
+                        int outLength = Integer.parseInt(in.readLine());
+                        int[] outgoing = new int[outLength];
+                        String[] tempLine = in.readLine().split("\t");
+                        for (int j = 0; j < outLength; j++) {
+                            outgoing[j] = Integer.parseInt(tempLine[j]);
+                        }
+                        int inLength = Integer.parseInt(in.readLine());
+                        int[] incoming = new int[inLength];
+                        tempLine = in.readLine().split("\t");
+                        for (int j = 0; j < inLength; j++) {
+                            incoming[j] = Integer.parseInt(tempLine[j]);
+                        }
+                        Node temp = new Node(length, outgoing, incoming);
+                        graph.addNodeCache(i, temp);
+                        lineCounter = lineCounter + 5;
 
                         updateProgressBar(lineCounter, nol);
                     }

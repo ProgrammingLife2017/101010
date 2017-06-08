@@ -1,4 +1,4 @@
-package window;
+package screens;
 
 
 import filesystem.FileSystem;

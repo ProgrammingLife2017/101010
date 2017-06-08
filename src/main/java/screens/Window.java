@@ -23,7 +23,7 @@ import javafx.stage.StageStyle;
 import logging.Logger;
 import logging.LoggerFactory;
 import parsing.Parser;
-import window.FileSelector;
+import screens.scenes.GraphScene;
 
 import java.io.File;
 import java.io.IOException;

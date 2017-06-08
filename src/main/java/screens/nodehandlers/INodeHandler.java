@@ -1,4 +1,4 @@
-package screens;
+package screens.nodehandlers;
 
 import datastructure.DrawNode;
 

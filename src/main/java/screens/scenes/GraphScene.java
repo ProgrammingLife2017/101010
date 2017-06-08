@@ -1,4 +1,4 @@
-package screens;
+package screens.scenes;
 
 import datastructure.DrawNode;
 import datastructure.DummyNode;
@@ -12,6 +12,11 @@ import javafx.scene.shape.Line;
 import parsing.Parser;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import screens.FXElementsFactory;
+import screens.Window;
+import screens.nodehandlers.INodeHandler;
+import screens.nodehandlers.NodeCenter;
+import screens.nodehandlers.NodeInfo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,7 +67,7 @@ import java.util.Set;
      * GraphScene pane constructor.
      * @param fact the Factory used to create JavaFX elements.
      */
-     /*package*/ GraphScene(FXElementsFactory fact) {
+     public GraphScene(FXElementsFactory fact) {
          center = new NodeCenter(this);
          info = new NodeInfo();
          state = info;

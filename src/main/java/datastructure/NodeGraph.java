@@ -7,8 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+
 import java.util.Queue;
 import java.util.TreeSet;
+
 
 
 /**
@@ -197,7 +202,6 @@ public class NodeGraph {
             addEdges(current, q, visited);
             drawNode = new DrawNode(current);
             drawNode.setWidth(nodes.get(current).getLength());
-            drawNode.setFill(Color.CRIMSON);
             drawNode.setHeight(10);
             drawNodes.addLast(drawNode);
         }
@@ -622,7 +626,6 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                newNodes.get(i).setFill(Color.CRIMSON);
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyIn = nodes.get(newNodes.get(i).getIndex());
@@ -688,7 +691,6 @@ public class NodeGraph {
                 nodes.get(newNodes.get(i).getIndex()).computeLength();
                 newNodes.get(i).setWidth(nodes.get(newNodes.get(i).getIndex()).getLength());
                 newNodes.get(i).setHeight(10);
-                newNodes.get(i).setFill(Color.CRIMSON);
                 newDrawNodes.add(newNodes.get(i));
             } else {
                 Node dummyOut = nodes.get(newNodes.get(i).getIndex());
@@ -813,5 +815,26 @@ public class NodeGraph {
      */
     protected LinkedList<Double> getLeafNodes() {
         return leafNodes;
+    }
+
+    /**
+     * Colors the node in even strokes.
+     * @param drawNode the node to be colored.
+     * @param colors the colors of the strokes.
+     */
+    public void colorDrawNode(DrawNode drawNode, ArrayList<Color> colors) {
+        drawNode.setFill(Color.CRIMSON);
+        Stop[] stops = new Stop[colors.size() * 2];
+        if (stops.length == 0) {
+            return;
+        }
+        double offset = 1 / (double) colors.size();
+
+        for (int i = 0; i < colors.size(); i++) {
+            stops[2 * i] = new Stop((i * offset), colors.get(i));
+            stops[(2 * i) + 1] = new Stop(((i + 1) * offset), colors.get(i));
+        }
+        LinearGradient lg1 = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
+        drawNode.setFill(lg1);
     }
 }

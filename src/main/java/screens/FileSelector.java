@@ -86,7 +86,7 @@ public final class FileSelector {
         }
 
         if (chosenFile != null) {
-            saveDirectory(chosenFile.getParentFile().getAbsolutePath());
+            saveDirectory(chosenFile.getParentFile().getAbsolutePath() + "\\");
         }
         return chosenFile;
     }

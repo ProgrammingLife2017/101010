@@ -2,9 +2,11 @@ package screens;
 
 import datastructure.DrawNode;
 import datastructure.NodeGraph;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -220,7 +222,6 @@ public class Window extends Application {
                     if (file != null && file.exists()) {
                         pB.setVisible(true);
                         NodeGraph.setCurrentInstance(Parser.getInstance().parse(file));
-
                         new Thread() {
                             public void run() {
                                 try {
@@ -234,7 +235,8 @@ public class Window extends Application {
                                 pB.setProgress(0.0);
                             }
                         }.start();
-
+                        this.interactionScene.resetController();
+                        GraphInfo.setInstance(new GraphInfo());
                         Thread drawing = graphScene.drawGraph(0, 200);
 
                         new Thread(() -> {

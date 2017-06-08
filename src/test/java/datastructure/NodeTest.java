@@ -152,7 +152,7 @@ public class NodeTest {
     @Test
     public void setIncomingEdgesTest() {
         Random r = new Random();
-        int[] rIntA = new int[r.nextInt(300000000)];
+        int[] rIntA = new int[r.nextInt(30000000)];
         for (int i = 0; i < rIntA.length; i++) {
             rIntA[i] = r.nextInt();
         }

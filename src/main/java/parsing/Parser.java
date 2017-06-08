@@ -132,7 +132,7 @@ public class Parser {
                                 if (line2.contains("\t")) {
                                     line2 = line2.substring(0, line2.indexOf("\t"));
                                 }
-                                node.setWeight(addGenomes(gw, line2, threadIntegerBased, allGenomes));
+                                addGenomes(gw, line2, threadIntegerBased, allGenomes);
 
                                 line2 = in.readLine();
                                 lineCounter++;

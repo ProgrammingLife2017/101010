@@ -49,4 +49,16 @@ public class DrawNode extends Rectangle {
         return id;
     }
 
+    /**
+     * Getter for the genome paths going through a DrawNode.
+     * @return all genomes that cross this DrawNode.
+     */
+    public String[] getGenomes() {
+//        int[] genomes = GraphInfo.getPaths()[this.id];
+//        String[] strGenomes = new String[genomes.length];
+//        for (int i = 0; i < genomes.length; i++) {
+//            strGenomes = GraphInfo.getGenomes()[genomes[i]];
+//        }
+        return null;
+    }
 }

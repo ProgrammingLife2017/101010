@@ -1,12 +1,17 @@
 package screens;
 
+import datastructure.Condition;
 import datastructure.DrawNode;
+import datastructure.GenomeCountCondition;
 import datastructure.NodeGraph;
+import datastructure.RegexCondition;
 import filesystem.FileSystem;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -329,10 +334,101 @@ public class Window extends Application {
                     }
                 }
         );
+        MenuItem item5 = new MenuItem("Number of Genomes");
+        item5.setOnAction(
+                event -> {
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        Stage newstage = new Stage();
+                        newstage.setTitle("Select the amount of genomes");
+                        GridPane box = new GridPane();
+                        TextField textField = new TextField();
+                        ChoiceBox choices = new ChoiceBox(FXCollections.observableArrayList(
+                                ">", "<", ">=", "<="));
+                        Button btn = new Button("Submit");
+                        choices.getSelectionModel().getSelectedIndex();
+                        btn.setOnAction(
+                                event2 -> {
+                                    if (textField.getText().length() == 0 || textField.getText().contains("\\D")) {
+                                        errorPopup("Please enter a number as number of genomes.");
+                                    } else {
+                                        int number = Integer.parseInt(textField.getText());
+//                                        || number >= GraphInfo.getNoGenomes()
+                                        if (number < 0) {
+                                            errorPopup("Input center id is out of bounds, \nplease provide a different input id.");
+                                        } else {
+                                            int index = choices.getSelectionModel().getSelectedIndex();
+                                            GenomeCountCondition gcc;
+                                            switch (index) {
+                                                case 0:
+                                                    //gcc = new GenomeCountCondition(number, true, false, ?getColor()?);
+                                                    break;
+                                                case 1:
+                                                    //gcc = new GenomeCountCondition(number, false, false, ?getColor()?);
+                                                    break;
+                                                case 2:
+                                                    //gcc = new GenomeCountCondition(number, true, true, ?getColor()?);
+                                                    break;
+                                                case 3:
+                                                    //gcc = new GenomeCountCondition(number, false, true, ?getColor()?);
+                                                    break;
+                                                default:
+                                                    errorPopup("Please select a constraint.");
+                                                    break;
+                                            }
+                                            newstage.close();
+                                        }
+                                    }
+                                }
+                        );
+                        box.add(new Label("Number:"), 1, 1);
+                        box.add(textField, 1, 2, 3, 1);
+                        box.add(new Label("Constraint:"), 1, 3);
+                        box.add(choices, 1, 4, 3, 1);
+                        box.add(btn, 1, 5);
+                        Scene scene = new Scene(box);
+                        newstage.setScene(scene);
+                        newstage.show();
+                        logger.info("state has been switched to centerId");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
+                }
+        );
+        MenuItem item6 = new MenuItem("Conditional Regex");
+        item6.setOnAction(
+                event -> {
+                    if (NodeGraph.getCurrentInstance() != null) {
+                        Stage newstage = new Stage();
+                        newstage.setTitle("Select the regex");
+                        GridPane box = new GridPane();
+                        TextField textField = new TextField();
+                        Button btn = new Button("Submit");
+                        btn.setOnAction(
+                                event2 -> {
+                                    String regex = textField.getText();
+                                    Color color = newColor();
+                                    RegexCondition regCond = new RegexCondition(regex, color);
+                                    newstage.close();
+                                }
+                        );
+                        box.add(new Label("Regex:"), 1, 1);
+                        box.add(textField, 1, 2, 3, 1);
+                        box.add(btn, 1, 3);
+                        Scene scene = new Scene(box);
+                        newstage.setScene(scene);
+                        newstage.show();
+                        logger.info("state has been switched to centerId");
+                    } else {
+                        errorPopup("Please load a graph.");
+                    }
+                }
+        );
         menu.getItems().add(item1);
         menu.getItems().add(item2);
         menu.getItems().add(item3);
         menu.getItems().add(item4);
+        menu.getItems().add(item5);
+        menu.getItems().add(item6);
         return menu;
     }
 

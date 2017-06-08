@@ -1,6 +1,5 @@
 package parsing;
 
-import datastructure.Node;
 import datastructure.NodeGraph;
 import datastructure.SegmentDB;
 import javafx.application.Platform;
@@ -202,7 +201,7 @@ public class Parser {
                     for (int i = 0; i < graphSize; i++) {
                         tempEdge = in.readLine().split("\t");
                         graph.addNode(i, graph.getNodeSegment(i).length());
-                        graph.addEdge(tempEdge[0], tempEdge[1]);
+                        graph.addEdge(Integer.parseInt(tempEdge[0]), Integer.parseInt(tempEdge[1]));
                         lineCounter = lineCounter + 1;
 
                         updateProgressBar(lineCounter, nol);

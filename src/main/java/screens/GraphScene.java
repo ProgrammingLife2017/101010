@@ -2,7 +2,6 @@ package screens;
 
 import datastructure.DrawNode;
 import datastructure.DummyNode;
-import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

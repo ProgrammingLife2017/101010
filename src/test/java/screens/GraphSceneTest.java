@@ -1,6 +1,5 @@
 package screens;
 
-import datastructure.Node;
 import datastructure.NodeGraph;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;

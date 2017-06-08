@@ -42,15 +42,15 @@ public class GenomeCountCondition extends Condition {
         int genomes = drawNode.getGenomes().length;
         if (greater) {
             if (equal) {
-                return decisionNumber >= genomes;
-            } else {
-                return decisionNumber > genomes;
-            }
-        } else {
-            if (equal) {
                 return decisionNumber <= genomes;
             } else {
                 return decisionNumber < genomes;
+            }
+        } else {
+            if (equal) {
+                return decisionNumber >= genomes;
+            } else {
+                return decisionNumber > genomes;
             }
         }
 

@@ -1,4 +1,4 @@
-package screens;
+package screens.scenes;
 
 import datastructure.DrawNode;
 import datastructure.DummyNode;
@@ -9,9 +9,14 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import parsing.Parser;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import parsing.Parser;
+import screens.FXElementsFactory;
+import screens.nodehandlers.INodeHandler;
+import screens.nodehandlers.NodeCenter;
+import screens.nodehandlers.NodeInfo;
+import services.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +46,13 @@ import java.util.Set;
     /**
      * The factory the GraphScene uses to create JavaFX elements.
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private FXElementsFactory fxElementsFactory;
+
+    /**
+     * Contains references to other services.
+     */
+    private ServiceLocator serviceLocator;
 
     /**
      * Event handler for when a node or edge is clicked.
@@ -49,24 +60,33 @@ import java.util.Set;
      private EventHandler<MouseEvent> click = event -> {
 
         if (event.getSource() instanceof DrawNode) {
-            DrawNode rect = (DrawNode) (event.getSource());
-            state.handle(rect);
+            state.handleNode((DrawNode) (event.getSource()));
         } else if (event.getSource() instanceof Line) {
-            Line l = (Line) (event.getSource());
-            String edgeNodes = l.getId();
-            Window.getInfoScreen().getTextArea().appendText("Edge from node " + edgeNodes.substring(0, edgeNodes.indexOf("-")) + " to " + edgeNodes.substring(edgeNodes.indexOf("-") + 1, edgeNodes.length()) + "\n");
+            state.handleLine((Line) (event.getSource()));
         }
      };
 
     /**
      * GraphScene pane constructor.
-     * @param fact the Factory used to create JavaFX elements.
+     * @param sL ServiceLocator for locating services registered in that object.
      */
-     /*package*/ GraphScene(FXElementsFactory fact) {
-         center = new NodeCenter(this);
-         info = new NodeInfo();
+     public GraphScene(ServiceLocator sL) {
+         center = new NodeCenter(sL);
+         info = new NodeInfo(sL);
          state = info;
-         this.fxElementsFactory = fact;
+         this.fxElementsFactory = sL.getFxElementsFactory();
+         this.serviceLocator = sL;
+     }
+
+    /**
+     * Register a reference of this object in the service locator.
+     * @param sL container of references to other services
+     */
+     public static void register(ServiceLocator sL) {
+         if (sL == null) {
+             throw new IllegalArgumentException("The service locator cannot be null");
+         }
+         sL.setGraphScene(new GraphScene(sL));
      }
 
     /**
@@ -77,15 +97,17 @@ import java.util.Set;
      */
     public Thread drawGraph(final int id, final int radius) {
         this.getChildren().clear();
-
+        serviceLocator.getController().setCurrentCenter(id);
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    Parser.getThread().join();
+                    Thread parser = Parser.getThread();
+                    if (parser != null) {
+                        parser.join();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 drawGraphUtil(id, radius);
             }
         };

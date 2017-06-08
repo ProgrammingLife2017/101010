@@ -1,4 +1,4 @@
-package screens;
+package screens.scenes;
 
 import datastructure.Node;
 import datastructure.NodeGraph;
@@ -15,14 +15,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import screens.FXElementsFactory;
+import services.ServiceLocator;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Tests the GraphScene class.
@@ -50,6 +56,10 @@ public class GraphSceneTest {
 
     NodeGraph ngTest = new NodeGraph();
 
+    ServiceLocator serviceLocator = mock(ServiceLocator.class);
+
+    Controller controller = mock(Controller.class);
+
     GraphScene gs;
 
     /**
@@ -70,6 +80,7 @@ public class GraphSceneTest {
 
     @Before
     public void setUp() {
+        int mockId = 100;
         Node n1 = new Node();
         n1.addOutgoingEdge(1);
         Node n2 = new Node();
@@ -77,6 +88,8 @@ public class GraphSceneTest {
         nodes.add(n1);
         nodes.add(n2);
         ngTest = new NodeGraph(nodes, null, null, null);
+        when(serviceLocator.getController()).thenReturn(controller);
+        when(controller.getRadius()).thenReturn(mockId);
         when(fact.createStage()).thenReturn(stage);
         when(fact.createLabel(anyString())).thenReturn(label);
         when(fact.createGroup()).thenReturn(group);
@@ -84,7 +97,7 @@ public class GraphSceneTest {
         when(fact.createScene(group, 150, 100)).thenReturn(scene);
         when(fact.setScene(stage, scene)).thenReturn(stage);
         NodeGraph.setCurrentInstance(ngTest);
-        gs = new GraphScene(fact);
+        gs = new GraphScene(serviceLocator);
     }
 
     @After

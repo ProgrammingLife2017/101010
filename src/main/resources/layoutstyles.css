@@ -3,8 +3,21 @@
 }
 
 .vbox {
-    -fx-border-color: #2e8b57;
-    -fx-border-width: 2px;
+    -fx-border-color: #727171;
+    -fx-border-width: 5px;
     -fx-padding: 10;
     -fx-spacing: 8;
+    -fx-background-color: #CBCACA;
+}
+
+.border_bottom {
+    -fx-border-style: hidden hidden dotted hidden;
+}
+
+.grid {
+    -fx-alignment: top-center;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
 }

@@ -42,8 +42,8 @@ public class DrawNode extends Rectangle {
     }
 
     /**
-     * Givens the hashcode of the DrawNode
-     * @return the hashcode
+     * Givens the hashcode of the DrawNode.
+     * @return the hashcode.
      */
     public int hashCode() {
         return id;

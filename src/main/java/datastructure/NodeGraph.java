@@ -1,13 +1,14 @@
 package datastructure;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.TreeSet;
-import java.util.Queue;
-import java.util.Iterator;
-import java.util.ListIterator;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Queue;
+import java.util.TreeSet;
 
 
 /**
@@ -259,7 +260,7 @@ public class NodeGraph {
     }
 
     /**
-     * Recursive method for topological sorting
+     * Recursive method for topological sorting.
      * @param current current node.
      * @param sorted current list of sorted nodes.
      * @param dNodes current list of nodes to be sorted.
@@ -314,7 +315,6 @@ public class NodeGraph {
              for (int i : nodes.get(current.getIndex()).getOutgoingEdges()) {
                  for (int j = 0; j < size; j++) {
                      DrawNode temp = drawNodes.get(j);
-                     int ind2 = temp.getIndex();
                      if (temp.getIndex() == i && temp.getX() < layer) {
                          layer = temp.getX();
                      }
@@ -756,7 +756,7 @@ public class NodeGraph {
      * @return the x-coordinate of the leaf nodes to be deleted.
      */
     public double removeAtLeaf() {
-        ArrayList<Integer> visited = new ArrayList<Integer>();;
+        ArrayList<Integer> visited = new ArrayList<Integer>();
         for (Double id : leafNodes) {
             if (id >= 0) {
                 for (int m : NodeGraph.getCurrentInstance().getNodes().get(id.intValue()).getIncomingEdges()) {
